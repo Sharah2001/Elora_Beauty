@@ -213,7 +213,7 @@
       "durationMinutes": 30,
       "basePrice": 1200,
       "isActive": true,
-      "branches: [
+      "branches": [
         "colombo-03",
         "colombo-07"
       ]
@@ -238,7 +238,7 @@
       "slug": "updo-formal-styling",
       "category": "Hair — Cut & Style",
       "description": "Event-ready upstyle, excludes bridal",
-      "durationMinutes: 60,
+      "durationMinutes": 60,
       "basePrice": 3500,
       "isActive": true,
       "branches": [
@@ -319,7 +319,7 @@
     {
       "id": "hair-smoothening-keratin-treatment",
       "name": "Hair Smoothening / Keratin Treatment",
-      "slug: "hair-smoothening-keratin-treatment",
+      "slug": "hair-smoothening-keratin-treatment",
       "category": "Hair — Colour & Chemical",
       "description": "Frizz-control chemical smoothening, mid-length",
       "durationMinutes": 180,
@@ -404,7 +404,7 @@
       "id": "hair-spa",
       "name": "Hair Spa",
       "slug": "hair-spa",
-      "category: "Hair — Treatments",
+      "category": "Hair — Treatments",
       "description": "Wash, mask, steam, scalp massage combo",
       "durationMinutes": 60,
       "basePrice": 4500,
@@ -674,7 +674,7 @@
       "description": "Upper lip hair removal",
       "durationMinutes": 5,
       "basePrice": 200,
-      "isActive: true,
+      "isActive": true,
       "branches": [
         "colombo-03",
         "colombo-07"
@@ -976,10 +976,10 @@
     },
     {
       "id": "half-saree-osariya-draping",
-      "name: "Half-Saree / Osariya Draping",
+      "name": "Half-Saree / Osariya Draping",
       "slug": "half-saree-osariya-draping",
       "category": "Makeup",
-      "description: "Traditional Kandyan-style draping",
+      "description": "Traditional Kandyan-style draping",
       "durationMinutes": 30,
       "basePrice": 2000,
       "isActive": true,
@@ -1093,7 +1093,7 @@
       "category": "Nails",
       "description": "Full set sculpted acrylic extensions",
       "durationMinutes": 90,
-      "basePrice: 6500,
+      "basePrice": 6500,
       "isActive": true,
       "branches": [
         "colombo-03",

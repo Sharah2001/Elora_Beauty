@@ -1,6 +1,0 @@
-{
-  "name": "Elora Beauty",
-  "description": "Premium multi-branch beauty salon booking platform based in Colombo with real-time slot availability, booking management, and custom administrative dashboard.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

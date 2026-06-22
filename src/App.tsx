@@ -21,9 +21,9 @@ export default function App() {
   const [preSelectedBranch, setPreSelectedBranch] = useState("");
   
   // Image path references generated
-  const heroImage = "/src/assets/images/elora_hero_banner_1782144601389.jpg";
-  const portfolio1 = "/src/assets/images/makeup_showcase_1782144615378.jpg";
-  const portfolio2 = "/src/assets/images/nail_art_showcase_1782144637254.jpg";
+  const heroImage = "/images/elora-hero-banner.jpg";
+  const portfolio1 = "/images/makeup-showcase.jpg";
+  const portfolio2 = "/images/nail-art-showcase.jpg";
 
   // Contact form state
   const [cName, setCName] = useState("");
