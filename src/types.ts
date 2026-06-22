@@ -1,0 +1,135 @@
+export interface Branch {
+  id: string;
+  name: string;
+  slug: string;
+  address: string;
+  city: string;
+  phone: string;
+  whatsapp?: string;
+  geo?: { lat: number; lng: number };
+  image: string;
+  isActive: boolean;
+  displayOrder: number;
+}
+
+export interface DaySchedule {
+  dayOfWeek: string; // "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun"
+  openTime: string; // "09:00"
+  closeTime: string; // "19:30"
+  isClosed: boolean;
+}
+
+export interface WorkingHours {
+  branchId: string;
+  schedule: DaySchedule[];
+  slotDurationMinutes: number; // e.g., 30
+}
+
+export interface BlockedDate {
+  id: string;
+  branchId?: string; // empty means "all branches"
+  date: string; // "YYYY-MM-DD"
+  reason?: string;
+  isFullDay: boolean;
+  blockedStartTime?: string;
+  blockedEndTime?: string;
+}
+
+export interface Artist {
+  id: string;
+  name: string;
+  slug: string;
+  photo: string;
+  bio: string;
+  specialties: string[]; // List of service IDs
+  branches: string[]; // List of branch IDs
+  isActive: boolean;
+  displayOrder: number;
+}
+
+export interface Service {
+  id: string;
+  name: string;
+  slug: string;
+  category: string; // "Makeup" | "Hair" | "Nails" | "Skin" | "Bridal" | "Body"
+  description: string;
+  durationMinutes: number;
+  basePrice: number;
+  image?: string;
+  branches: string[]; // availability per branch
+  isActive: boolean;
+}
+
+export interface Package {
+  id: string;
+  name: string;
+  includedServices: string[]; // Service IDs
+  totalPrice: number;
+  discountNote?: string; // e.g. "Save 15%"
+  description: string;
+  image?: string;
+}
+
+export interface Offer {
+  id: string;
+  title: string;
+  description: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  validFrom: string; // "YYYY-MM-DD"
+  validUntil: string; // "YYYY-MM-DD"
+  applicableServices?: string[]; // Service IDs
+  image?: string;
+  isActive: boolean;
+}
+
+export interface Testimonial {
+  id: string;
+  customerName: string;
+  rating: number; // 1-5
+  comment: string;
+  serviceReceived?: string; // Service ID
+  branch?: string; // Branch ID
+  isApproved: boolean;
+  submittedAt: string;
+}
+
+export interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  category?: string;
+  displayOrder: number;
+}
+
+export type BookingStatus = "pending" | "confirmed" | "completed" | "no-show" | "cancelled";
+
+export interface Booking {
+  id: string;
+  branch: string; // Branch ID
+  artist?: string; // Artist ID or "" for "Any Available"
+  services: string[]; // Service IDs
+  customerName: string;
+  customerPhone: string;
+  date: string; // "YYYY-MM-DD"
+  startTime: string; // "14:30"
+  endTime: string; // "15:30"
+  status: BookingStatus;
+  bookingSource: "online" | "manual";
+  bookingReference: string; // e.g. "BK-7F3K2"
+  pin: string; // 4-digit code e.g. "4932"
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  message: string;
+  branch?: string; // Branch ID
+  status: "new" | "read" | "responded";
+  submittedAt: string;
+}
