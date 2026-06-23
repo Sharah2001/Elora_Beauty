@@ -14,9 +14,6 @@ export default function Navbar({ activeTab, setActiveTab, onOpenBooking }: Navba
     { label: "Home", id: "home" },
     { label: "Services & Prices", id: "services" },
     { label: "Stylists", id: "artists" },
-    { label: "Our Work", id: "work" },
-    { label: "Locations", id: "locations" },
-    { label: "Reviews", id: "reviews" },
     { label: "My Booking", id: "manage" }
   ];
 

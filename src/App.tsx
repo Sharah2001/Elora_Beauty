@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import BookingWizard from "./components/BookingWizard";
 import Services from "./components/Services";
 import Artists from "./components/Artists";
+import Gallery from "./components/Gallery";
 import Locations from "./components/Locations";
 import Reviews from "./components/Reviews";
 import ManageBookings from "./components/ManageBookings";
@@ -22,9 +23,6 @@ export default function App() {
   
   // Image path references generated
   const heroImage = "/images/elora-hero-banner.jpg";
-  const portfolio1 = "/images/makeup-showcase.jpg";
-  const portfolio2 = "/images/nail-art-showcase.jpg";
-
   // Contact form state
   const [cName, setCName] = useState("");
   const [cPhone, setCPhone] = useState("");
@@ -182,79 +180,10 @@ export default function App() {
               </div>
             </section>
 
-            {/* OUR RECENLY WORK PORTFOLIO (Looklike UI Image 1 portfolio) */}
-            <section className="bg-[#1A1A1A] border border-[#C5A059]/20 text-white rounded-3xl p-8 md:p-10 space-y-8 shadow-xl">
-              <div className="text-center space-y-1">
-                <span className="text-[10px] font-mono tracking-widest text-[#C5A059] uppercase font-bold">our recently work</span>
-                <h2 className="font-serif text-3xl font-bold">Crafted Colombo Portfolios</h2>
-                <p className="text-zinc-400 text-xs leading-relaxed max-w-sm mx-auto font-light">Pristine results recorded raw in our Kollupitiya beauty studio.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div className="h-64 rounded-2xl overflow-hidden border border-[#C5A059]/20 shadow-lg relative group">
-                    <img 
-                       src={portfolio1} 
-                      alt="Sri Lankan Glamour Makeup result" 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover hover:scale-105 transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-stone-950/20"></div>
-                  </div>
-                  <div>
-                    <h4 className="font-serif font-bold text-sm">Colombo Evening Sensation Makeup</h4>
-                    <span className="text-[10px] font-mono text-[#C5A059] block font-semibold">Category: Professional Glamour Makeup</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="h-64 rounded-2xl overflow-hidden border border-[#C5A059]/20 shadow-lg relative group">
-                    <img 
-                      src={portfolio2} 
-                      alt="Nude Pink and gold foil nails" 
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover hover:scale-105 transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-stone-950/20"></div>
-                  </div>
-                  <div>
-                    <h4 className="font-serif font-bold text-sm">Luxury Chic Nude Gold Gel Acrylic overlay</h4>
-                    <span className="text-[10px] font-mono text-[#C5A059] block font-bold">Category: Russian Nails extensions</span>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* BRANCH PICKER DIRECT LINKS */}
-            <section className="bg-white border border-[#C5A059]/10 rounded-3xl p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-4">
-                <span className="font-mono text-xs font-bold text-[#C5A059] uppercase tracking-widest block">multi-branch convenient</span>
-                <h3 className="font-serif text-2xl font-bold text-[#1A1A1A]">Choose Your Nearby Elora Studio</h3>
-                <p className="text-stone-500 text-xs leading-relaxed font-light">
-                  Our premises in Kollupitiya and Cinnamon Gardens feature comfortable waiting lounge areas, gate-guarded client parking space, and private styling rooms.
-                </p>
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => handleOpenBooking("colombo-03")} 
-                    className="px-4 py-2 bg-[#1A1A1A] rounded-lg text-xs font-semibold text-white uppercase hover:bg-[#C5A059] transition-colors cursor-pointer animate-fadeIn"
-                  >
-                    Kollupitiya (C3)
-                  </button>
-                  <button 
-                    onClick={() => handleOpenBooking("colombo-07")} 
-                    className="px-4 py-2 bg-[#1A1A1A] rounded-lg text-xs font-semibold text-white uppercase hover:bg-[#C5A059] transition-colors cursor-pointer animate-fadeIn"
-                  >
-                    Cinnamon Gardens (C7)
-                  </button>
-                </div>
-              </div>
-              <div className="space-y-3 bg-stone-50 p-5 rounded-2xl border border-stone-200 text-xs text-stone-704">
-                <h4 className="font-serif font-bold text-[#1A1A1A]">Colombo Support Hotlines</h4>
-                <p className="flex justify-between border-b pb-1"><span>Kollupitiya Galle Rd:</span> <span className="font-mono text-[#C5A059] font-bold">+94 11 255 5342</span></p>
-                <p className="flex justify-between border-b pb-1"><span>Cinnamon Gardens Ward Pl:</span> <span className="font-mono text-[#C5A059] font-bold">+94 11 268 4828</span></p>
-                <p className="flex justify-between"><span>WhatsApp Consultation:</span> <span className="font-mono text-[#059669] font-bold">+94 77 222 5342</span></p>
-              </div>
-            </section>
+            {/* GALLERY, REVIEWS AND LOCATIONS */}
+            <Gallery />
+            <Reviews />
+            <Locations onSelectBranchForBooking={(bid) => handleOpenBooking(bid)} />
 
             {/* INTERACTIVE IN-PAGE CONTACT FORM (Saranjah, Section 5) */}
             <section className="bg-gradient-to-r from-stone-50 to-amber-50/10 border border-[#C5A059]/15 rounded-2xl p-6 md:p-8 max-w-xl mx-auto space-y-4 shadow-sm">
@@ -343,40 +272,7 @@ export default function App() {
 
         {/* VIEW 4: PORTFOLIO / PREVIOUS WORK */}
         {activeTab === "work" && (
-          <div className="space-y-12 py-4 animate-fadeIn">
-            <div className="text-center max-w-xl mx-auto space-y-1">
-              <h2 className="font-serif text-3xl font-bold text-[#1A1A1A]">Elora Visual Catalogue</h2>
-              <p className="text-stone-500 text-sm font-light">Actual unedited outcomes from our Colombo beauty parlor rooms.</p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { title: "Nude pink gel manicure design", tag: "Nails Expert", seed: "ba1", img: portfolio2 },
-                { title: "Colombo cocktail makeup application", tag: "Makeup Artist", seed: "ba2", img: portfolio1 },
-                { title: "Italian protective balayage treatment", tag: "Hair Dresser", seed: "ba3", img: "https://picsum.photos/seed/balayagebeauty/500/500" },
-                { title: "Royal Kandyan bride sari draping detail", tag: "Bridal Suite", seed: "ba4", img: "https://picsum.photos/seed/kandyanbridal/500/500" },
-                { title: "Hydrated organic facial skin result", tag: "Skin Clinic", seed: "ba5", img: "https://picsum.photos/seed/facialsing/500/500" },
-                { title: "Modern western bridal styling set", tag: "Bridal Suite", seed: "ba6", img: "https://picsum.photos/seed/weddingdressingsl/550/550" }
-              ].map((item, idx) => (
-                <div key={idx} className="bg-white border border-[#C5A059]/10 rounded-2xl overflow-hidden shadow-sm hover:border-[#C5A059]/30 transition-all">
-                  <div className="h-56 bg-stone-100 overflow-hidden relative group">
-                    <img 
-                      src={item.img} 
-                      alt={item.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-350"
-                    />
-                  </div>
-                  <div className="p-4 flex justify-between items-center bg-white border-t border-stone-100">
-                    <h4 className="font-serif font-bold text-xs text-[#1A1A1A] leading-snug">{item.title}</h4>
-                    <span className="text-[10px] text-[#C5A059] bg-[#C5A059]/10 px-2.5 py-0.5 rounded font-mono uppercase shrink-0 ml-2 font-bold">
-                      {item.tag}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Gallery />
         )}
 
         {/* VIEW 5: LOCATIONS GUIDES */}
