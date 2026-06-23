@@ -1,6 +1,7 @@
 import {type SchemaTypeDefinition} from 'sanity'
 
 import {artistType} from './artist'
+import {beforeAfterType} from './beforeAfter'
 import {blockedDateType} from './blockedDate'
 import {bookingType} from './booking'
 import {branchType} from './branch'
@@ -30,6 +31,7 @@ export const schema: {types: SchemaTypeDefinition[]} = {
     contactMessageType,
     faqType,
     galleryItemType,
+    beforeAfterType,
     certificationType,
     siteSettingsType,
   ],

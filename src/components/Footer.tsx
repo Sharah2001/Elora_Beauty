@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, MapPin, Phone, Mail, Clock, Instagram, Heart, Globe } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Instagram, Heart, Globe } from "lucide-react";
 
 interface FooterProps {
   setActiveTab: (tab: string) => void;
@@ -15,11 +15,11 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
           {/* Column 1: Intro */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#AA823B] to-[#C5A059] flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
+              <div className="brand-mark brand-mark-footer">
+                <span>E</span>
               </div>
-              <span className="font-serif text-xl font-bold tracking-tight text-white">
-                Elora<span className="text-[#C5A059] font-sans font-normal text-sm ml-1">Beauty</span>
+              <span className="font-serif text-xl font-bold tracking-[-0.04em] text-white">
+                Elora<span className="text-[#C5A059] font-sans font-semibold text-[0.68em] tracking-[0.18em] uppercase ml-1.5 align-middle">Beauty</span>
               </span>
             </div>
             <p className="text-stone-400 text-sm leading-relaxed">

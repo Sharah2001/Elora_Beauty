@@ -103,46 +103,132 @@ export default function App() {
         {activeTab === "home" && (
           <div className="space-y-16 animate-fadeIn">
             
-            {/* HERO BANNER SECTION (Image 1 Style + Slogan) */}
-            <section className="relative h-[480px] rounded-3xl overflow-hidden shadow-2xl">
-              <img 
-                src={heroImage} 
-                alt="Elora Beauty Colombo Studio" 
-                referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover select-none"
+            {/* HERO BANNER SECTION (Dark makeup-shop style using Elora colours) */}
+            <section className="relative left-1/2 -mt-8 min-h-[calc(100vh-5rem)] w-screen -translate-x-1/2 overflow-hidden border-y border-[#C5A059]/30 bg-[#050505] shadow-2xl">
+              <img
+                src={heroImage}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full object-cover opacity-[0.18] mix-blend-screen saturate-[0.78]"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-stone-950/75 via-stone-900/45 to-transparent"></div>
-              
-              <div className="absolute inset-y-0 left-0 flex flex-col justify-center px-6 sm:px-12 max-w-xl text-white space-y-6">
-                <div>
-                  <span className="inline-flex items-center text-xs font-mono tracking-widest text-[#FCD34D] uppercase font-bold bg-amber-500/20 px-3 py-1 rounded-full mb-3">
-                    <Sparkles className="w-3.5 h-3.5 mr-1 text-[#FCD34D]" />
-                    luxury salon EXPERIENCE
-                  </span>
-                  <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight leading-tight">
-                    This Friday <span className="text-[#FCA5A5]">20% OFF</span> all Makeups!
-                  </h1>
-                  <p className="text-stone-300 text-xs sm:text-sm mt-3 leading-relaxed font-light">
-                    Indulge in Colombo's premium hair care, luxury gel extensions, oxygen facials, and royalty bridal styling. Our master certified team awaits you.
-                  </p>
-                </div>
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,5,5,0.94)_0%,rgba(5,5,5,0.82)_38%,rgba(5,5,5,0.68)_100%),radial-gradient(circle_at_72%_42%,rgba(197,160,89,0.24),transparent_32%)]"></div>
+              <div className="absolute inset-0 hero-dark-texture"></div>
+              <div className="hero-outline-square left-[36%] top-[9%]"></div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
+              <div className="relative z-10 mx-auto grid min-h-[calc(100vh-5rem)] max-w-7xl items-center gap-10 px-6 py-10 sm:px-10 lg:grid-cols-[0.82fr_1fr] lg:px-14 xl:grid-cols-[0.78fr_0.82fr_0.95fr]">
+                <div className="space-y-7 text-center animate-heroContent lg:text-left">
+                  <div className="mx-auto flex w-fit items-center gap-3 lg:mx-0">
+                    <div className="brand-mark brand-mark-footer">
+                      <span>E</span>
+                    </div>
+                    <div className="text-left leading-none">
+                      <p className="font-serif text-lg font-bold tracking-[-0.04em] text-white">
+                        Elora<span className="ml-1.5 font-sans text-[0.68em] font-semibold uppercase tracking-[0.2em] text-[#C5A059] align-middle">Beauty</span>
+                      </p>
+                      <p className="mt-1 text-[8px] font-mono uppercase tracking-[0.24em] text-stone-400">Make-up & Salon</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="font-serif text-2xl italic tracking-wide text-white sm:text-3xl">
+                      Blend Beauty in You!
+                    </p>
+                    <h1 className="font-sans text-6xl font-extrabold uppercase leading-[0.9] tracking-[-0.07em] text-[#C5A059] sm:text-7xl lg:text-8xl">
+                      Beauty<br />Salon
+                    </h1>
+                  </div>
+
+                  <div className="mx-auto flex w-fit items-center gap-3 text-white lg:mx-0">
+                    {[Instagram, Phone, Mail].map((Icon, index) => (
+                      <span key={index} className="flex h-8 w-8 items-center justify-center rounded-full border border-white/35 bg-white/5">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="hero-line mx-auto lg:mx-0"></div>
+
+                  <div className="mx-auto max-w-xs space-y-4 lg:mx-0">
+                    <div className="hero-frame-label">
+                      Make-up & Cosmetic
+                    </div>
+                    <p className="text-xs leading-relaxed text-stone-400">
+                      Premium Colombo beauty care for makeup, hair, nails, skin, and bridal styling — crafted with certified Elora artists.
+                    </p>
+                  </div>
+
                   <button
                     onClick={() => handleOpenBooking("")}
-                    className="px-6 py-3 bg-[#C5A059] text-white font-bold text-sm rounded-full shadow-lg shadow-amber-950/20 hover:bg-[#AA823B] hover:scale-[1.02] active:scale-95 transition-all text-center cursor-pointer"
+                    className="group relative overflow-hidden rounded-full bg-[#C5A059] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#C5A059]/20 transition-all hover:bg-[#AA823B] hover:scale-[1.02] active:scale-95 cursor-pointer"
                   >
-                    Book An Appointment
+                    <span className="absolute inset-y-0 -left-10 w-8 rotate-12 bg-white/30 blur-sm transition-all duration-700 group-hover:left-[115%]"></span>
+                    <span className="relative">Book Appointment</span>
                   </button>
-                  <button
-                    onClick={() => {
-                      const el = document.getElementById("footer");
-                      el?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-sm rounded-full text-center transition cursor-pointer"
-                  >
-                    Contact Hotlines
-                  </button>
+                </div>
+
+                <div className="relative mx-auto flex min-h-[360px] w-full items-center justify-center animate-heroContent lg:min-h-[520px]">
+                  <div className="hero-diamond-frame">
+                    <div className="hero-diamond-photo">
+                      <img
+                        src="/images/bridal-makeup-hero.png"
+                        alt="Bridal makeup service at Elora Beauty"
+                        referrerPolicy="no-referrer"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative hidden min-h-[520px] items-center justify-center animate-heroContent xl:flex">
+                  <div className="relative h-[430px] w-full max-w-[420px] overflow-hidden rounded-[2rem] border border-[#C5A059]/75 bg-[radial-gradient(circle_at_24%_20%,rgba(250,246,244,0.13),transparent_24%),radial-gradient(circle_at_76%_74%,rgba(197,160,89,0.24),transparent_30%),linear-gradient(145deg,rgba(255,255,255,0.07),rgba(197,160,89,0.05)_42%,rgba(5,5,5,0.24))] p-6 shadow-[0_28px_90px_rgba(197,160,89,0.18)]">
+                    <div className="absolute inset-3 rounded-[1.55rem] border border-white/18"></div>
+                    <div className="absolute -right-14 -top-14 h-40 w-40 rounded-full border border-[#C5A059]/35"></div>
+                    <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full border border-[#C5A059]/25"></div>
+
+                    <div className="absolute left-8 top-10 h-28 w-28">
+                      {[0, 1, 2, 3].map((petal) => (
+                        <span
+                          key={petal}
+                          className="absolute left-1/2 top-1/2 h-14 w-7 origin-bottom rounded-full bg-gradient-to-b from-[#FAF6F4]/80 to-[#C5A059]/55"
+                          style={{ transform: `translate(-50%, -100%) rotate(${petal * 90}deg)` }}
+                        ></span>
+                      ))}
+                      <span className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#C5A059] shadow-[0_0_26px_rgba(197,160,89,0.72)]"></span>
+                    </div>
+
+                    <div className="absolute bottom-12 right-10 h-36 w-36">
+                      {[0, 1, 2, 3, 4].map((petal) => (
+                        <span
+                          key={petal}
+                          className="absolute left-1/2 top-1/2 h-16 w-8 origin-bottom rounded-full bg-gradient-to-b from-white/70 to-[#AA823B]/60"
+                          style={{ transform: `translate(-50%, -100%) rotate(${petal * 72}deg)` }}
+                        ></span>
+                      ))}
+                      <span className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#C5A059] bg-[#050505]"></span>
+                    </div>
+
+                    <div className="relative z-10 flex h-full flex-col justify-between">
+                      <div className="ml-auto grid grid-cols-2 gap-3">
+                        {[Sparkles, SmilePlus, Scissors, Hand].map((Icon, index) => (
+                          <span
+                            key={index}
+                            className="flex h-14 w-14 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.07] text-[#C5A059] shadow-lg shadow-black/20 backdrop-blur-sm"
+                          >
+                            <Icon className="h-6 w-6" />
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="h-px w-40 bg-gradient-to-r from-[#C5A059] via-white/55 to-transparent"></div>
+                        <div className="flex items-center gap-3">
+                          <span className="h-3 w-3 rounded-full bg-[#C5A059]"></span>
+                          <span className="h-3 w-16 rounded-full border border-[#C5A059]/60"></span>
+                          <span className="h-3 w-3 rounded-full bg-white/60"></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>

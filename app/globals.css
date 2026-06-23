@@ -22,6 +22,416 @@
   animation: fadeIn 0.4s ease-out forwards;
 }
 
+@keyframes heroImage {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes heroContent {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes logoSparkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 0 rgba(252, 211, 77, 0));
+  }
+  50% {
+    transform: scale(1.12) rotate(10deg);
+    filter: drop-shadow(0 0 10px rgba(252, 211, 77, 0.65));
+  }
+}
+
+@keyframes shimmerText {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.animate-heroImage {
+  animation: heroImage 16s ease-out infinite alternate;
+}
+
+.animate-heroContent {
+  animation: heroContent 0.75s ease-out both;
+}
+
+.animate-floatSlow {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+.animate-logoSparkle {
+  animation: logoSparkle 2.6s ease-in-out infinite;
+}
+
+.animate-shimmerText {
+  background-size: 200% auto;
+  animation: shimmerText 4s linear infinite;
+}
+
+.brand-mark {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background:
+    linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+    linear-gradient(135deg, #f7d98b 0%, #c5a059 42%, #8f6428 100%) border-box;
+  border: 2px solid transparent;
+  box-shadow:
+    0 10px 24px rgba(143, 100, 40, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  isolation: isolate;
+}
+
+.brand-mark::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: inherit;
+  border: 1px solid rgba(247, 217, 139, 0.28);
+}
+
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  width: 32%;
+  height: 18%;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.28);
+  filter: blur(3px);
+  transform: rotate(-28deg);
+}
+
+.brand-mark span {
+  position: relative;
+  z-index: 1;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 800;
+  line-height: 1;
+  color: #f7d98b;
+  text-shadow: 0 2px 10px rgba(247, 217, 139, 0.32);
+}
+
+.brand-mark-sm {
+  width: 42px;
+  height: 42px;
+}
+
+.brand-mark-sm span {
+  font-size: 25px;
+}
+
+.brand-mark-hero {
+  width: 46px;
+  height: 46px;
+}
+
+.brand-mark-hero span {
+  font-size: 28px;
+}
+
+.brand-mark-footer {
+  width: 34px;
+  height: 34px;
+}
+
+.brand-mark-footer span {
+  font-size: 20px;
+}
+
+.hero-sparkle {
+  position: absolute;
+  z-index: 1;
+  color: #f7d98b;
+  font-size: 1.4rem;
+  text-shadow: 0 0 20px rgba(247, 217, 139, 0.48);
+  animation: sparkleDrift 3.4s ease-in-out infinite;
+}
+
+.hero-dark-texture {
+  background:
+    radial-gradient(circle at 76% 45%, rgba(197, 160, 89, 0.28), transparent 15%),
+    radial-gradient(circle at 86% 58%, rgba(170, 130, 59, 0.18), transparent 20%),
+    linear-gradient(90deg, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.92) 46%, rgba(26, 26, 26, 0.72) 100%);
+}
+
+.hero-outline-square {
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  border: 2px solid rgba(250, 246, 244, 0.75);
+  border-radius: 1.1rem;
+  transform: rotate(45deg);
+}
+
+.hero-outline-square::after {
+  content: "";
+  position: absolute;
+  right: -13px;
+  bottom: 8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: #c5a059;
+}
+
+.hero-line {
+  position: relative;
+  width: min(280px, 72vw);
+  height: 1px;
+  background: rgba(250, 246, 244, 0.74);
+}
+
+.hero-line::after {
+  content: "";
+  position: absolute;
+  right: -11px;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translateY(-50%);
+  border: 2px solid rgba(250, 246, 244, 0.9);
+  border-radius: 9999px;
+  background: #050505;
+}
+
+.hero-frame-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 280px;
+  border: 1px solid #c5a059;
+  padding: 0.9rem 1.4rem;
+  color: #faf6f4;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-frame-label::before,
+.hero-frame-label::after {
+  content: "";
+  position: absolute;
+  inset: -7px 7px 7px -7px;
+  border: 1px solid rgba(197, 160, 89, 0.7);
+  pointer-events: none;
+}
+
+.hero-frame-label::after {
+  inset: 7px -7px -7px 7px;
+}
+
+.hero-diamond-frame {
+  width: min(390px, 68vw);
+  height: min(390px, 68vw);
+  transform: rotate(45deg);
+  border: 20px solid #c5a059;
+  border-radius: 3.5rem;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(250, 246, 244, 0.12);
+  overflow: hidden;
+}
+
+.hero-diamond-photo {
+  width: 100%;
+  height: 100%;
+  background: #050505;
+  transform: rotate(-45deg) scale(1.16);
+}
+
+.hero-diamond-photo img {
+  animation: heroImage 15s ease-out infinite alternate;
+  object-position: center;
+}
+
+.hero-floral-composition {
+  position: relative;
+  width: min(480px, 100%);
+  height: min(540px, 74vh);
+}
+
+.hero-floral-composition::before {
+  content: "";
+  position: absolute;
+  inset: 10% -12% 4% 6%;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 45% 42%, rgba(197, 160, 89, 0.22), transparent 30%),
+    radial-gradient(circle at 66% 55%, rgba(250, 246, 244, 0.12), transparent 22%);
+  filter: blur(10px);
+}
+
+.hero-floral-artwork {
+  position: absolute;
+  inset: 0 -10% 0 -12%;
+  overflow: hidden;
+  border-radius: 9999px 0 0 9999px;
+  opacity: 0.92;
+  mask-image:
+    radial-gradient(ellipse at 35% 50%, #000 0 42%, rgba(0, 0, 0, 0.86) 54%, transparent 76%),
+    linear-gradient(90deg, #000 0 62%, transparent 100%);
+  -webkit-mask-image:
+    radial-gradient(ellipse at 35% 50%, #000 0 42%, rgba(0, 0, 0, 0.86) 54%, transparent 76%),
+    linear-gradient(90deg, #000 0 62%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+.hero-floral-artwork::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 5, 0.38), rgba(5, 5, 5, 0.08) 42%, rgba(5, 5, 5, 0.72) 100%),
+    radial-gradient(circle at 72% 34%, rgba(197, 160, 89, 0.22), transparent 30%);
+  pointer-events: none;
+}
+
+.hero-floral-artwork img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+  filter: saturate(0.82) contrast(1.04) sepia(0.16) brightness(0.88);
+}
+
+.hero-floral-ring {
+  position: absolute;
+  border: 1px solid rgba(197, 160, 89, 0.58);
+  border-radius: 9999px;
+}
+
+.hero-floral-ring-large {
+  right: 3%;
+  top: 4%;
+  width: 210px;
+  height: 210px;
+  background: repeating-radial-gradient(circle, rgba(197, 160, 89, 0.36) 0 2px, transparent 2px 8px);
+  opacity: 0.68;
+}
+
+.hero-floral-ring-small {
+  left: 2%;
+  bottom: 6%;
+  width: 160px;
+  height: 160px;
+  border-width: 2px;
+  opacity: 0.52;
+}
+
+.hero-gold-leaf {
+  position: absolute;
+  width: 28px;
+  height: 54px;
+  border-radius: 9999px 9999px 9999px 0;
+  background: linear-gradient(135deg, rgba(250, 246, 244, 0.78), rgba(197, 160, 89, 0.78));
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.24);
+}
+
+.hero-gold-leaf-1 {
+  right: 8%;
+  top: 38%;
+  transform: rotate(38deg);
+}
+
+.hero-gold-leaf-2 {
+  right: 28%;
+  bottom: 8%;
+  transform: rotate(-28deg);
+}
+
+.hero-gold-leaf-3 {
+  left: 0;
+  top: 18%;
+  transform: rotate(-55deg);
+}
+
+.hero-mini-flower {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at center, #c5a059 0 9%, transparent 10%),
+    radial-gradient(ellipse at 50% 16%, rgba(250, 246, 244, 0.78) 0 20%, transparent 21%),
+    radial-gradient(ellipse at 84% 50%, rgba(197, 160, 89, 0.58) 0 20%, transparent 21%),
+    radial-gradient(ellipse at 50% 84%, rgba(250, 246, 244, 0.7) 0 20%, transparent 21%),
+    radial-gradient(ellipse at 16% 50%, rgba(197, 160, 89, 0.5) 0 20%, transparent 21%);
+  filter: drop-shadow(0 12px 20px rgba(197, 160, 89, 0.18));
+}
+
+.hero-mini-flower-1 {
+  right: 1%;
+  bottom: 22%;
+  transform: rotate(16deg);
+}
+
+.hero-mini-flower-2 {
+  left: 2%;
+  bottom: 28%;
+  transform: rotate(-22deg) scale(0.78);
+}
+
+@keyframes sparkleDrift {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1.16);
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-outline-square {
+    display: none;
+  }
+
+  .hero-frame-label {
+    min-width: min(280px, 86vw);
+  }
+
+  .hero-diamond-frame {
+    border-width: 12px;
+    border-radius: 2.25rem;
+  }
+}
+
 ::selection {
   background-color: #c5a059;
   color: #1a1a1a;
