@@ -123,6 +123,14 @@ export interface Booking {
   updatedAt: string;
 }
 
+export interface Timeslot{
+  startTime: string;
+  endTime: string;
+  available: boolean;
+  artistId?: string;
+  branchId?: string;
+}
+
 export interface ContactMessage {
   id: string;
   name: string;
@@ -132,4 +140,26 @@ export interface ContactMessage {
   branch?: string; // Branch ID
   status: "new" | "read" | "responded";
   submittedAt: string;
+}
+
+export interface RescheduleRequest {
+  bookingId: string;
+  oldDate: string;
+  oldTime: string;
+  newDate: string;
+  newTime: string;
+}
+
+export interface BookingLookupResult {
+  customerPhone: string;
+  bookings: Booking[];
+}
+
+export interface BookingCancellationRequest {
+  bookingId: string;
+  customerPhone: string;
+  pin: string;
+  reason?: string;
+  cancelledAt: string;
+  cancelledBy: "customer" | "staff";
 }
