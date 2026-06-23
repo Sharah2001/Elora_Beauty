@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, Calendar, Menu, X, Shield, PhoneCall } from "lucide-react";
+import { Calendar, Menu, X, Shield, PhoneCall } from "lucide-react";
 
 interface NavbarProps {
   activeTab: string;
@@ -23,14 +23,14 @@ export default function Navbar({ activeTab, setActiveTab, onOpenBooking }: Navba
         <div className="flex justify-between h-20">
           {/* Logo */}
           <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setActiveTab("home")}>
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-[#AA823B] to-[#C5A059] shadow-sm">
-              <Sparkles className="w-5 h-5 text-white" />
+            <div className="brand-mark brand-mark-sm">
+              <span>E</span>
             </div>
             <div>
-              <span className="font-serif text-2xl font-bold tracking-tight text-[#1A1A1A]">
-                Elora<span className="text-[#C5A059] font-sans font-normal text-lg ml-1">Beauty</span>
+              <span className="font-serif text-2xl font-bold tracking-[-0.04em] text-[#1A1A1A] leading-none">
+                Elora<span className="text-[#C5A059] font-sans font-semibold text-[0.68em] tracking-[0.18em] uppercase ml-1.5 align-middle">Beauty</span>
               </span>
-              <p className="text-[9px] font-mono tracking-widest text-[#C5A059] uppercase leading-none">Colombo Premier Spa</p>
+              <p className="text-[9px] font-mono tracking-[0.28em] text-[#AA823B] uppercase leading-none mt-0.5">Colombo Premier Spa</p>
             </div>
           </div>
 
