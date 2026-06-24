@@ -124,8 +124,9 @@ export const faqsQuery = groq`
 `
 
 export const galleryItemsQuery = groq`
-  *[_type == "galleryItem" && isActive == true] | order(displayOrder asc, title asc) {
+  *[_type == "galleryItem" && isActive == true] | order(_createdAt desc)[0...24] {
     _id,
+    _createdAt,
     title,
     category,
     image,

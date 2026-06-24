@@ -173,14 +173,17 @@ function normalizeCategory(value: unknown): string {
 }
 
 function imageCandidatePaths(source: string): string[] {
-  const extensions = path.extname(source) ? [''] : ['.png', '.jpg', '.jpeg', '.webp']
+  const normalizedSource = source.replace(/^[/\\]+/, '')
+  const extensions = path.extname(normalizedSource) ? [''] : ['.png', '.jpg', '.jpeg', '.webp']
   const roots = [
     process.cwd(),
     path.join(process.cwd(), 'public'),
     path.join(process.cwd(), 'public', 'images'),
   ]
 
-  return roots.flatMap((root) => extensions.map((extension) => path.resolve(root, `${source}${extension}`)))
+  return roots.flatMap((root) =>
+    extensions.map((extension) => path.resolve(root, `${normalizedSource}${extension}`)),
+  )
 }
 
 async function imageValue(
@@ -472,7 +475,7 @@ async function migrateGalleryItems() {
   const galleryItems = readCollection('galleryItems')
   const legacyGalleryItems = galleryItems.length > 0 ? galleryItems : readCollection('gallery')
 
-  await migrateCollection('9. Gallery Items', legacyGalleryItems, async (item, index) => {
+  await migrateCollection('9. Gallery Items', [...legacyGalleryItems].reverse(), async (item, index) => {
     const sourceId = stringValue(item.id, `gallery-${index + 1}`)
     const title = stringValue(item.title, `Gallery item ${index + 1}`)
 

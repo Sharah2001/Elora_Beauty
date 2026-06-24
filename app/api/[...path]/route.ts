@@ -277,6 +277,18 @@ export async function GET(request: NextRequest, context: RouteContext) {
     if (route === "offers") return json(database.offers ?? []);
     if (route === "artists") return json(database.artists ?? []);
     if (route === "faqs") return json(database.faqs ?? []);
+    if (route === "working-hours") return json(database.workingHours ?? []);
+
+    if (route === "gallery") {
+      return json(
+        [...(database.galleryItems ?? [])]
+          .filter((item: any) => item.isActive !== false)
+          .sort((a: any, b: any) =>
+            String(b.createdAt ?? "").localeCompare(String(a.createdAt ?? "")),
+          )
+          .slice(0, 24),
+      );
+    }
 
     if (route === "testimonials") {
       return json(

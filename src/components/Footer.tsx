@@ -23,7 +23,7 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
               </span>
             </div>
             <p className="text-stone-400 text-sm leading-relaxed">
-              Experience the pinnacle of luxury guest styling and modern organic treatments, designed exclusively to enhance your authentic confidence in Colombo.
+              Premium hair, makeup, nails, skin, and bridal care across six convenient Colombo-area studios.
             </p>
             <div className="flex space-x-4 pt-2">
               <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-850 flex items-center justify-center hover:bg-[#C5A059] hover:text-[#1A1A1A] transition-colors cursor-pointer text-stone-400">
@@ -72,20 +72,13 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
 
           {/* Column 3: Contact Info */}
           <div className="space-y-4">
-            <h3 className="font-serif font-semibold text-white tracking-wide border-b border-stone-800 pb-2 text-md">Colombo Studios</h3>
+            <h3 className="font-serif font-semibold text-white tracking-wide border-b border-stone-800 pb-2 text-md">Our Locations</h3>
             <div className="space-y-3 text-sm text-stone-400">
               <div className="flex items-start space-x-3">
                 <MapPin className="w-4 h-4 mt-0.5 text-[#C5A059] shrink-0" />
                 <div>
-                  <h4 className="text-xs font-semibold text-stone-200">Kollupitiya Branch:</h4>
-                  <p>82 Galle Road, Colombo 03</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin className="w-4 h-4 mt-0.5 text-[#C5A059] shrink-0" />
-                <div>
-                  <h4 className="text-xs font-semibold text-stone-200">Cinnamon Gardens Branch:</h4>
-                  <p>14 Ward Place, Colombo 07</p>
+                  <h4 className="text-xs font-semibold text-stone-200">Six Elora Beauty studios</h4>
+                  <p>Kollupitiya, Cinnamon Gardens, Bambalapitiya, Wellawatte, Dehiwala, and Wattala</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3 pt-1">
@@ -112,11 +105,11 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
                 <span className="text-[#C5A059]">09:00 - 20:00</span>
               </div>
               <div className="flex justify-between">
-                <span>Sunday (C3 only)</span>
-                <span>10:00 - 18:00</span>
+                <span>Sunday</span>
+                <span>Branch dependent</span>
               </div>
               <p className="text-[11px] text-[#C5A059] font-sans leading-snug pt-2">
-                * Note: Our Cinnamon Gardens branch remains fully closed on Sundays.
+                Check the Locations page for current branch-specific hours.
               </p>
             </div>
           </div>

@@ -228,7 +228,13 @@ export default function App() {
             </section>
 
             {/* GALLERY, REVIEWS AND LOCATIONS */}
-            <Gallery />
+            <Gallery
+              preview
+              onViewMore={() => {
+                setActiveTab("work");
+                window.scrollTo({top: 0, behavior: "smooth"});
+              }}
+            />
             <Reviews />
             <Locations onSelectBranchForBooking={(bid) => handleOpenBooking(bid)} />
 
