@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const offerType = defineType({
   name: 'offer',
   title: 'Offers',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({name: 'title', title: 'Offer Title', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'description', title: 'Description', type: 'text', rows: 3}),
     defineField({

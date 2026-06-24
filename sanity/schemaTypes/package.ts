@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const packageType = defineType({
   name: 'package',
   title: 'Packages',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({name: 'name', title: 'Package Name', type: 'string', validation: (rule) => rule.required()}),
     defineField({
       name: 'includedServices',

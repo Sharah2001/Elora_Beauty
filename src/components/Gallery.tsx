@@ -1,71 +1,108 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {ArrowRight, Images} from "lucide-react";
+import BeforeAfter from "./BeforeAfter";
 
-const galleryItems = [
-  {
-    title: "Nude pink gel manicure design",
-    tag: "Nails Expert",
-    img: "/images/nail-art-showcase.jpg"
-  },
-  {
-    title: "Colombo cocktail makeup application",
-    tag: "Makeup Artist",
-    img: "/images/makeup-showcase.jpg"
-  },
-  {
-    title: "Italian protective balayage treatment",
-    tag: "Hair Dresser",
-    img: "https://picsum.photos/seed/balayagebeauty/500/500"
-  },
-  {
-    title: "Royal Kandyan bride sari draping detail",
-    tag: "Bridal Suite",
-    img: "https://picsum.photos/seed/kandyanbridal/500/500"
-  },
-  {
-    title: "Hydrated organic facial skin result",
-    tag: "Skin Clinic",
-    img: "https://picsum.photos/seed/facialsing/500/500"
-  },
-  {
-    title: "Modern western bridal styling set",
-    tag: "Bridal Suite",
-    img: "https://picsum.photos/seed/weddingdressingsl/550/550"
-  }
-];
+type GalleryItem = {
+  id: string;
+  title: string;
+  category?: string;
+  image: string;
+  description?: string;
+  createdAt?: string;
+};
 
-export default function Gallery() {
+interface GalleryProps {
+  preview?: boolean;
+  onViewMore?: () => void;
+}
+
+const MAX_GALLERY_ITEMS = 24;
+const HOME_PREVIEW_ITEMS = 6;
+
+export default function Gallery({preview = false, onViewMore}: GalleryProps) {
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/gallery")
+      .then((response) => response.json())
+      .then((items) => {
+        setGalleryItems(Array.isArray(items) ? items.slice(0, MAX_GALLERY_ITEMS) : []);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const visibleItems = preview
+    ? galleryItems.slice(0, HOME_PREVIEW_ITEMS)
+    : galleryItems.slice(0, MAX_GALLERY_ITEMS);
+
   return (
-    <section className="space-y-12 py-4 animate-fadeIn">
-      <div className="text-center max-w-xl mx-auto space-y-1">
-        <h2 className="font-serif text-3xl font-bold text-[#1A1A1A]">Elora Visual Catalogue</h2>
-        <p className="text-stone-500 text-sm font-light">
-          Actual unedited outcomes from our Colombo beauty parlor rooms.
+    <section className="space-y-8 py-4 animate-fadeIn">
+      <div className="mx-auto max-w-xl space-y-2 text-center">
+        <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#C5A059]">
+          <Images className="h-4 w-4" />
+          Our work
+        </span>
+        <h2 className="font-serif text-3xl font-bold text-[#1A1A1A]">
+          Elora Beauty Gallery
+        </h2>
+        <p className="text-sm font-light text-stone-500">
+          Explore our latest nail art, bridal makeup, threading, facial, waxing, hair, and spa work.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {galleryItems.map((item) => (
-          <div
-            key={item.title}
-            className="bg-white border border-[#C5A059]/10 rounded-2xl overflow-hidden shadow-sm hover:border-[#C5A059]/30 transition-all"
-          >
-            <div className="h-56 bg-stone-100 overflow-hidden relative group">
+      {loading ? (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+          {Array.from({length: preview ? HOME_PREVIEW_ITEMS : 9}).map((_, index) => (
+            <div key={index} className="aspect-square animate-pulse bg-stone-200" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+          {visibleItems.map((item) => (
+            <article
+              key={item.id}
+              className="group relative aspect-square overflow-hidden border border-[#C5A059]/15 bg-stone-100"
+            >
               <img
-                src={item.img}
+                src={item.image}
                 alt={item.title}
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-all duration-350"
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
-            </div>
-            <div className="p-4 flex justify-between items-center bg-white border-t border-stone-100">
-              <h4 className="font-serif font-bold text-xs text-[#1A1A1A] leading-snug">{item.title}</h4>
-              <span className="text-[10px] text-[#C5A059] bg-[#C5A059]/10 px-2.5 py-0.5 rounded font-mono uppercase shrink-0 ml-2 font-bold">
-                {item.tag}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent px-4 pb-4 pt-16">
+                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#D8B96E]">
+                  {item.category || "Beauty"}
+                </p>
+                <h3 className="mt-1 font-serif text-sm font-semibold text-white sm:text-base">
+                  {item.title}
+                </h3>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {preview && galleryItems.length > HOME_PREVIEW_ITEMS && onViewMore && (
+        <div className="flex justify-center pt-2">
+          <button
+            type="button"
+            onClick={onViewMore}
+            className="inline-flex min-h-11 items-center gap-2 border border-[#C5A059] px-6 text-sm font-bold text-[#AA823B] transition hover:bg-[#C5A059] hover:text-white cursor-pointer"
+          >
+            View More Work
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {!preview && (
+        <>
+          <p className="text-center text-xs text-stone-400">
+            Showing the latest {visibleItems.length} gallery images.
+          </p>
+          <BeforeAfter />
+        </>
+      )}
     </section>
   );
 }

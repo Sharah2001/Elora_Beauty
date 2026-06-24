@@ -4,6 +4,23 @@ import {
   readDatabase,
   type Database,
 } from "@/lib/database";
+import { client } from "@/sanity/lib/client";
+import {
+  approvedTestimonialsQuery,
+  artistsQuery,
+  beforeAfterQuery,
+  blockedDatesQuery,
+  branchesQuery,
+  certificationsQuery,
+  faqsQuery,
+  galleryItemsQuery,
+  offersQuery,
+  packagesQuery,
+  servicesQuery,
+  siteSettingsQuery,
+  workingHoursQuery,
+} from "@/sanity/lib/contentQueries";
+import { writeClient } from "@/sanity/lib/writeClient";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -67,6 +84,17 @@ function generatePin(): string {
 
 function cleanPhone(phone: string): string {
   return phone.replace(/[\s\-()+]/g, "");
+}
+
+function sanityDocumentId(type: string, sourceId: string): string {
+  const safeId = sourceId
+    .normalize("NFKD")
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^[.-]+|[.-]+$/g, "");
+
+  return `${type}-${safeId}`;
 }
 
 function isAdmin(request: NextRequest): boolean {
@@ -269,21 +297,33 @@ export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const segments = await getPath(context);
     const route = segments.join("/");
-    const database = await readDatabase();
 
-    if (route === "branches") return json(database.branches ?? []);
-    if (route === "services") return json(database.services ?? []);
-    if (route === "packages") return json(database.packages ?? []);
-    if (route === "offers") return json(database.offers ?? []);
-    if (route === "artists") return json(database.artists ?? []);
-    if (route === "faqs") return json(database.faqs ?? []);
-
+    if (route === "branches") return json(await client.fetch(branchesQuery));
+    if (route === "services") return json(await client.fetch(servicesQuery));
+    if (route === "packages") return json(await client.fetch(packagesQuery));
+    if (route === "offers") {
+      const today = new Date().toISOString().slice(0, 10);
+      return json(await client.fetch(offersQuery, { today }));
+    }
+    if (route === "artists") return json(await client.fetch(artistsQuery));
+    if (route === "faqs") return json(await client.fetch(faqsQuery));
+    if (route === "gallery") return json(await client.fetch(galleryItemsQuery));
+    if (route === "before-after") return json(await client.fetch(beforeAfterQuery));
+    if (route === "certifications") return json(await client.fetch(certificationsQuery));
     if (route === "testimonials") {
-      return json(
-        (database.testimonials ?? []).filter(
-          (testimonial: any) => testimonial.isApproved,
-        ),
-      );
+      return json(await client.fetch(approvedTestimonialsQuery));
+    }
+    if (route === "working-hours") {
+      return json(await client.fetch(workingHoursQuery));
+    }
+    if (route === "blocked-dates") {
+      const fromDate =
+        request.nextUrl.searchParams.get("fromDate") ??
+        new Date().toISOString().slice(0, 10);
+      return json(await client.fetch(blockedDatesQuery, { fromDate }));
+    }
+    if (route === "site-settings") {
+      return json(await client.fetch(siteSettingsQuery));
     }
 
     if (route === "availability") {
@@ -300,8 +340,26 @@ export async function GET(request: NextRequest, context: RouteContext) {
         );
       }
 
+      const [branches, services, artists, workingHours, blockedDates, localDatabase] =
+        await Promise.all([
+          client.fetch(branchesQuery),
+          client.fetch(servicesQuery),
+          client.fetch(artistsQuery),
+          client.fetch(workingHoursQuery),
+          client.fetch(blockedDatesQuery, { fromDate: date }),
+          readDatabase(),
+        ]);
+      const availabilityDatabase: Database = {
+        branches,
+        services,
+        artists,
+        workingHours,
+        blockedDates,
+        bookings: localDatabase.bookings ?? [],
+      };
+
       return json(
-        getAvailability(database, {
+        getAvailability(availabilityDatabase, {
           branchId,
           date,
           serviceIds: serviceIds.split(",").filter(Boolean),
@@ -309,6 +367,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
         }),
       );
     }
+
+    const database = await readDatabase();
 
     if (route === "admin/me") {
       return isAdmin(request)
@@ -371,6 +431,59 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const route = segments.join("/");
     const body = await getBody(request);
 
+    if (route === "sanity/gallery-cleanup") {
+      const configuredSecret = process.env.SANITY_GALLERY_WEBHOOK_SECRET;
+      const providedSecret = request.headers.get("x-gallery-cleanup-secret");
+
+      if (!configuredSecret) {
+        return error("Gallery cleanup webhook is not configured.", 503);
+      }
+
+      if (providedSecret !== configuredSecret) {
+        return error("Unauthorized gallery cleanup request.", 401);
+      }
+
+      const galleryDocuments = await writeClient.fetch<
+        {_id: string; assetId?: string}[]
+      >(
+        `*[_type == "galleryItem"] | order(_createdAt desc) {
+          _id,
+          "assetId": image.asset->_id
+        }`,
+      );
+      const staleDocuments = galleryDocuments.slice(24);
+
+      if (staleDocuments.length === 0) {
+        return json({ success: true, deletedDocuments: 0, deletedAssets: 0 });
+      }
+
+      let transaction = writeClient.transaction();
+      for (const document of staleDocuments) {
+        transaction = transaction.delete(document._id);
+      }
+      await transaction.commit();
+
+      let deletedAssets = 0;
+      for (const assetId of new Set(
+        staleDocuments.map((document) => document.assetId).filter(Boolean),
+      )) {
+        const referenceCount = await writeClient.fetch<number>(
+          `count(*[references($assetId)])`,
+          { assetId },
+        );
+        if (referenceCount === 0 && assetId) {
+          await writeClient.delete(assetId);
+          deletedAssets += 1;
+        }
+      }
+
+      return json({
+        success: true,
+        deletedDocuments: staleDocuments.length,
+        deletedAssets,
+      });
+    }
+
     if (route === "admin/auth") {
       const configuredPassword =
         process.env.ADMIN_PASSWORD_HASH ?? "admin123";
@@ -411,20 +524,34 @@ export async function POST(request: NextRequest, context: RouteContext) {
         return error("Name, rating and comments are required.", 400);
       }
 
-      await mutateDatabase((database) => {
-        database.testimonials = [
-          ...(database.testimonials ?? []),
-          {
-            id: `t_${Date.now()}`,
-            customerName,
-            rating: Number(rating),
-            comment,
-            serviceReceived: serviceReceived ?? "",
-            branch: branch ?? "",
-            isApproved: false,
-            submittedAt: new Date().toISOString(),
-          },
-        ];
+      const sourceId = `t_${Date.now()}`;
+      const numericRating = Number(rating);
+
+      if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
+        return error("Rating must be between 1 and 5.", 400);
+      }
+
+      await writeClient.create({
+        _id: sanityDocumentId("testimonial", sourceId),
+        _type: "testimonial",
+        sourceId,
+        customerName,
+        rating: numericRating,
+        comment,
+        serviceReceived: serviceReceived
+          ? {
+              _type: "reference",
+              _ref: sanityDocumentId("service", String(serviceReceived)),
+            }
+          : undefined,
+        branch: branch
+          ? {
+              _type: "reference",
+              _ref: sanityDocumentId("branch", String(branch)),
+            }
+          : undefined,
+        isApproved: false,
+        submittedAt: new Date().toISOString(),
       });
 
       return json({

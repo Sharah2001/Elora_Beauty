@@ -180,9 +180,255 @@
 
 .hero-dark-texture {
   background:
-    radial-gradient(circle at 76% 45%, rgba(197, 160, 89, 0.28), transparent 15%),
-    radial-gradient(circle at 86% 58%, rgba(170, 130, 59, 0.18), transparent 20%),
-    linear-gradient(90deg, rgba(5, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.92) 46%, rgba(26, 26, 26, 0.72) 100%);
+    linear-gradient(90deg, rgba(5, 5, 5, 0.86) 0%, rgba(5, 5, 5, 0.72) 52%, rgba(26, 24, 20, 0.56) 100%),
+    repeating-linear-gradient(90deg, transparent 0 79px, rgba(255, 255, 255, 0.018) 80px);
+}
+
+.hero-editorial-frame {
+  position: relative;
+  width: min(440px, 82vw);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid rgba(216, 185, 110, 0.7);
+  border-radius: 8px;
+  background: #15130f;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.46),
+    16px 16px 0 rgba(197, 160, 89, 0.1);
+}
+
+.hero-editorial-frame::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.hero-editorial-frame > img {
+  animation: heroImage 15s ease-out infinite alternate;
+  object-position: center;
+}
+
+.hero-reference {
+  border-top: 1px solid rgba(197, 160, 89, 0.62);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.28);
+}
+
+.hero-reference::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #000 0%, #000 44%, rgba(0, 0, 0, 0.82) 61%, rgba(0, 0, 0, 0.14) 100%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.42), transparent 42%);
+  pointer-events: none;
+}
+
+.hero-reference-right {
+  position: absolute;
+  inset: 0 0 0 52%;
+  overflow: hidden;
+}
+
+.hero-reference-right::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.34) 34%, rgba(0, 0, 0, 0.05) 100%),
+    radial-gradient(circle at 66% 52%, rgba(197, 160, 89, 0.2), transparent 44%);
+}
+
+.hero-reference-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 57% center;
+  filter: saturate(0.72) contrast(1.12) brightness(0.58) sepia(0.12);
+  transform: scale(1.04);
+}
+
+.hero-reference-line {
+  position: relative;
+  width: min(310px, 76vw);
+  height: 1px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.hero-reference-line::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  transform: translateY(-50%);
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  border-radius: 9999px;
+  background: #000;
+}
+
+.hero-reference-label {
+  position: relative;
+  display: inline-flex;
+  min-width: 280px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #c5a059;
+  padding: 0.9rem 1.4rem;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero-reference-label::before,
+.hero-reference-label::after {
+  content: "";
+  position: absolute;
+  inset: -7px 7px 7px -7px;
+  border: 1px solid rgba(197, 160, 89, 0.72);
+  pointer-events: none;
+}
+
+.hero-reference-label::after {
+  inset: 7px -7px -7px 7px;
+}
+
+.hero-reference-center {
+  min-height: 500px;
+}
+
+.hero-reference-diamond {
+  position: relative;
+  width: min(390px, 32vw);
+  aspect-ratio: 1;
+  transform: rotate(45deg);
+  overflow: hidden;
+  border: 20px solid #c5a059;
+  border-radius: 4.5rem;
+  background: #160c06;
+  box-shadow:
+    0 34px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.hero-reference-diamond-image {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-45deg) scale(1.43);
+}
+
+.hero-reference-diamond-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 54% center;
+  animation: heroImage 15s ease-out infinite alternate;
+}
+
+.hero-reference-shape {
+  position: absolute;
+  width: 62px;
+  height: 62px;
+  transform: rotate(45deg);
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  border-radius: 12px;
+}
+
+.hero-reference-shape::after {
+  content: "";
+  position: absolute;
+  right: -12px;
+  bottom: -12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: #c5a059;
+}
+
+.hero-reference-shape-top {
+  top: 2%;
+  left: 8%;
+}
+
+.hero-reference-shape-bottom {
+  right: 1%;
+  bottom: 1%;
+  transform: rotate(45deg) scale(0.85);
+}
+
+@media (max-width: 1023px) {
+  .hero-reference::before {
+    background:
+      linear-gradient(180deg, #000 0%, #000 68%, rgba(0, 0, 0, 0.84) 100%),
+      linear-gradient(90deg, #000, rgba(0, 0, 0, 0.62));
+  }
+
+  .hero-reference-right {
+    inset: 58% 0 0;
+    opacity: 0.38;
+  }
+
+  .hero-reference-grid {
+    padding-bottom: 5rem;
+  }
+
+  .hero-reference-center {
+    min-height: 470px;
+  }
+
+  .hero-reference-diamond {
+    width: min(390px, 68vw);
+  }
+}
+
+@media (max-width: 639px) {
+  .hero-reference-grid {
+    min-height: auto;
+  }
+
+  .hero-reference-copy {
+    max-width: calc(100vw - 3rem);
+  }
+
+  .hero-reference-copy h1 {
+    font-size: clamp(3.5rem, 18vw, 5rem);
+  }
+
+  .hero-reference-label {
+    min-width: min(280px, 82vw);
+    font-size: 0.75rem;
+  }
+
+  .hero-reference-line {
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .hero-reference-center {
+    min-height: 390px;
+  }
+
+  .hero-reference-diamond {
+    width: min(300px, 72vw);
+    border-width: 14px;
+    border-radius: 3.4rem;
+  }
+
+  .hero-reference-shape {
+    width: 46px;
+    height: 46px;
+  }
+
+  .hero-reference-shape-top {
+    left: 4%;
+  }
 }
 
 .hero-outline-square {

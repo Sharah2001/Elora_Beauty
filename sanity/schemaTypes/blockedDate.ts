@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const blockedDateType = defineType({
   name: 'blockedDate',
   title: 'Blocked Dates',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({
       name: 'branch',
       title: 'Branch',

@@ -103,6 +103,47 @@ export interface FAQ {
   displayOrder: number;
 }
 
+export interface Certification {
+  id: string;
+  title: string;
+  issuer?: string;
+  reference?: string;
+  description?: string;
+  image?: string;
+  displayOrder: number;
+}
+
+export interface BeforeAfter {
+  id: string;
+  title: string;
+  caption: string;
+  serviceCategory: string;
+  service?: string;
+  beforeImage: string;
+  afterImage: string;
+  displayOrder: number;
+}
+
+export interface SiteSettings {
+  businessName?: string;
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroDescription?: string;
+  heroServiceLabel?: string;
+  heroButtonLabel?: string;
+  heroImage?: string;
+  aboutTitle?: string;
+  aboutDescription?: string;
+  aboutImage?: string;
+  aboutHighlights?: string[];
+  contactEmail?: string;
+  instagramUrl?: string;
+  facebookUrl?: string;
+  googleBusinessUrl?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+}
+
 export type BookingStatus = "pending" | "confirmed" | "completed" | "no-show" | "cancelled";
 
 export interface Booking {

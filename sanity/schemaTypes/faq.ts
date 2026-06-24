@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const faqType = defineType({
   name: 'faq',
   title: 'FAQs',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({name: 'question', title: 'Question', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'answer', title: 'Answer', type: 'text', rows: 4, validation: (rule) => rule.required()}),
     defineField({name: 'category', title: 'Category', type: 'string'}),

@@ -31,6 +31,70 @@
       "image": "",
       "isActive": true,
       "displayOrder": 2
+    },
+    {
+      "id": "bambalapitiya",
+      "name": "Elora Beauty - Bambalapitiya (Colombo 04)",
+      "slug": "bambalapitiya",
+      "address": "42 Galle Road, Bambalapitiya",
+      "city": "Colombo 04",
+      "phone": "+94 11 250 4422",
+      "whatsapp": "+94 77 444 4422",
+      "geo": {
+        "lat": 6.8889,
+        "lng": 79.8567
+      },
+      "image": "",
+      "isActive": true,
+      "displayOrder": 3
+    },
+    {
+      "id": "wellawatte",
+      "name": "Elora Beauty - Wellawatte (Colombo 06)",
+      "slug": "wellawatte",
+      "address": "188 Galle Road, Wellawatte",
+      "city": "Colombo 06",
+      "phone": "+94 11 258 6611",
+      "whatsapp": "+94 77 555 6611",
+      "geo": {
+        "lat": 6.8741,
+        "lng": 79.8605
+      },
+      "image": "",
+      "isActive": true,
+      "displayOrder": 4
+    },
+    {
+      "id": "dehiwala",
+      "name": "Elora Beauty - Dehiwala",
+      "slug": "dehiwala",
+      "address": "120 Galle Road, Dehiwala",
+      "city": "Dehiwala",
+      "phone": "+94 11 272 8833",
+      "whatsapp": "+94 77 666 8833",
+      "geo": {
+        "lat": 6.8511,
+        "lng": 79.8658
+      },
+      "image": "",
+      "isActive": true,
+      "displayOrder": 5
+    },
+    {
+      "id": "wattala",
+      "name": "Elora Beauty - Wattala",
+      "slug": "wattala",
+      "address": "275 Negombo Road, Wattala",
+      "city": "Wattala",
+      "phone": "+94 11 294 7755",
+      "whatsapp": "+94 77 777 7755",
+      "geo": {
+        "lat": 6.9896,
+        "lng": 79.8926
+      },
+      "image": "",
+      "isActive": true,
+      "displayOrder": 6
     }
   ],
   "workingHours": [
@@ -129,6 +193,198 @@
           "isClosed": true
         }
       ]
+    },
+    {
+      "branchId": "bambalapitiya",
+      "slotDurationMinutes": 30,
+      "schedule": [
+        {
+          "dayOfWeek": "Mon",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Tue",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Wed",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Thu",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Fri",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sat",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sun",
+          "openTime": "10:00",
+          "closeTime": "18:00",
+          "isClosed": false
+        }
+      ]
+    },
+    {
+      "branchId": "wellawatte",
+      "slotDurationMinutes": 30,
+      "schedule": [
+        {
+          "dayOfWeek": "Mon",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Tue",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Wed",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Thu",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Fri",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sat",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sun",
+          "openTime": "10:00",
+          "closeTime": "18:00",
+          "isClosed": false
+        }
+      ]
+    },
+    {
+      "branchId": "dehiwala",
+      "slotDurationMinutes": 30,
+      "schedule": [
+        {
+          "dayOfWeek": "Mon",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Tue",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Wed",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Thu",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Fri",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sat",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sun",
+          "openTime": "10:00",
+          "closeTime": "18:00",
+          "isClosed": false
+        }
+      ]
+    },
+    {
+      "branchId": "wattala",
+      "slotDurationMinutes": 30,
+      "schedule": [
+        {
+          "dayOfWeek": "Mon",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Tue",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Wed",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Thu",
+          "openTime": "09:00",
+          "closeTime": "19:30",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Fri",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sat",
+          "openTime": "09:00",
+          "closeTime": "20:00",
+          "isClosed": false
+        },
+        {
+          "dayOfWeek": "Sun",
+          "openTime": "10:00",
+          "closeTime": "18:00",
+          "isClosed": false
+        }
+      ]
     }
   ],
   "blockedDates": [
@@ -159,7 +415,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -173,7 +433,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -187,7 +451,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -201,7 +469,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -215,7 +487,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -229,7 +505,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -243,7 +523,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -257,7 +541,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -271,7 +559,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -285,7 +577,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -299,7 +595,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -313,7 +613,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -327,7 +631,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -341,7 +649,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -355,7 +667,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -369,7 +685,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -383,7 +703,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -397,7 +721,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -411,7 +739,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -425,7 +757,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -439,7 +775,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -453,7 +793,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -467,7 +811,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -481,7 +829,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -495,7 +847,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -509,7 +865,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -523,7 +883,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -537,7 +901,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -551,7 +919,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -565,7 +937,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -579,7 +955,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -593,7 +973,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -607,7 +991,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -621,7 +1009,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -635,7 +1027,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -649,7 +1045,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -663,7 +1063,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -677,7 +1081,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -691,7 +1099,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -705,7 +1117,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -719,7 +1135,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -733,7 +1153,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -747,7 +1171,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -761,7 +1189,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -775,7 +1207,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -789,7 +1225,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -803,7 +1243,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -817,7 +1261,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -831,7 +1279,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -845,7 +1297,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -859,7 +1315,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -873,7 +1333,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -887,7 +1351,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -901,7 +1369,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -915,7 +1387,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -929,7 +1405,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -943,7 +1423,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -957,7 +1441,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -971,7 +1459,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -985,7 +1477,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -999,7 +1495,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1013,7 +1513,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1027,7 +1531,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1041,7 +1549,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1055,7 +1567,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1069,7 +1585,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1083,7 +1603,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1097,7 +1621,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1111,7 +1639,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1125,7 +1657,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1139,7 +1675,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1153,7 +1693,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1167,7 +1711,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1181,7 +1729,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1195,7 +1747,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1209,7 +1765,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1223,7 +1783,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     },
     {
@@ -1237,7 +1801,11 @@
       "isActive": true,
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ]
     }
   ],
@@ -1298,16 +1866,17 @@
       "id": "samantha",
       "name": "Samantha Perera",
       "slug": "samantha-perera",
-      "photo": "samantha",
+      "photo": "/images/gallery/gallery-06.jpg",
       "bio": "Samantha has over 10 years of experience in luxury hair styling and corrective balayage. She trained in London and excels in custom cuts for both local and expat clients.",
       "specialties": [
         "hair-cut",
-        "hair-coloring",
-        "weekend-pamper"
+        "hair-coloring"
       ],
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte"
       ],
       "isActive": true,
       "displayOrder": 1
@@ -1316,15 +1885,15 @@
       "id": "priyanthi",
       "name": "Priyanthi Silva",
       "slug": "priyanthi-silva",
-      "photo": "priyanthi",
+      "photo": "/images/gallery/gallery-01.jpg",
       "bio": "Priyanthi is certified in Russian manicure techniques and is the go-to nail artist in Colombo. She crafts gorgeous nail extensions and designs customized for weddings.",
       "specialties": [
-        "nail-gel",
-        "weekend-pamper",
-        "bridal-gold"
+        "nail-gel"
       ],
       "branches": [
-        "colombo-03"
+        "colombo-03",
+        "dehiwala",
+        "wattala"
       ],
       "isActive": true,
       "displayOrder": 2
@@ -1333,18 +1902,20 @@
       "id": "elora",
       "name": "Elora Jayawardena",
       "slug": "elora-jayawardena",
-      "photo": "elora",
+      "photo": "/images/gallery/gallery-02.jpg",
       "bio": "Founder of Elora Beauty and a celebrity makeup artist in Sri Lanka. Elora specializes in traditional Kandyan and modern western bridal looks that look flawless on camera.",
       "specialties": [
         "pro-makeup",
         "skin-glow",
-        "bridal-styling",
-        "bridal-gold",
-        "weekend-pamper"
+        "bridal-styling"
       ],
       "branches": [
         "colombo-03",
-        "colombo-07"
+        "colombo-07",
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala",
+        "wattala"
       ],
       "isActive": true,
       "displayOrder": 3
@@ -1471,7 +2042,7 @@
       "id": "c1",
       "title": "Sri Lanka Elite Salon Award 2025",
       "issuer": "Lanka Beauty Pageants Association",
-      "image": "certificate_elite",
+      "image": "",
       "yearAwarded": 2025,
       "displayOrder": 1
     },
@@ -1479,7 +2050,7 @@
       "id": "c2",
       "title": "Master Academy of Hair Styling Certified",
       "issuer": "Toni&Guy London Affiliated",
-      "image": "certificate_toniguy",
+      "image": "",
       "yearAwarded": 2023,
       "displayOrder": 2
     }
@@ -1499,5 +2070,273 @@
       "caption": "Creative Gel Nail Styling with elegant gold sparkles",
       "serviceCategory": "Nails"
     }
-  ]
+
+  ],
+  "galleryItems": [
+    {
+      "id": "gallery-01",
+      "title": "Gold leaf gel manicure",
+      "category": "Nails",
+      "image": "/images/gallery/gallery-01.jpg",
+      "description": "Gold leaf gel manicure by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 1,
+      "createdAt": "2026-06-24T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-02",
+      "title": "Traditional bridal makeup",
+      "category": "Bridal",
+      "image": "/images/gallery/gallery-02.jpg",
+      "description": "Traditional bridal makeup by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 2,
+      "createdAt": "2026-06-23T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-03",
+      "title": "Precision eyebrow threading",
+      "category": "Threading",
+      "image": "/images/gallery/gallery-03.jpg",
+      "description": "Precision eyebrow threading by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 3,
+      "createdAt": "2026-06-22T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-04",
+      "title": "Brightening facial treatment",
+      "category": "Facial",
+      "image": "/images/gallery/gallery-04.jpg",
+      "description": "Brightening facial treatment by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 4,
+      "createdAt": "2026-06-21T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-05",
+      "title": "Professional leg waxing",
+      "category": "Waxing",
+      "image": "/images/gallery/gallery-05.jpg",
+      "description": "Professional leg waxing by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 5,
+      "createdAt": "2026-06-20T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-06",
+      "title": "Glossy balayage finish",
+      "category": "Hair",
+      "image": "/images/gallery/gallery-06.jpg",
+      "description": "Glossy balayage finish by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 6,
+      "createdAt": "2026-06-19T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-07",
+      "title": "Classic red manicure",
+      "category": "Nails",
+      "image": "/images/gallery/gallery-07.jpg",
+      "description": "Classic red manicure by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 7,
+      "createdAt": "2026-06-18T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-08",
+      "title": "Floral bridal hair updo",
+      "category": "Bridal",
+      "image": "/images/gallery/gallery-08.jpg",
+      "description": "Floral bridal hair updo by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 8,
+      "createdAt": "2026-06-17T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-09",
+      "title": "Defined party makeup",
+      "category": "Makeup",
+      "image": "/images/gallery/gallery-09.jpg",
+      "description": "Defined party makeup by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 9,
+      "createdAt": "2026-06-16T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-10",
+      "title": "Relaxing scalp massage",
+      "category": "Hair",
+      "image": "/images/gallery/gallery-10.jpg",
+      "description": "Relaxing scalp massage by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 10,
+      "createdAt": "2026-06-15T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-11",
+      "title": "Luxury spa pedicure",
+      "category": "Nails",
+      "image": "/images/gallery/gallery-11.jpg",
+      "description": "Luxury spa pedicure by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 11,
+      "createdAt": "2026-06-14T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-12",
+      "title": "Hydrating facial serum",
+      "category": "Facial",
+      "image": "/images/gallery/gallery-12.jpg",
+      "description": "Hydrating facial serum by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 12,
+      "createdAt": "2026-06-13T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-13",
+      "title": "Soft ombre nail extensions",
+      "category": "Nails",
+      "image": "/images/gallery/gallery-13.jpg",
+      "description": "Soft ombre nail extensions by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 13,
+      "createdAt": "2026-06-12T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-14",
+      "title": "Kandyan bridal dressing",
+      "category": "Bridal",
+      "image": "/images/gallery/gallery-14.jpg",
+      "description": "Kandyan bridal dressing by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 14,
+      "createdAt": "2026-06-11T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-15",
+      "title": "Upper lip threading",
+      "category": "Threading",
+      "image": "/images/gallery/gallery-15.jpg",
+      "description": "Upper lip threading by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 15,
+      "createdAt": "2026-06-10T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-16",
+      "title": "Microdermabrasion facial",
+      "category": "Facial",
+      "image": "/images/gallery/gallery-16.jpg",
+      "description": "Microdermabrasion facial by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 16,
+      "createdAt": "2026-06-09T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-17",
+      "title": "Professional underarm waxing",
+      "category": "Waxing",
+      "image": "/images/gallery/gallery-17.jpg",
+      "description": "Professional underarm waxing by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 17,
+      "createdAt": "2026-06-08T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-18",
+      "title": "Formal occasion hair updo",
+      "category": "Hair",
+      "image": "/images/gallery/gallery-18.jpg",
+      "description": "Formal occasion hair updo by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 18,
+      "createdAt": "2026-06-07T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-19",
+      "title": "Chrome pearl nail art",
+      "category": "Nails",
+      "image": "/images/gallery/gallery-19.jpg",
+      "description": "Chrome pearl nail art by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 19,
+      "createdAt": "2026-06-06T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-20",
+      "title": "Western bridal makeup",
+      "category": "Bridal",
+      "image": "/images/gallery/gallery-20.jpg",
+      "description": "Western bridal makeup by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 20,
+      "createdAt": "2026-06-05T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-21",
+      "title": "Eyebrow shaping and tinting",
+      "category": "Threading",
+      "image": "/images/gallery/gallery-21.jpg",
+      "description": "Eyebrow shaping and tinting by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 21,
+      "createdAt": "2026-06-04T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-22",
+      "title": "Oxygen glow facial",
+      "category": "Facial",
+      "image": "/images/gallery/gallery-22.jpg",
+      "description": "Oxygen glow facial by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 22,
+      "createdAt": "2026-06-03T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-23",
+      "title": "Full body scrub treatment",
+      "category": "Body & Spa",
+      "image": "/images/gallery/gallery-23.jpg",
+      "description": "Full body scrub treatment by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 23,
+      "createdAt": "2026-06-02T09:00:00.000Z"
+    },
+    {
+      "id": "gallery-24",
+      "title": "Precision bob haircut",
+      "category": "Hair",
+      "image": "/images/gallery/gallery-24.jpg",
+      "description": "Precision bob haircut by the Elora Beauty team.",
+      "isActive": true,
+      "displayOrder": 24,
+      "createdAt": "2026-06-01T09:00:00.000Z"
+    }
+  ],
+  "siteSettings": {
+    "businessName": "Elora Beauty",
+    "heroEyebrow": "Hair · Makeup · Nails · Skin · Bridal",
+    "heroTitle": "Signature Beauty",
+    "heroDescription": "Tailored beauty treatments delivered by experienced artists at our Colombo-area studios.",
+    "heroServiceLabel": "Premium Salon Services",
+    "heroButtonLabel": "Book Appointment",
+    "heroImage": "/images/bridal-makeup-hero.png",
+    "aboutTitle": "Beauty expertise, thoughtfully personal",
+    "aboutDescription": "Elora Beauty brings professional hair, makeup, nails, skin, spa, and bridal care together across six convenient studios. Our artists combine careful consultation, modern techniques, and warm hospitality so every appointment feels personal from the first conversation to the finished look.",
+    "aboutImage": "/images/elora-hero-banner.jpg",
+    "aboutHighlights": [
+      "Six convenient studio locations",
+      "Experienced multi-service artists",
+      "Transparent service pricing",
+      "Easy online appointment booking"
+    ],
+    "contactEmail": "contact@elorabeauty.com",
+    "instagramUrl": "https://instagram.com",
+    "facebookUrl": "https://facebook.com",
+    "googleBusinessUrl": "https://google.com",
+    "seoTitle": "Elora Beauty | Colombo Premium Multi-Branch Beauty Parlour",
+    "seoDescription": "Professional hair, nails, makeup, skin care, spa, and bridal styling across six Elora Beauty studios."
+  }
 }
+

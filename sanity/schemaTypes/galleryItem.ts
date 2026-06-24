@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const galleryItemType = defineType({
   name: 'galleryItem',
   title: 'Gallery',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({name: 'title', title: 'Title', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'category', title: 'Category', type: 'string'}),
     defineField({

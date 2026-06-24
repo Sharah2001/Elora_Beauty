@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const testimonialType = defineType({
   name: 'testimonial',
   title: 'Testimonials',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({
       name: 'customerName',
       title: 'Customer Name',

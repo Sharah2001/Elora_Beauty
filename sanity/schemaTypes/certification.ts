@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const certificationType = defineType({
   name: 'certification',
   title: 'Certifications',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({name: 'title', title: 'Title', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'issuer', title: 'Issuer', type: 'string'}),
     defineField({name: 'reference', title: 'Reference / Certificate Number', type: 'string'}),

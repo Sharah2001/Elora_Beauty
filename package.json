@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "migrate:sanity": "tsx scripts/migrate-db-store-to-sanity.ts",
+    "migrate:sanity": "tsx scripts/migrate-content.ts",
+    "migrate:sanity:dry": "tsx scripts/migrate-content.ts --dry-run",
     "start": "next start",
     "clean": "rm -rf .next",
     "lint": "tsc --noEmit"

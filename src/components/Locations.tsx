@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { MapPin, Phone, Building, MessageSquare, Clock, Check } from "lucide-react";
-import { Branch } from "../types";
+import { MapPin, Phone, Building, MessageSquare, Clock } from "lucide-react";
+import { Branch, WorkingHours } from "../types";
 
 interface LocationsProps {
   onSelectBranchForBooking: (branchId: string) => void;
@@ -8,22 +8,31 @@ interface LocationsProps {
 
 export default function Locations({ onSelectBranchForBooking }: LocationsProps) {
   const [branches, setBranches] = useState<Branch[]>([]);
+  const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
 
   useEffect(() => {
     fetch("/api/branches")
       .then((res) => res.json())
       .then((data) => setBranches(data));
+
+    fetch("/api/working-hours")
+      .then((res) => res.json())
+      .then((data) => setWorkingHours(data));
   }, []);
 
   return (
     <div className="space-y-12 py-4">
       <div className="text-center max-w-xl mx-auto space-y-2">
         <h2 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Our Colombo Studios</h2>
-        <p className="text-stone-500 text-sm font-light">With two beautiful, fully-serviced premises in Colombo's premium districts, relaxation is never far away.</p>
+        <p className="text-stone-500 text-sm font-light">Visit one of our six fully serviced studios across Colombo and nearby areas.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {branches.map((branch) => {
+          const branchHours = workingHours.find((hours) => hours.branchId === branch.id);
+          const weekday = branchHours?.schedule.find((day) => day.dayOfWeek === "Mon");
+          const saturday = branchHours?.schedule.find((day) => day.dayOfWeek === "Sat");
+          const sunday = branchHours?.schedule.find((day) => day.dayOfWeek === "Sun");
           // Generate a Colombo Google Map embed source based on latitude & longitude
           // Or search queries for Kollupitiya/Cinnamon Gardens
           const mapQuery = encodeURIComponent(branch.address + ", " + branch.city);
@@ -78,6 +87,25 @@ export default function Locations({ onSelectBranchForBooking }: LocationsProps) 
                     className="filter select-none grayscale invert contrast-90 md:contrast-100"
                   />
                 </div>
+
+                {branchHours && (
+                  <div className="grid grid-cols-3 gap-3 border-t border-[#C5A059]/15 pt-4 text-center">
+                    {[
+                      {label: "Mon–Fri", schedule: weekday},
+                      {label: "Saturday", schedule: saturday},
+                      {label: "Sunday", schedule: sunday},
+                    ].map(({label, schedule}) => (
+                      <div key={label} className="min-w-0">
+                        <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400">{label}</p>
+                        <p className="mt-1 text-[10px] font-mono text-stone-700">
+                          {schedule?.isClosed
+                            ? "Closed"
+                            : `${schedule?.openTime || "—"}–${schedule?.closeTime || "—"}`}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Action Button */}
@@ -93,30 +121,11 @@ export default function Locations({ onSelectBranchForBooking }: LocationsProps) 
         })}
       </div>
 
-      {/* Opening hours display section */}
-      <div className="bg-[#1A1A1A] text-white rounded-3xl p-6 md:p-8 border border-[#C5A059]/20 shadow-xl">
-        <h3 className="font-serif font-bold text-lg mb-4 flex items-center">
-          <Clock className="w-5 h-5 text-[#C5A059] mr-2 shrink-0" />
-          Standard Studio Schedule
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-stone-400">
-          <div className="space-y-4">
-            <h4 className="font-bold text-stone-200">Kollupitiya (C3) Operating Hours</h4>
-            <div className="space-y-1 bg-stone-900/50 p-4 rounded-xl font-mono leading-relaxed border border-[#C5A059]/10">
-              <p className="flex justify-between"><span>Monday - Thursday</span> <span>09:00 - 19:30</span></p>
-              <p className="flex justify-between text-[#C5A059] border-t border-stone-800 pt-1 mt-1"><span>Friday - Saturday</span> <span>09:00 - 20:00</span></p>
-              <p className="flex justify-between border-t border-stone-800 pt-1 mt-1"><span>Sunday SPECIAL</span> <span>10:00 - 18:00</span></p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-bold text-stone-200 font-sans">Cinnamon Gardens (C7) Operating Hours</h4>
-            <div className="space-y-1 bg-stone-900/50 p-4 rounded-xl font-mono leading-relaxed border border-[#C5A059]/10">
-              <p className="flex justify-between"><span>Monday - Thursday</span> <span>09:30 - 19:30</span></p>
-              <p className="flex justify-between text-[#C5A059] border-t border-stone-800 pt-1 mt-1"><span>Friday - Saturday</span> <span>09:30 - 20:00</span></p>
-              <p className="flex justify-between text-[#C5A059] font-bold border-t border-stone-800 pt-1 mt-1"><span>Sunday CLOSED</span> <span className="text-[#C5A059] font-sans font-normal text-xs">Closed to staff rest</span></p>
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center justify-center gap-3 border-y border-[#C5A059]/20 py-5 text-center text-sm text-stone-600">
+        <Clock className="h-5 w-5 text-[#C5A059]" />
+        <p>
+          Opening times are maintained per branch and may change on blocked dates or public holidays.
+        </p>
       </div>
     </div>
   );
