@@ -2003,6 +2003,26 @@
       "notes": "Likes neutral colors",
       "createdAt": "2026-06-22T08:00:00Z",
       "updatedAt": "2026-06-22T08:00:00Z"
+    },
+    {
+      "id": "bk_1782277131615",
+      "branch": "colombo-03",
+      "artist": "samantha",
+      "services": [
+        "ladies-haircut"
+      ],
+      "customerName": "sharanyah",
+      "customerPhone": "0763992352",
+      "date": "2026-06-25",
+      "startTime": "09:00",
+      "endTime": "09:45",
+      "status": "confirmed",
+      "bookingSource": "online",
+      "bookingReference": "BK-L0DKU",
+      "pin": "5119",
+      "notes": "n/a",
+      "createdAt": "2026-06-24T04:58:51.614Z",
+      "updatedAt": "2026-06-24T04:58:51.614Z"
     }
   ],
   "contactMessages": [
@@ -2050,6 +2070,7 @@
       "caption": "Creative Gel Nail Styling with elegant gold sparkles",
       "serviceCategory": "Nails"
     }
+
   ],
   "galleryItems": [
     {
@@ -2318,3 +2339,4 @@
     "seoDescription": "Professional hair, nails, makeup, skin care, spa, and bridal styling across six Elora Beauty studios."
   }
 }
+

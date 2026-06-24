@@ -35,6 +35,7 @@ export interface BlockedDate {
   blockedEndTime?: string;
 }
 
+
 export interface Artist {
   id: string;
   name: string;
@@ -164,7 +165,7 @@ export interface Booking {
   updatedAt: string;
 }
 
-export interface Timeslot{
+export interface TimeSlot{
   startTime: string;
   endTime: string;
   available: boolean;
