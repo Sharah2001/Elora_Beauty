@@ -1866,12 +1866,11 @@
       "id": "samantha",
       "name": "Samantha Perera",
       "slug": "samantha-perera",
-      "photo": "samantha",
+      "photo": "/images/gallery/gallery-06.jpg",
       "bio": "Samantha has over 10 years of experience in luxury hair styling and corrective balayage. She trained in London and excels in custom cuts for both local and expat clients.",
       "specialties": [
         "hair-cut",
-        "hair-coloring",
-        "weekend-pamper"
+        "hair-coloring"
       ],
       "branches": [
         "colombo-03",
@@ -1886,12 +1885,10 @@
       "id": "priyanthi",
       "name": "Priyanthi Silva",
       "slug": "priyanthi-silva",
-      "photo": "priyanthi",
+      "photo": "/images/gallery/gallery-01.jpg",
       "bio": "Priyanthi is certified in Russian manicure techniques and is the go-to nail artist in Colombo. She crafts gorgeous nail extensions and designs customized for weddings.",
       "specialties": [
-        "nail-gel",
-        "weekend-pamper",
-        "bridal-gold"
+        "nail-gel"
       ],
       "branches": [
         "colombo-03",
@@ -1905,14 +1902,12 @@
       "id": "elora",
       "name": "Elora Jayawardena",
       "slug": "elora-jayawardena",
-      "photo": "elora",
+      "photo": "/images/gallery/gallery-02.jpg",
       "bio": "Founder of Elora Beauty and a celebrity makeup artist in Sri Lanka. Elora specializes in traditional Kandyan and modern western bridal looks that look flawless on camera.",
       "specialties": [
         "pro-makeup",
         "skin-glow",
-        "bridal-styling",
-        "bridal-gold",
-        "weekend-pamper"
+        "bridal-styling"
       ],
       "branches": [
         "colombo-03",
@@ -2027,7 +2022,7 @@
       "id": "c1",
       "title": "Sri Lanka Elite Salon Award 2025",
       "issuer": "Lanka Beauty Pageants Association",
-      "image": "certificate_elite",
+      "image": "",
       "yearAwarded": 2025,
       "displayOrder": 1
     },
@@ -2035,7 +2030,7 @@
       "id": "c2",
       "title": "Master Academy of Hair Styling Certified",
       "issuer": "Toni&Guy London Affiliated",
-      "image": "certificate_toniguy",
+      "image": "",
       "yearAwarded": 2023,
       "displayOrder": 2
     }
@@ -2297,5 +2292,29 @@
       "displayOrder": 24,
       "createdAt": "2026-06-01T09:00:00.000Z"
     }
-  ]
+  ],
+  "siteSettings": {
+    "businessName": "Elora Beauty",
+    "heroEyebrow": "Hair · Makeup · Nails · Skin · Bridal",
+    "heroTitle": "Signature Beauty",
+    "heroDescription": "Tailored beauty treatments delivered by experienced artists at our Colombo-area studios.",
+    "heroServiceLabel": "Premium Salon Services",
+    "heroButtonLabel": "Book Appointment",
+    "heroImage": "/images/bridal-makeup-hero.png",
+    "aboutTitle": "Beauty expertise, thoughtfully personal",
+    "aboutDescription": "Elora Beauty brings professional hair, makeup, nails, skin, spa, and bridal care together across six convenient studios. Our artists combine careful consultation, modern techniques, and warm hospitality so every appointment feels personal from the first conversation to the finished look.",
+    "aboutImage": "/images/elora-hero-banner.jpg",
+    "aboutHighlights": [
+      "Six convenient studio locations",
+      "Experienced multi-service artists",
+      "Transparent service pricing",
+      "Easy online appointment booking"
+    ],
+    "contactEmail": "contact@elorabeauty.com",
+    "instagramUrl": "https://instagram.com",
+    "facebookUrl": "https://facebook.com",
+    "googleBusinessUrl": "https://google.com",
+    "seoTitle": "Elora Beauty | Colombo Premium Multi-Branch Beauty Parlour",
+    "seoDescription": "Professional hair, nails, makeup, skin care, spa, and bridal styling across six Elora Beauty studios."
+  }
 }

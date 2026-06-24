@@ -1,4 +1,5 @@
 import {defineArrayMember, defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const dayScheduleType = defineType({
   name: 'daySchedule',
@@ -41,6 +42,7 @@ export const workingHoursType = defineType({
   title: 'Working Hours',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({
       name: 'branch',
       title: 'Branch',

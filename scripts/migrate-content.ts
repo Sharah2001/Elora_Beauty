@@ -311,6 +311,7 @@ async function migrateBranches() {
     return compact({
       _id: documentId('branch', sourceId),
       _type: 'branch',
+      sourceId,
       name,
       slug: slug(item.slug, name),
       address: stringValue(item.address),
@@ -339,6 +340,7 @@ async function migrateServices() {
     return compact({
       _id: documentId('service', sourceId),
       _type: 'service',
+      sourceId,
       name,
       slug: slug(item.slug, name),
       category: normalizeCategory(item.category),
@@ -361,6 +363,7 @@ async function migrateArtists() {
     return compact({
       _id: documentId('artist', sourceId),
       _type: 'artist',
+      sourceId,
       name,
       slug: slug(item.slug, name),
       photo: await imageValue(item.photo, name, `artist "${name}"`),
@@ -381,6 +384,7 @@ async function migrateWorkingHours() {
     return {
       _id: documentId('workingHours', branchId),
       _type: 'workingHours',
+      sourceId: branchId,
       branch: reference('branch', branchId),
       slotDurationMinutes: numberValue(item.slotDurationMinutes, 30),
       schedule: schedule.map((day, dayIndex) => ({
@@ -404,6 +408,7 @@ async function migrateBlockedDates() {
     return compact({
       _id: documentId('blockedDate', sourceId),
       _type: 'blockedDate',
+      sourceId,
       branch: branchId ? reference('branch', branchId) : undefined,
       date: stringValue(item.date),
       reason: stringValue(item.reason) || undefined,
@@ -422,6 +427,7 @@ async function migratePackages() {
     return compact({
       _id: documentId('package', sourceId),
       _type: 'package',
+      sourceId,
       name,
       includedServices: serviceReferences(item.includedServices, `package "${name}"`),
       totalPrice: numberValue(item.totalPrice),
@@ -442,6 +448,7 @@ async function migrateOffers() {
     return compact({
       _id: documentId('offer', sourceId),
       _type: 'offer',
+      sourceId,
       title,
       description: stringValue(item.description) || undefined,
       discountType: stringValue(item.discountType),
@@ -462,6 +469,7 @@ async function migrateFaqs() {
     return compact({
       _id: documentId('faq', sourceId),
       _type: 'faq',
+      sourceId,
       question: stringValue(item.question),
       answer: stringValue(item.answer),
       category: stringValue(item.category) || undefined,
@@ -475,13 +483,20 @@ async function migrateGalleryItems() {
   const galleryItems = readCollection('galleryItems')
   const legacyGalleryItems = galleryItems.length > 0 ? galleryItems : readCollection('gallery')
 
-  await migrateCollection('9. Gallery Items', [...legacyGalleryItems].reverse(), async (item, index) => {
+  const latestGalleryItems = [...legacyGalleryItems]
+    .sort((left, right) =>
+      stringValue(right.createdAt).localeCompare(stringValue(left.createdAt)),
+    )
+    .slice(0, 24)
+
+  await migrateCollection('9. Gallery Items', latestGalleryItems, async (item, index) => {
     const sourceId = stringValue(item.id, `gallery-${index + 1}`)
     const title = stringValue(item.title, `Gallery item ${index + 1}`)
 
     return compact({
       _id: documentId('galleryItem', sourceId),
       _type: 'galleryItem',
+      sourceId,
       title,
       category: stringValue(item.category) || undefined,
       image: await imageValue(item.image, title, `gallery item "${title}"`),
@@ -502,6 +517,7 @@ async function migrateBeforeAfter() {
     return compact({
       _id: documentId('beforeAfter', sourceId),
       _type: 'beforeAfter',
+      sourceId,
       title,
       caption,
       serviceCategory: normalizeCategory(item.serviceCategory),
@@ -526,6 +542,7 @@ async function migrateCertifications() {
       return compact({
         _id: documentId('certification', sourceId),
         _type: 'certification',
+        sourceId,
         title,
         issuer: stringValue(item.issuer) || undefined,
         reference: stringValue(item.reference) || undefined,
@@ -553,6 +570,7 @@ async function migrateApprovedTestimonials() {
     return compact({
       _id: documentId('testimonial', sourceId),
       _type: 'testimonial',
+      sourceId,
       customerName: stringValue(item.customerName, 'Anonymous'),
       rating: numberValue(item.rating, 5),
       comment: stringValue(item.comment),
@@ -582,7 +600,13 @@ async function migrateSiteSettings() {
       heroEyebrow: stringValue(item.heroEyebrow) || undefined,
       heroTitle: stringValue(item.heroTitle) || undefined,
       heroDescription: stringValue(item.heroDescription) || undefined,
+      heroServiceLabel: stringValue(item.heroServiceLabel) || undefined,
+      heroButtonLabel: stringValue(item.heroButtonLabel) || undefined,
       heroImage: await imageValue(item.heroImage, businessName, 'site settings hero'),
+      aboutTitle: stringValue(item.aboutTitle) || undefined,
+      aboutDescription: stringValue(item.aboutDescription) || undefined,
+      aboutImage: await imageValue(item.aboutImage, businessName, 'site settings about'),
+      aboutHighlights: stringArray(item.aboutHighlights),
       contactEmail: stringValue(item.contactEmail) || undefined,
       instagramUrl: stringValue(item.instagramUrl) || undefined,
       facebookUrl: stringValue(item.facebookUrl) || undefined,

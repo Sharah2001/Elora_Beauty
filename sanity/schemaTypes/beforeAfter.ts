@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const beforeAfterType = defineType({
   name: 'beforeAfter',
   title: 'Before & After',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({
       name: 'title',
       title: 'Title',

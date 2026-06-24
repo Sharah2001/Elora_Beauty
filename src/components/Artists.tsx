@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { User, Sparkles, Building, Medal, Heart } from "lucide-react";
-import { Artist, Service, Branch } from "../types";
+import { Building, Medal } from "lucide-react";
+import { Artist, Service, Branch, Certification } from "../types";
 
 interface ArtistsProps {
   onSelectArtistForBooking: (artistId: string) => void;
@@ -10,6 +10,7 @@ export default function Artists({ onSelectArtistForBooking }: ArtistsProps) {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
 
   useEffect(() => {
     fetch("/api/artists")
@@ -23,6 +24,10 @@ export default function Artists({ onSelectArtistForBooking }: ArtistsProps) {
     fetch("/api/branches")
       .then((res) => res.json())
       .then((data) => setBranches(data));
+
+    fetch("/api/certifications")
+      .then((res) => res.json())
+      .then((data) => setCertifications(data));
   }, []);
 
   return (
@@ -46,7 +51,7 @@ export default function Artists({ onSelectArtistForBooking }: ArtistsProps) {
               {/* Picture + Basic overlay */}
               <div className="relative h-64 bg-stone-100">
                 <img 
-                  src={`https://picsum.photos/seed/${artist.photo}/500/500`}
+                  src={artist.photo || `https://picsum.photos/seed/${artist.id}/500/500`}
                   alt={artist.name}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
@@ -109,25 +114,36 @@ export default function Artists({ onSelectArtistForBooking }: ArtistsProps) {
         })}
       </div>
 
-      {/* Certifications Section (Sathurgini, 1 hr) */}
-      <section className="bg-[#1A1A1A] text-stone-300 border border-[#C5A059]/20 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-2 max-w-xl">
-          <h3 className="font-serif text-xl font-bold text-white">Highly Awarded and Safe Standards</h3>
-          <p className="text-stone-400 text-xs leading-relaxed font-light font-sans">
-            Elora Beauty is a certified licensed partner of the Lanka Beauty Pageants Association. Every treatment adheres fully to international sanitary safety protocols, ensuring supreme luxury without compromise.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <div className="bg-stone-900 border border-[#C5A059]/15 rounded-xl p-3 shadow-sm max-w-[200px] text-center shrink-0">
-            <h4 className="text-[10px] font-mono font-bold tracking-wider text-[#C5A059] block mb-1">ACC_NO 2932</h4>
-            <p className="text-[11px] font-bold text-stone-200">Sri Lanka Salon Of The Year 2025</p>
+      {certifications.length > 0 && (
+        <section className="border-y border-[#C5A059]/20 bg-[#1A1A1A] px-6 py-8 text-stone-300 md:px-8">
+          <div className="grid gap-7 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C5A059]">
+                Recognition
+              </p>
+              <h3 className="mt-2 font-serif text-2xl font-bold text-white">
+                Certifications & Awards
+              </h3>
+              <p className="mt-2 text-xs leading-5 text-stone-400">
+                Professional standards and industry recognition maintained by Elora Beauty.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {certifications.map((certification) => (
+                <article key={certification.id} className="border border-white/15 p-4">
+                  <Medal className="h-5 w-5 text-[#C5A059]" />
+                  <h4 className="mt-3 font-serif text-sm font-semibold text-white">
+                    {certification.title}
+                  </h4>
+                  <p className="mt-1 text-[10px] uppercase tracking-wider text-stone-500">
+                    {certification.issuer || certification.reference}
+                  </p>
+                </article>
+              ))}
+            </div>
           </div>
-          <div className="bg-stone-900 border border-[#C5A059]/15 rounded-xl p-3 shadow-sm max-w-[200px] text-center shrink-0">
-            <h4 className="text-[10px] font-mono font-bold tracking-wider text-[#C5A059] block mb-1 font-bold">certified</h4>
-            <p className="text-[11px] font-bold text-stone-200">Toni&Guy London Affiliation</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

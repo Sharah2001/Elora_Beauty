@@ -24,7 +24,7 @@ export default function Locations({ onSelectBranchForBooking }: LocationsProps) 
     <div className="space-y-12 py-4">
       <div className="text-center max-w-xl mx-auto space-y-2">
         <h2 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Our Colombo Studios</h2>
-        <p className="text-stone-500 text-sm font-light">With two beautiful, fully-serviced premises in Colombo's premium districts, relaxation is never far away.</p>
+        <p className="text-stone-500 text-sm font-light">Visit one of our six fully serviced studios across Colombo and nearby areas.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

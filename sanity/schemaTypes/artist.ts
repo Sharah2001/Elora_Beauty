@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const artistType = defineType({
   name: 'artist',
   title: 'Artists',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({
       name: 'name',
       title: 'Artist Name',

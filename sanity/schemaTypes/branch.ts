@@ -1,10 +1,12 @@
 import {defineField, defineType} from 'sanity'
+import {sourceIdField} from './sourceId'
 
 export const branchType = defineType({
   name: 'branch',
   title: 'Branches',
   type: 'document',
   fields: [
+    sourceIdField(),
     defineField({
       name: 'name',
       title: 'Branch Name',

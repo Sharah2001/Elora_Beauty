@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {ArrowRight, Images} from "lucide-react";
+import BeforeAfter from "./BeforeAfter";
 
 type GalleryItem = {
   id: string;
@@ -95,9 +96,12 @@ export default function Gallery({preview = false, onViewMore}: GalleryProps) {
       )}
 
       {!preview && (
-        <p className="text-center text-xs text-stone-400">
-          Showing the latest {visibleItems.length} gallery images.
-        </p>
+        <>
+          <p className="text-center text-xs text-stone-400">
+            Showing the latest {visibleItems.length} gallery images.
+          </p>
+          <BeforeAfter />
+        </>
       )}
     </section>
   );

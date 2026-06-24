@@ -12,6 +12,9 @@ import Locations from "./components/Locations";
 import Reviews from "./components/Reviews";
 import ManageBookings from "./components/ManageBookings";
 import AdminPanel from "./components/AdminPanel";
+import About from "./components/About";
+import Faq from "./components/Faq";
+import {SiteSettings} from "./types";
 
 export default function App() {
   // Routes: "home" | "services" | "artists" | "work" | "locations" | "reviews" | "manage" | "admin" | "book_now"
@@ -19,6 +22,7 @@ export default function App() {
 
   // Pre-selected parameters for booking flow launcher
   const [preSelectedBranch, setPreSelectedBranch] = useState("");
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   
   // Contact form state
   const [cName, setCName] = useState("");
@@ -29,14 +33,25 @@ export default function App() {
   const [cError, setCError] = useState("");
   const [sendingMsg, setSendingMsg] = useState(false);
 
-  // Set Search Engine Optimization meta headers (SEO)
   useEffect(() => {
-    document.title = "Elora Beauty | Colombo Premium Multi-Branch Hair, Nails & Bridal Parlour";
+    fetch("/api/site-settings")
+      .then((response) => response.json())
+      .then((data) => setSiteSettings(data || null));
+  }, []);
+
+  useEffect(() => {
+    document.title =
+      siteSettings?.seoTitle ||
+      "Elora Beauty | Colombo Premium Multi-Branch Hair, Nails & Bridal Parlour";
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute("content", "Elora Beauty Parlour Colombo. Luxury multi-branch salon in Kollupitiya & Cinnamon Gardens offering professional nail extensions, makeup, protective hair balayage, and Kandyan bridal styling.");
+      metaDesc.setAttribute(
+        "content",
+        siteSettings?.seoDescription ||
+          "Elora Beauty Parlour Colombo. Professional hair, nails, makeup, skin care, and bridal styling.",
+      );
     }
-  }, [activeTab]);
+  }, [activeTab, siteSettings]);
 
   const handleOpenBooking = (branchId = "") => {
     setPreSelectedBranch(branchId);
@@ -83,6 +98,9 @@ export default function App() {
     }
   };
 
+  const heroTitle = siteSettings?.heroTitle || "Signature Beauty";
+  const [heroTitleFirst, ...heroTitleRest] = heroTitle.split(" ");
+
   return (
     <div className="min-h-screen bg-[#FAF6F4] text-stone-900 font-sans flex flex-col justify-between">
       
@@ -117,22 +135,22 @@ export default function App() {
                         Elora <span className="font-sans text-xs uppercase tracking-[0.24em] text-[#C5A059]">Beauty</span>
                       </p>
                       <p className="mt-1.5 text-[8px] uppercase tracking-[0.28em] text-stone-400">
-                        Colombo Premier Salon
+                        {siteSettings?.businessName || "Colombo Premier Salon"}
                       </p>
                     </div>
                   </div>
 
                   <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-[#C5A059]">
-                    Hair · Makeup · Nails · Skin · Bridal
+                    {siteSettings?.heroEyebrow || "Hair · Makeup · Nails · Skin · Bridal"}
                   </p>
 
                   <h1 className="mt-4 font-sans text-6xl font-extrabold uppercase leading-[0.86] text-[#C5A059] sm:text-7xl lg:text-[4.8rem] xl:text-[5.1rem]">
-                    Signature
-                    <span className="block">Beauty</span>
+                    {heroTitleFirst}
+                    <span className="block">{heroTitleRest.join(" ")}</span>
                   </h1>
 
                   <p className="mt-5 max-w-sm font-serif text-2xl italic leading-tight text-white sm:text-[1.7rem]">
-                    Personal care. Polished results.
+                    {siteSettings?.heroDescription || "Personal care. Polished results."}
                   </p>
 
                   <div className="mt-5 flex justify-center gap-3 lg:justify-start">
@@ -161,19 +179,19 @@ export default function App() {
                   <div className="hero-reference-line mt-6"></div>
 
                   <div className="hero-reference-label mt-9">
-                    Premium Salon Services
+                    {siteSettings?.heroServiceLabel || "Premium Salon Services"}
                   </div>
 
                   <p className="mt-5 max-w-sm text-sm leading-5 text-stone-400">
-                    Tailored beauty treatments delivered by experienced artists at our
-                    Kollupitiya and Cinnamon Gardens studios.
+                    {siteSettings?.aboutDescription ||
+                      "Tailored beauty treatments delivered by experienced artists across our studios."}
                   </p>
 
                   <button
                     onClick={() => handleOpenBooking("")}
                     className="mt-5 min-h-11 border border-[#C5A059] bg-[#C5A059] px-8 text-sm font-bold uppercase tracking-[0.1em] text-white transition hover:border-[#AA823B] hover:bg-[#AA823B] cursor-pointer"
                   >
-                    Book Appointment
+                    {siteSettings?.heroButtonLabel || "Book Appointment"}
                   </button>
                 </div>
 
@@ -181,7 +199,7 @@ export default function App() {
                   <div className="hero-reference-diamond">
                     <div className="hero-reference-diamond-image">
                       <img
-                        src="/images/bridal-makeup-hero.png"
+                        src={siteSettings?.heroImage || "/images/bridal-makeup-hero.png"}
                         alt="Elora Beauty bridal makeup service"
                       />
                     </div>
@@ -193,6 +211,8 @@ export default function App() {
                 <div className="hidden lg:block" aria-hidden="true"></div>
               </div>
             </section>
+
+            <About settings={siteSettings} />
 
             {/* QUICK FEATURES BENTO (Looklike UI Image 1 category cards) */}
             <section className="space-y-6">
@@ -237,6 +257,7 @@ export default function App() {
             />
             <Reviews />
             <Locations onSelectBranchForBooking={(bid) => handleOpenBooking(bid)} />
+            <Faq />
 
             {/* INTERACTIVE IN-PAGE CONTACT FORM (Saranjah, Section 5) */}
             <section className="bg-gradient-to-r from-stone-50 to-amber-50/10 border border-[#C5A059]/15 rounded-2xl p-6 md:p-8 max-w-xl mx-auto space-y-4 shadow-sm">
