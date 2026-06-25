@@ -2175,6 +2175,29 @@
       "notes": "n/a",
       "createdAt": "2026-06-25T07:56:23.003Z",
       "updatedAt": "2026-06-25T07:58:36.446Z"
+    },
+    {
+      "id": "bk_1782398520099",
+      "branch": "dehiwala",
+      "artist": "amaya",
+      "services": [
+        "ladies-haircut",
+        "childrens-haircut-under-12",
+        "blow-dry-&-style",
+        "anti-hair-fall-treatment"
+      ],
+      "customerName": "vjjhbbgnmkl;",
+      "customerPhone": "345678987654",
+      "date": "2026-06-26",
+      "startTime": "16:00",
+      "endTime": "18:20",
+      "status": "confirmed",
+      "bookingSource": "online",
+      "bookingReference": "BK-PZ8JX",
+      "pin": "9604",
+      "notes": "dfcgvhbjnm ",
+      "createdAt": "2026-06-25T14:42:00.099Z",
+      "updatedAt": "2026-06-25T14:42:00.099Z"
     }
   ],
   "contactMessages": [
@@ -2302,7 +2325,6 @@
       "isActive": true,
       "displayOrder": 3
     }
-
   ],
   "galleryItems": [
     {
@@ -2571,4 +2593,3 @@
     "seoDescription": "Professional hair, nails, makeup, skin care, spa, and bridal styling across six Elora Beauty studios."
   }
 }
-

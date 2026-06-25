@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
+import Image from "next/image";
 import {Award, BadgeCheck, Building2, Medal, Sparkles, UserRound} from "lucide-react";
 import {Artist, Branch, Certification, Service} from "../types";
 import Button from "./ui/Button";
@@ -85,11 +86,13 @@ export default function Artists({
                 <div className="flex w-full flex-col">
                   <div className="relative h-72 overflow-hidden bg-stone-100">
                     {artist.photo ? (
-                      <img
+                      <Image
                         src={artist.photo}
                         alt={artist.photoAlt || `${artist.name}, Elora Beauty artist`}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-500 hover:scale-105"
+                        fill
+                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                        quality={70}
+                        className="object-cover transition duration-500 hover:scale-105"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-brand-surface-muted">
@@ -206,10 +209,11 @@ export default function Artists({
                   className="flex min-h-40 gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5"
                 >
                   {certification.image ? (
-                    <img
+                    <Image
                       src={certification.image}
                       alt={certification.imageAlt || certification.title}
-                      loading="lazy"
+                      width={56}
+                      height={56}
                       className="h-14 w-14 shrink-0 rounded-xl bg-white object-contain p-1"
                     />
                   ) : (

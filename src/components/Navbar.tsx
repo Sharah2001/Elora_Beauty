@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Calendar, ChevronDown, MapPin, Menu, X, Shield } from "lucide-react";
 import {Branch} from "../types";
 
@@ -29,21 +30,25 @@ export default function Navbar({
   ];
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-brand-gold/15 bg-white/95 shadow-sm backdrop-blur-md">
+    <nav aria-label="Primary navigation" className="sticky top-0 z-40 border-b border-brand-gold/15 bg-white/95 shadow-sm backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           {/* Logo */}
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setActiveTab("home")}>
-            <div className="brand-mark brand-mark-sm">
-              <span>E</span>
-            </div>
-            <div>
-              <span className="font-serif text-2xl font-bold leading-none tracking-[-0.04em] text-brand-ink">
-                Elora<span className="ml-1.5 align-middle font-sans text-[0.68em] font-semibold uppercase tracking-[0.18em] text-brand-gold">Beauty</span>
-              </span>
-              <p className="mt-0.5 font-mono text-[9px] uppercase leading-none tracking-[0.28em] text-brand-gold-dark">Colombo Premier Spa</p>
-            </div>
-          </div>
+          <button
+            type="button"
+            className="flex items-center space-x-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            onClick={() => setActiveTab("home")}
+          >
+            <Image
+              src="/images/elora-logo.svg"
+              alt="Elora Beauty Colombo Premier Spa"
+              width={220}
+              height={58}
+              priority
+              sizes="220px"
+              className="h-[58px] w-[220px]"
+            />
+          </button>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-4">
@@ -54,10 +59,11 @@ export default function Navbar({
                   setActiveTab(item.id);
                   setIsOpen(false);
                 }}
+                aria-current={activeTab === item.id ? "page" : undefined}
                 className={`px-3 py-2 text-sm font-medium transition-colors cursor-pointer ${
                   activeTab === item.id
-                    ? "border-b-2 border-brand-gold pt-3 font-semibold text-brand-gold"
-                    : "text-stone-600 hover:text-brand-gold"
+                    ? "border-b-2 border-brand-gold-dark pt-3 font-semibold text-brand-gold-dark"
+                    : "text-stone-700 hover:text-brand-gold-dark"
                 }`}
               >
                 {item.label}
@@ -86,16 +92,17 @@ export default function Navbar({
             <button
               onClick={() => setActiveTab("admin")}
               className={`p-2 rounded-full transition-colors cursor-pointer ${
-                activeTab === "admin" ? "bg-brand-gold/15 text-brand-gold" : "text-stone-400 hover:text-brand-gold"
+                activeTab === "admin" ? "bg-brand-gold/15 text-brand-gold-dark" : "text-stone-500 hover:text-brand-gold-dark"
               }`}
               title="Staff Portal"
+              aria-label="Open staff portal"
             >
               <Shield className="w-4 h-4" />
             </button>
 
             <button
               onClick={onOpenBooking}
-              className="inline-flex items-center rounded-full bg-brand-gold px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-amber-900/15 transition-all hover:scale-[1.02] hover:bg-brand-gold-dark active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+              className="inline-flex items-center rounded-full bg-brand-gold-dark px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-amber-900/15 transition-all hover:scale-[1.02] hover:bg-[#76511c] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark focus-visible:ring-offset-2"
             >
               <Calendar className="w-4 h-4 mr-2" />
               Book Appointment
@@ -109,6 +116,7 @@ export default function Navbar({
               className="rounded-md p-2 text-stone-600 hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
               aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -118,7 +126,7 @@ export default function Navbar({
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="space-y-2 border-b border-brand-gold/15 bg-brand-surface-muted px-4 pb-6 pt-2 shadow-inner lg:hidden">
+        <div id="mobile-navigation" className="space-y-2 border-b border-brand-gold/15 bg-brand-surface-muted px-4 pb-6 pt-2 shadow-inner lg:hidden">
           {navItems.map((item) => (
             <button
                key={item.id}
@@ -128,9 +136,10 @@ export default function Navbar({
               }}
               className={`block w-full text-left px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                 activeTab === item.id
-                  ? "bg-brand-gold/15 text-brand-gold"
-                  : "text-stone-700 hover:bg-brand-gold/5 hover:text-brand-gold"
+                  ? "bg-brand-gold/15 text-brand-gold-dark"
+                  : "text-stone-700 hover:bg-brand-gold/5 hover:text-brand-gold-dark"
               }`}
+              aria-current={activeTab === item.id ? "page" : undefined}
             >
               {item.label}
             </button>
@@ -171,7 +180,7 @@ export default function Navbar({
                 onOpenBooking();
                 setIsOpen(false);
               }}
-              className="flex w-full items-center justify-center rounded-full bg-brand-gold px-6 py-4 font-medium text-white transition hover:bg-brand-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+              className="flex w-full items-center justify-center rounded-full bg-brand-gold-dark px-6 py-4 font-medium text-white transition hover:bg-[#76511c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark"
             >
               <Calendar className="w-5 h-5 mr-2" />
               Book Appointment

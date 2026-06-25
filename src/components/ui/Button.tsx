@@ -11,10 +11,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<ButtonVariant, string> = {
-  primary: "bg-brand-gold text-white hover:bg-brand-gold-dark",
+  primary: "bg-brand-gold-dark text-white hover:bg-[#76511c]",
   secondary: "bg-brand-ink text-white hover:bg-stone-800",
   outline:
-    "border border-brand-gold text-brand-gold-dark hover:bg-brand-gold hover:text-white",
+    "border border-brand-gold-dark text-brand-gold-dark hover:bg-brand-gold-dark hover:text-white",
   ghost: "text-stone-600 hover:bg-brand-gold-soft hover:text-brand-gold-dark",
 };
 

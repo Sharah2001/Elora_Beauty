@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import Image from "next/image";
 import {BeforeAfter as BeforeAfterItem} from "../types";
 import Card from "./ui/Card";
 import EmptyState from "./ui/EmptyState";
@@ -11,17 +12,21 @@ function ComparisonSlider({item}: {item: BeforeAfterItem}) {
 
   return (
     <div className="relative aspect-[4/3] select-none overflow-hidden bg-stone-100">
-      <img
+      <Image
         src={item.afterImage}
         alt={item.afterImageAlt || `After ${item.title}`}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        sizes="(max-width: 767px) 100vw, 50vw"
+        quality={72}
+        className="object-cover"
       />
-      <img
+      <Image
         src={item.beforeImage}
         alt={item.beforeImageAlt || `Before ${item.title}`}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        sizes="(max-width: 767px) 100vw, 50vw"
+        quality={72}
+        className="object-cover"
         style={{clipPath: `inset(0 ${100 - position}% 0 0)`}}
       />
       <div

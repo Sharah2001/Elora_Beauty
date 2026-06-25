@@ -22,7 +22,7 @@ export default function SectionHeading({
       className={`${align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"} ${className}`}
     >
       {eyebrow && (
-        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-brand-gold">
+        <p className={`text-[10px] font-bold uppercase tracking-[0.22em] ${inverse ? "text-brand-gold" : "text-brand-gold-dark"}`}>
           {eyebrow}
         </p>
       )}
@@ -34,7 +34,7 @@ export default function SectionHeading({
         {title}
       </h2>
       {description && (
-        <p className={`mt-3 text-sm leading-6 ${inverse ? "text-stone-400" : "text-stone-500"}`}>
+        <p className={`mt-3 text-sm leading-6 ${inverse ? "text-stone-300" : "text-stone-600"}`}>
           {description}
         </p>
       )}

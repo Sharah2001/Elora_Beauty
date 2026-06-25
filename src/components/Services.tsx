@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
+import Image from "next/image";
 import {Check, Clock3, Flame, Sparkles, Star} from "lucide-react";
 import {Offer, Package, Service} from "../types";
 import Button from "./ui/Button";
@@ -108,10 +109,13 @@ export default function Services({
               return (
                 <Card key={offer.id} as="article" interactive className="overflow-hidden">
                   {offer.image && (
-                    <img
+                    <Image
                       src={offer.image}
                       alt={offer.imageAlt || offer.title}
-                      loading="lazy"
+                      width={720}
+                      height={360}
+                      sizes="(max-width: 767px) 100vw, 50vw"
+                      quality={70}
                       className="h-44 w-full object-cover"
                     />
                   )}
@@ -187,10 +191,13 @@ export default function Services({
               <Card key={service.id} as="article" interactive className="overflow-hidden">
                 <div className="grid h-full sm:grid-cols-[9rem_1fr]">
                   {service.image ? (
-                    <img
+                    <Image
                       src={service.image}
                       alt={service.imageAlt || service.name}
-                      loading="lazy"
+                      width={288}
+                      height={360}
+                      sizes="(max-width: 639px) 100vw, 144px"
+                      quality={68}
                       className="h-52 w-full object-cover sm:h-full"
                     />
                   ) : (
@@ -252,10 +259,13 @@ export default function Services({
               {visiblePackages.map((item) => (
                 <article key={item.id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
                   {item.image && (
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.imageAlt || item.name}
-                      loading="lazy"
+                      width={720}
+                      height={384}
+                      sizes="(max-width: 1023px) 100vw, 50vw"
+                      quality={70}
                       className="h-48 w-full object-cover"
                     />
                   )}

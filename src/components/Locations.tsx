@@ -41,6 +41,7 @@ export default function Locations({
   const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [loadedMaps, setLoadedMaps] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     Promise.all([
@@ -116,14 +117,35 @@ export default function Locations({
             return (
               <Card key={branch.id} as="article" interactive className="overflow-hidden">
                 <div className="relative h-64 bg-stone-100">
-                  <iframe
-                    title={`${branch.name} location map`}
-                    src={embedUrl}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    className="h-full w-full border-0"
-                    allowFullScreen
-                  />
+                  {loadedMaps.has(branch.id) ? (
+                    <iframe
+                      title={`${branch.name} location map`}
+                      src={embedUrl}
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="h-full w-full border-0"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setLoadedMaps((current) => new Set(current).add(branch.id))
+                      }
+                      className="flex h-full w-full flex-col items-center justify-center gap-3 bg-[radial-gradient(circle_at_center,_#f5ecdb,_#e7e5e4)] px-6 text-center transition hover:bg-brand-gold-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-gold"
+                      aria-label={`Load interactive map for ${branch.name}`}
+                    >
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-card">
+                        <MapPin className="h-7 w-7 text-brand-gold-dark" />
+                      </span>
+                      <span className="font-serif text-lg font-semibold text-brand-ink">
+                        View interactive map
+                      </span>
+                      <span className="max-w-sm text-xs leading-5 text-stone-600">
+                        Map content loads only when requested to improve page speed and privacy.
+                      </span>
+                    </button>
+                  )}
                   <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-gold-dark shadow-sm backdrop-blur">
                     <Building2 className="h-3.5 w-3.5" />
                     {branch.city}
@@ -151,7 +173,7 @@ export default function Locations({
                       <a
                         href={`https://wa.me/${whatsappNumber}`}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                       >
                         <MessageCircle className="h-4 w-4" />
@@ -161,7 +183,7 @@ export default function Locations({
                     <a
                       href={directionsUrl}
                       target="_blank"
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-stone-200 px-4 text-xs font-semibold text-stone-700 transition hover:border-brand-gold hover:text-brand-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
                     >
                       <ExternalLink className="h-4 w-4" />
