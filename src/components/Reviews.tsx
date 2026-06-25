@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Star, MessageSquareCode, Check, Send, AlertCircle } from "lucide-react";
 import { Testimonial, Service, Branch } from "../types";
+import EmptyState from "./ui/EmptyState";
+import LoadingSkeleton from "./ui/LoadingSkeleton";
+import SectionHeading from "./ui/SectionHeading";
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Testimonial[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState("");
 
   // Review Form status
   const [submitting, setSubmitting] = useState(false);
@@ -21,8 +26,13 @@ export default function Reviews() {
 
   const refreshReviews = () => {
     fetch("/api/testimonials")
-      .then((res) => res.json())
-      .then((data) => setReviews(data));
+      .then((res) => {
+        if (!res.ok) throw new Error("Reviews unavailable.")
+        return res.json()
+      })
+      .then((data) => setReviews(Array.isArray(data) ? data : []))
+      .catch(() => setReviewsError("Guest reviews could not be loaded."))
+      .finally(() => setReviewsLoading(false));
   };
 
   useEffect(() => {
@@ -85,15 +95,21 @@ export default function Reviews() {
       
       {/* Testimonials Display */}
       <section className="space-y-8 animate-fadeIn">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Guest Feedback</h2>
-          <p className="text-stone-500 text-sm font-light">Verified reviews from our beautiful visitors in Colombo studios.</p>
-        </div>
+        <SectionHeading
+          eyebrow="Client experiences"
+          title="Guest Feedback"
+          description="Approved reviews shared by guests who visited Elora Beauty studios."
+        />
 
-        {reviews.length === 0 ? (
-          <div className="py-12 text-center text-stone-400 font-light border rounded-3xl bg-stone-50/50">
-            No approved reviews found currently. Support with your feedback below!
-          </div>
+        {reviewsLoading ? (
+          <LoadingSkeleton count={3} />
+        ) : reviewsError ? (
+          <EmptyState title="Reviews unavailable" description={reviewsError} />
+        ) : reviews.length === 0 ? (
+          <EmptyState
+            title="No approved reviews yet"
+            description="Approved client experiences will appear here once published."
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((rev) => {
@@ -101,21 +117,21 @@ export default function Reviews() {
               const matchedBranch = branches.find((b) => b.id === rev.branch);
 
               return (
-                <div key={rev.id} className="bg-white rounded-2xl p-6 border border-stone-200/50 shadow-sm flex flex-col justify-between">
+                <article key={rev.id} className="flex flex-col justify-between rounded-3xl border border-brand-gold/10 bg-white p-6 shadow-card">
                   <div className="space-y-3">
                     {/* Stars */}
                     <div className="flex space-x-1">
                       {Array.from({ length: 5 }).map((_, idx) => (
                         <Star 
                           key={idx} 
-                          className={`w-4 h-4 ${idx < rev.rating ? "text-amber-400 fill-amber-450" : "text-stone-250"}`} 
+                          className={`h-4 w-4 ${idx < rev.rating ? "fill-amber-400 text-amber-400" : "text-stone-300"}`}
                           fill={idx < rev.rating ? "currentColor" : "none"}
                         />
                       ))}
                     </div>
 
-                    <p className="text-stone-701 text-xs italic leading-relaxed font-light mt-2">
-                      "{rev.comment}"
+                    <p className="mt-2 text-sm font-light italic leading-7 text-stone-600">
+                      “{rev.comment}”
                     </p>
                   </div>
 
@@ -126,13 +142,20 @@ export default function Reviews() {
                         {rev.submittedAt ? new Date(rev.submittedAt).toLocaleDateString() : ""}
                       </p>
                     </div>
-                    {matchedService && (
-                      <span className="text-[10px] text-[#C5A059] bg-[#C5A059]/10 px-2.5 py-0.5 rounded font-mono uppercase">
-                        {matchedService.name.replace("Professional ", "").replace("Luxury ", "").split(",")[0]}
-                      </span>
-                    )}
+                    <div className="text-right">
+                      {matchedService && (
+                        <span className="block text-[10px] font-semibold uppercase text-brand-gold-dark">
+                          {matchedService.name.replace("Professional ", "").replace("Luxury ", "").split(",")[0]}
+                        </span>
+                      )}
+                      {matchedBranch && (
+                        <span className="mt-1 block text-[9px] text-stone-400">
+                          {matchedBranch.name.replace("Elora Beauty - ", "")}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
@@ -158,7 +181,7 @@ export default function Reviews() {
 
         {errorMsg && (
           <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-xl flex items-start text-sm">
-            <AlertCircle className="w-5 h-5 mr-1.5 shrink-0 text-red-550" />
+            <AlertCircle className="mr-1.5 h-5 w-5 shrink-0 text-red-500" />
             <span className="font-medium">{errorMsg}</span>
           </div>
         )}

@@ -16,9 +16,23 @@ export const certificationType = defineType({
       title: 'Certificate or Logo',
       type: 'image',
       options: {hotspot: true},
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
     }),
     defineField({name: 'isActive', title: 'Show on Website', type: 'boolean', initialValue: true}),
-    defineField({name: 'displayOrder', title: 'Display Order', type: 'number', initialValue: 0}),
+    defineField({
+      name: 'displayOrder',
+      title: 'Display Order',
+      type: 'number',
+      initialValue: 0,
+      validation: (rule) => rule.integer().min(0),
+    }),
   ],
   preview: {select: {title: 'title', subtitle: 'issuer', media: 'image'}},
 })

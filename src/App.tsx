@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { 
-  Facebook, Instagram, MessageCircle, Phone, Scissors, Hand, HeartHandshake, SmilePlus
+  ArrowRight, Check, Facebook, Instagram, MapPin, Scissors, Hand, HeartHandshake, SmilePlus
 } from "lucide-react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -14,7 +15,7 @@ import ManageBookings from "./components/ManageBookings";
 import AdminPanel from "./components/AdminPanel";
 import About from "./components/About";
 import Faq from "./components/Faq";
-import {SiteSettings} from "./types";
+import {Branch, SiteSettings} from "./types";
 
 export default function App() {
   // Routes: "home" | "services" | "artists" | "work" | "locations" | "reviews" | "manage" | "admin" | "book_now"
@@ -23,6 +24,8 @@ export default function App() {
   // Pre-selected parameters for booking flow launcher
   const [preSelectedBranch, setPreSelectedBranch] = useState("");
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState("");
   
   // Contact form state
   const [cName, setCName] = useState("");
@@ -34,9 +37,17 @@ export default function App() {
   const [sendingMsg, setSendingMsg] = useState(false);
 
   useEffect(() => {
-    fetch("/api/site-settings")
-      .then((response) => response.json())
-      .then((data) => setSiteSettings(data || null));
+    Promise.all([
+      fetch("/api/site-settings").then((response) => response.json()),
+      fetch("/api/branches").then((response) => response.json()),
+    ]).then(([settingsData, branchData]) => {
+      setSiteSettings(settingsData || null);
+      setBranches(Array.isArray(branchData) ? branchData : []);
+      const savedBranch = window.localStorage.getItem("elora-preferred-branch") || "";
+      if (savedBranch && branchData.some((branch: Branch) => branch.id === savedBranch)) {
+        setSelectedBranch(savedBranch);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -53,8 +64,17 @@ export default function App() {
     }
   }, [activeTab, siteSettings]);
 
-  const handleOpenBooking = (branchId = "") => {
-    setPreSelectedBranch(branchId);
+  const handleSelectBranch = (branchId: string) => {
+    setSelectedBranch(branchId);
+    if (branchId) {
+      window.localStorage.setItem("elora-preferred-branch", branchId);
+    } else {
+      window.localStorage.removeItem("elora-preferred-branch");
+    }
+  };
+
+  const handleOpenBooking = (branchId = selectedBranch) => {
+    setPreSelectedBranch(branchId || selectedBranch);
     setActiveTab("book_now");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -108,7 +128,10 @@ export default function App() {
       <Navbar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        onOpenBooking={() => handleOpenBooking("")} 
+        onOpenBooking={() => handleOpenBooking()}
+        branches={branches}
+        selectedBranchId={selectedBranch}
+        onSelectBranch={handleSelectBranch}
       />
 
       {/* Main Container */}
@@ -119,88 +142,107 @@ export default function App() {
           <div className="space-y-16 animate-fadeIn">
             
             {/* HERO BANNER SECTION */}
-            <section className="hero-reference relative left-1/2 -mt-8 w-screen -translate-x-1/2 overflow-hidden bg-black">
+            <section className="hero-reference relative left-1/2 -mt-8 w-screen -translate-x-1/2 overflow-hidden">
               <div className="hero-reference-right" aria-hidden="true">
-                <img src="/images/makeup-showcase.jpg" alt="" />
+                <Image
+                  src="/images/makeup-showcase.jpg"
+                  alt=""
+                  fill
+                  priority
+                  sizes="48vw"
+                />
               </div>
 
-              <div className="hero-reference-grid relative z-10 mx-auto grid min-h-[640px] max-w-[1440px] grid-cols-1 items-center px-6 py-10 sm:px-10 lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[0.82fr_1.08fr_0.8fr] lg:px-14 lg:py-8 xl:px-20">
-                <div className="hero-reference-copy relative z-20 mx-auto w-full max-w-md text-center lg:mx-0 lg:text-left">
-                  <div className="mx-auto flex w-fit items-center gap-3 lg:mx-0">
-                    <div className="brand-mark brand-mark-hero">
-                      <span>E</span>
-                    </div>
-                    <div className="text-left leading-none">
-                      <p className="font-serif text-xl font-bold text-white">
-                        Elora <span className="font-sans text-xs uppercase tracking-[0.24em] text-[#C5A059]">Beauty</span>
-                      </p>
-                      <p className="mt-1.5 text-[8px] uppercase tracking-[0.28em] text-stone-400">
-                        {siteSettings?.businessName || "Colombo Premier Salon"}
-                      </p>
-                    </div>
+              <div className="hero-reference-grid relative z-10 mx-auto grid max-w-[1440px] items-center gap-12 px-6 py-16 sm:px-10 lg:min-h-[680px] lg:grid-cols-[0.82fr_1.08fr_0.8fr] lg:px-14 lg:py-14 xl:px-20">
+                <div className="hero-reference-copy mx-auto w-full max-w-xl text-center lg:mx-0 lg:text-left">
+                  <div className="hero-reference-eyebrow mx-auto lg:mx-0">
+                    <span></span>
+                    {siteSettings?.heroEyebrow || "Hair · Makeup · Nails · Skin · Bridal"}
                   </div>
 
-                  <p className="mt-8 text-xs font-semibold uppercase tracking-[0.22em] text-[#C5A059]">
-                    {siteSettings?.heroEyebrow || "Hair · Makeup · Nails · Skin · Bridal"}
-                  </p>
-
-                  <h1 className="mt-4 font-sans text-6xl font-extrabold uppercase leading-[0.86] text-[#C5A059] sm:text-7xl lg:text-[4.8rem] xl:text-[5.1rem]">
+                  <h1 className="mt-7 font-serif text-[3.5rem] font-medium leading-[0.94] tracking-[-0.045em] text-white sm:text-7xl lg:text-[5.35rem]">
                     {heroTitleFirst}
-                    <span className="block">{heroTitleRest.join(" ")}</span>
+                    <span className="block text-[#D3AD63]">{heroTitleRest.join(" ")}</span>
                   </h1>
 
-                  <p className="mt-5 max-w-sm font-serif text-2xl italic leading-tight text-white sm:text-[1.7rem]">
-                    {siteSettings?.heroDescription || "Personal care. Polished results."}
+                  <p className="mx-auto mt-7 max-w-lg text-base font-light leading-7 text-stone-300 lg:mx-0 lg:text-lg">
+                    {siteSettings?.heroDescription ||
+                      "Personalised beauty care, refined by experienced artists and delivered with thoughtful attention to every detail."}
                   </p>
 
-                  <div className="mt-5 flex justify-center gap-3 lg:justify-start">
+                  <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                    <button
+                      onClick={() => handleOpenBooking()}
+                      className="group inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#C5A059] px-7 text-sm font-semibold text-white transition hover:bg-[#AA823B] sm:w-auto cursor-pointer"
+                    >
+                      {siteSettings?.heroButtonLabel || "Book Appointment"}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("services")}
+                      className="inline-flex min-h-12 w-full items-center justify-center border border-white/25 px-7 text-sm font-medium text-white transition hover:border-[#C5A059] hover:text-[#D3AD63] sm:w-auto cursor-pointer"
+                    >
+                      Explore Services
+                    </button>
+                  </div>
+
+                  <div className="mt-10 grid grid-cols-2 gap-4 border-t border-white/10 pt-6 sm:flex sm:gap-8">
                     {[
-                      {label: "Instagram", icon: Instagram},
-                      {label: "Facebook", icon: Facebook},
-                      {label: "Call Elora Beauty", icon: Phone},
-                      {label: "WhatsApp", icon: MessageCircle},
-                    ].map(({label, icon: Icon}) => (
-                      <button
-                        key={label}
-                        type="button"
-                        title={label}
-                        aria-label={label}
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/65 text-white transition hover:border-[#C5A059] hover:bg-[#C5A059] cursor-pointer"
-                      >
-                        <Icon className="h-4 w-4" />
-                      </button>
+                      "Certified beauty artists",
+                      "Studios across Colombo",
+                    ].map((item, index) => (
+                      <div key={item} className="flex items-center justify-center gap-2 text-left lg:justify-start">
+                        {index === 0 ? (
+                          <Check className="h-4 w-4 shrink-0 text-[#D3AD63]" />
+                        ) : (
+                          <MapPin className="h-4 w-4 shrink-0 text-[#D3AD63]" />
+                        )}
+                        <span className="text-xs leading-5 text-stone-400">{item}</span>
+                      </div>
                     ))}
                   </div>
 
-                  <p className="mt-4 text-[10px] uppercase tracking-[0.32em] text-stone-400">
-                    Colombo · Sri Lanka
-                  </p>
-
-                  <div className="hero-reference-line mt-6"></div>
-
-                  <div className="hero-reference-label mt-9">
-                    {siteSettings?.heroServiceLabel || "Premium Salon Services"}
-                  </div>
-
-                  <p className="mt-5 max-w-sm text-sm leading-5 text-stone-400">
-                    {siteSettings?.aboutDescription ||
-                      "Tailored beauty treatments delivered by experienced artists across our studios."}
-                  </p>
-
-                  <button
-                    onClick={() => handleOpenBooking("")}
-                    className="mt-5 min-h-11 border border-[#C5A059] bg-[#C5A059] px-8 text-sm font-bold uppercase tracking-[0.1em] text-white transition hover:border-[#AA823B] hover:bg-[#AA823B] cursor-pointer"
-                  >
-                    {siteSettings?.heroButtonLabel || "Book Appointment"}
-                  </button>
+                  {(siteSettings?.instagramUrl || siteSettings?.facebookUrl) && (
+                    <div className="mt-6 flex items-center justify-center gap-3 lg:justify-start">
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                        Follow Elora
+                      </span>
+                      {siteSettings.instagramUrl && (
+                        <a
+                          href={siteSettings.instagramUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Visit Elora Beauty on Instagram"
+                          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-stone-300 transition hover:border-brand-gold hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                        >
+                          <Instagram className="h-4 w-4" />
+                        </a>
+                      )}
+                      {siteSettings.facebookUrl && (
+                        <a
+                          href={siteSettings.facebookUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Visit Elora Beauty on Facebook"
+                          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-stone-300 transition hover:border-brand-gold hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                        >
+                          <Facebook className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                <div className="hero-reference-center relative z-20 mx-auto mt-14 flex w-full items-center justify-center lg:mt-0">
+                <div className="hero-reference-center relative z-20 mx-auto flex w-full items-center justify-center">
                   <div className="hero-reference-diamond">
                     <div className="hero-reference-diamond-image">
-                      <img
+                      <Image
                         src={siteSettings?.heroImage || "/images/bridal-makeup-hero.png"}
-                        alt="Elora Beauty bridal makeup service"
+                        alt={siteSettings?.heroImageAlt || "Bridal makeup artistry at Elora Beauty"}
+                        fill
+                        priority
+                        sizes="(max-width: 1023px) 68vw, 32vw"
                       />
                     </div>
                   </div>
@@ -237,7 +279,7 @@ export default function App() {
                       <p className="text-stone-400 text-[10px] sm:text-xs mt-1 leading-snug">{item.desc}</p>
                     </div>
                     <button
-                      onClick={() => handleOpenBooking("")}
+                      onClick={() => handleOpenBooking()}
                       className="text-xs text-[#C5A059] font-bold hover:underline text-left mt-4 cursor-pointer"
                     >
                       Book Session →
@@ -256,7 +298,11 @@ export default function App() {
               }}
             />
             <Reviews />
-            <Locations onSelectBranchForBooking={(bid) => handleOpenBooking(bid)} />
+            <Locations
+              selectedBranchId={selectedBranch}
+              onSelectBranch={handleSelectBranch}
+              onSelectBranchForBooking={(bid) => handleOpenBooking(bid)}
+            />
             <Faq />
 
             {/* INTERACTIVE IN-PAGE CONTACT FORM (Saranjah, Section 5) */}
@@ -267,7 +313,7 @@ export default function App() {
               </div>
 
               {cStatus && <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg font-bold">{cStatus}</p>}
-              {cError && <p className="text-xs text-red-700 bg-red-50 border border-red-150 p-2.5 rounded-lg font-bold">{cError}</p>}
+              {cError && <p className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-bold text-red-700">{cError}</p>}
 
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div>
@@ -333,13 +379,16 @@ export default function App() {
 
         {/* VIEW 2: SERVICES SECTION */}
         {activeTab === "services" && (
-          <Services onSelectServiceForBooking={(sid) => handleOpenBooking("")} />
+          <Services
+            selectedBranchId={selectedBranch}
+            onSelectServiceForBooking={() => handleOpenBooking()}
+          />
         )}
 
         {/* VIEW 3: STYLISTS SECTION */}
         {activeTab === "artists" && (
-          <Artists onSelectArtistForBooking={(aid) => {
-            setPreSelectedBranch("");
+          <Artists selectedBranchId={selectedBranch} onSelectArtistForBooking={(aid) => {
+            setPreSelectedBranch(selectedBranch);
             setActiveTab("book_now");
           }} />
         )}
@@ -351,7 +400,11 @@ export default function App() {
 
         {/* VIEW 5: LOCATIONS GUIDES */}
         {activeTab === "locations" && (
-          <Locations onSelectBranchForBooking={(bid) => handleOpenBooking(bid)} />
+          <Locations
+            selectedBranchId={selectedBranch}
+            onSelectBranch={handleSelectBranch}
+            onSelectBranchForBooking={(bid) => handleOpenBooking(bid)}
+          />
         )}
 
         {/* VIEW 6: TESTIMONIALS */}
@@ -384,7 +437,7 @@ export default function App() {
       {/* Footer */}
       <Footer 
         setActiveTab={setActiveTab} 
-        onOpenBooking={() => handleOpenBooking("")} 
+        onOpenBooking={() => handleOpenBooking()}
       />
 
     </div>

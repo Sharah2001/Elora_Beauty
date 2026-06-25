@@ -22,14 +22,34 @@ export const blockedDateType = defineType({
       title: 'Blocked Start Time',
       type: 'string',
       hidden: ({parent}) => parent?.isFullDay !== false,
-      validation: (rule) => rule.regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          if ((context.parent as {isFullDay?: boolean} | undefined)?.isFullDay !== false) return true
+          if (!value) return 'Start time is required for a partial-day block.'
+          return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value))
+            ? true
+            : 'Use 24-hour time in HH:MM format.'
+        }),
     }),
     defineField({
       name: 'blockedEndTime',
       title: 'Blocked End Time',
       type: 'string',
       hidden: ({parent}) => parent?.isFullDay !== false,
-      validation: (rule) => rule.regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const parent = context.parent as
+            | {isFullDay?: boolean; blockedStartTime?: string}
+            | undefined
+          if (parent?.isFullDay !== false) return true
+          if (!value) return 'End time is required for a partial-day block.'
+          if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(value))) {
+            return 'Use 24-hour time in HH:MM format.'
+          }
+          return !parent.blockedStartTime || String(value) > parent.blockedStartTime
+            ? true
+            : 'End time must be later than start time.'
+        }),
     }),
   ],
   preview: {

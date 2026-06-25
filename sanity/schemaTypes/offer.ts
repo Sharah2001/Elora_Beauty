@@ -26,10 +26,27 @@ export const offerType = defineType({
       name: 'discountValue',
       title: 'Discount Value',
       type: 'number',
-      validation: (rule) => rule.required().positive(),
+      validation: (rule) =>
+        rule.required().positive().custom((value, context) => {
+          if (context.parent && (context.parent as {discountType?: string}).discountType === 'percentage' && Number(value) > 100) {
+            return 'Percentage discounts cannot exceed 100%.'
+          }
+          return true
+        }),
     }),
     defineField({name: 'validFrom', title: 'Valid From', type: 'date', validation: (rule) => rule.required()}),
-    defineField({name: 'validUntil', title: 'Valid Until', type: 'date', validation: (rule) => rule.required()}),
+    defineField({
+      name: 'validUntil',
+      title: 'Valid Until',
+      type: 'date',
+      validation: (rule) =>
+        rule.required().custom((value, context) => {
+          const validFrom = (context.parent as {validFrom?: string} | undefined)?.validFrom
+          return !value || !validFrom || value >= validFrom
+            ? true
+            : 'Valid Until must be the same as or later than Valid From.'
+        }),
+    }),
     defineField({
       name: 'applicableServices',
       title: 'Applicable Services',
@@ -42,7 +59,14 @@ export const offerType = defineType({
       title: 'Offer Image',
       type: 'image',
       options: {hotspot: true},
-      fields: [{name: 'alt', title: 'Alternative Text', type: 'string'}],
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
     }),
     defineField({name: 'isActive', title: 'Active', type: 'boolean', initialValue: true}),
   ],

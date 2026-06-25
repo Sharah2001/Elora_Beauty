@@ -8,6 +8,7 @@ export interface Branch {
   whatsapp?: string;
   geo?: { lat: number; lng: number };
   image: string;
+  imageAlt?: string;
   isActive: boolean;
   displayOrder: number;
 }
@@ -41,9 +42,13 @@ export interface Artist {
   name: string;
   slug: string;
   photo: string;
+  photoAlt?: string;
   bio: string;
+  role?: string;
+  experienceYears?: number;
   specialties: string[]; // List of service IDs
   branches: string[]; // List of branch IDs
+  certifications?: Pick<Certification, "id" | "title" | "issuer" | "reference">[];
   isActive: boolean;
   displayOrder: number;
 }
@@ -57,6 +62,7 @@ export interface Service {
   durationMinutes: number;
   basePrice: number;
   image?: string;
+  imageAlt?: string;
   branches: string[]; // availability per branch
   isActive: boolean;
 }
@@ -64,11 +70,14 @@ export interface Service {
 export interface Package {
   id: string;
   name: string;
+  slug?: string;
   includedServices: string[]; // Service IDs
+  branches?: string[];
   totalPrice: number;
   discountNote?: string; // e.g. "Save 15%"
   description: string;
   image?: string;
+  imageAlt?: string;
 }
 
 export interface Offer {
@@ -81,6 +90,7 @@ export interface Offer {
   validUntil: string; // "YYYY-MM-DD"
   applicableServices?: string[]; // Service IDs
   image?: string;
+  imageAlt?: string;
   isActive: boolean;
 }
 
@@ -110,6 +120,7 @@ export interface Certification {
   reference?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   displayOrder: number;
 }
 
@@ -120,7 +131,9 @@ export interface BeforeAfter {
   serviceCategory: string;
   service?: string;
   beforeImage: string;
+  beforeImageAlt?: string;
   afterImage: string;
+  afterImageAlt?: string;
   displayOrder: number;
 }
 
@@ -132,9 +145,11 @@ export interface SiteSettings {
   heroServiceLabel?: string;
   heroButtonLabel?: string;
   heroImage?: string;
+  heroImageAlt?: string;
   aboutTitle?: string;
   aboutDescription?: string;
   aboutImage?: string;
+  aboutImageAlt?: string;
   aboutHighlights?: string[];
   contactEmail?: string;
   instagramUrl?: string;

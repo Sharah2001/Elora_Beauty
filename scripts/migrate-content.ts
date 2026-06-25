@@ -17,6 +17,14 @@ type SanityImage = {
 type MigrationDocument = SanityDocumentStub & {_id: string}
 
 const isDryRun = process.argv.includes('--dry-run')
+const onlyArgument = process.argv.find((argument) => argument.startsWith('--only='))
+const selectedSections = new Set(
+  onlyArgument
+    ?.slice('--only='.length)
+    .split(',')
+    .map((section) => section.trim().toLowerCase())
+    .filter(Boolean) || [],
+)
 const sourcePath = path.join(process.cwd(), 'db-store.json')
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
@@ -52,6 +60,10 @@ const migrationCounts = {
   created: 0,
   skipped: 0,
   failed: 0,
+}
+
+function shouldMigrate(section: string): boolean {
+  return selectedSections.size === 0 || selectedSections.has(section.toLowerCase())
 }
 
 // Old data uses a few broad service labels that do not match the service IDs.
@@ -368,8 +380,13 @@ async function migrateArtists() {
       slug: slug(item.slug, name),
       photo: await imageValue(item.photo, name, `artist "${name}"`),
       bio: stringValue(item.bio),
+      role: stringValue(item.role, 'Beauty Artist'),
+      experienceYears: numberValue(item.experienceYears),
       specialties: serviceReferences(item.specialties, `artist "${name}"`),
       branches: branchReferences(item.branches, `artist "${name}"`),
+      certifications: stringArray(item.certifications).map((certificationId, certificationIndex) =>
+        keyedReference('certification', certificationId, certificationIndex),
+      ),
       isActive: booleanValue(item.isActive, true),
       displayOrder: numberValue(item.displayOrder, index),
     })
@@ -622,20 +639,23 @@ async function run() {
   console.log(`Project: ${projectId}`)
   console.log(`Dataset: ${dataset}`)
   console.log(`Source: ${sourcePath}`)
+  if (selectedSections.size > 0) {
+    console.log(`Sections: ${[...selectedSections].join(', ')}`)
+  }
 
-  await migrateBranches()
-  await migrateServices()
-  await migrateArtists()
-  await migrateWorkingHours()
-  await migrateBlockedDates()
-  await migratePackages()
-  await migrateOffers()
-  await migrateFaqs()
-  await migrateGalleryItems()
-  await migrateBeforeAfter()
-  await migrateCertifications()
-  await migrateApprovedTestimonials()
-  await migrateSiteSettings()
+  if (shouldMigrate('branches')) await migrateBranches()
+  if (shouldMigrate('services')) await migrateServices()
+  if (shouldMigrate('certifications')) await migrateCertifications()
+  if (shouldMigrate('artists')) await migrateArtists()
+  if (shouldMigrate('working-hours')) await migrateWorkingHours()
+  if (shouldMigrate('blocked-dates')) await migrateBlockedDates()
+  if (shouldMigrate('packages')) await migratePackages()
+  if (shouldMigrate('offers')) await migrateOffers()
+  if (shouldMigrate('faqs')) await migrateFaqs()
+  if (shouldMigrate('gallery')) await migrateGalleryItems()
+  if (shouldMigrate('before-after')) await migrateBeforeAfter()
+  if (shouldMigrate('testimonials')) await migrateApprovedTestimonials()
+  if (shouldMigrate('site-settings')) await migrateSiteSettings()
 
   console.log('\nMigration summary')
   console.log(`  ${isDryRun ? 'Validated' : 'Migrated'}: ${migrationCounts.created}`)

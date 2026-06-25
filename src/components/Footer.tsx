@@ -51,13 +51,13 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
                 "Premium hair, makeup, nails, skin, and bridal care across our Colombo-area studios."}
             </p>
             <div className="flex space-x-4 pt-2">
-              <a href={settings?.instagramUrl || "https://instagram.com"} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-850 flex items-center justify-center hover:bg-[#C5A059] hover:text-[#1A1A1A] transition-colors cursor-pointer text-stone-400">
+              <a href={settings?.instagramUrl || "https://instagram.com"} target="_blank" rel="noreferrer" aria-label="Elora Beauty on Instagram" className="flex h-9 w-9 items-center justify-center rounded-full bg-stone-900 text-stone-400 transition-colors hover:bg-brand-gold hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href={settings?.facebookUrl || "https://facebook.com"} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-850 flex items-center justify-center hover:bg-[#C5A059] hover:text-[#1A1A1A] transition-colors cursor-pointer text-stone-400">
+              <a href={settings?.facebookUrl || "https://facebook.com"} target="_blank" rel="noreferrer" aria-label="Elora Beauty on Facebook" className="flex h-9 w-9 items-center justify-center rounded-full bg-stone-900 text-stone-400 transition-colors hover:bg-brand-gold hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold">
                 <Heart className="w-4 h-4" />
               </a>
-              <a href={settings?.googleBusinessUrl || "https://google.com"} target="_blank" rel="noreferrer" className="w-9 h-9 rounded-full bg-stone-850 flex items-center justify-center hover:bg-[#C5A059] hover:text-[#1A1A1A] transition-colors cursor-pointer text-stone-400">
+              <a href={settings?.googleBusinessUrl || "https://google.com"} target="_blank" rel="noreferrer" aria-label="Elora Beauty Google business profile" className="flex h-9 w-9 items-center justify-center rounded-full bg-stone-900 text-stone-400 transition-colors hover:bg-brand-gold hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold">
                 <Globe className="w-4 h-4" />
               </a>
             </div>
@@ -102,7 +102,9 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
               <div className="flex items-start space-x-3">
                 <MapPin className="w-4 h-4 mt-0.5 text-[#C5A059] shrink-0" />
                 <div>
-                  <h4 className="text-xs font-semibold text-stone-200">{branches.length || 6} Elora Beauty studios</h4>
+                  <h4 className="text-xs font-semibold text-stone-200">
+                    {branches.length ? `${branches.length} Elora Beauty ${branches.length === 1 ? "studio" : "studios"}` : "Elora Beauty studios"}
+                  </h4>
                   <p>{branches.map((branch) => branch.city).join(", ") || "Colombo and nearby areas"}</p>
                 </div>
               </div>

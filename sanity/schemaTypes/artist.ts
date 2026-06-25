@@ -25,7 +25,15 @@ export const artistType = defineType({
       title: 'Photo',
       type: 'image',
       options: {hotspot: true},
-      fields: [{name: 'alt', title: 'Alternative Text', type: 'string'}],
+      validation: (rule) => rule.required(),
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
     }),
     defineField({
       name: 'bio',
@@ -33,6 +41,19 @@ export const artistType = defineType({
       type: 'text',
       rows: 4,
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'role',
+      title: 'Professional Role',
+      description: 'For example: Senior Hair Stylist or Bridal Makeup Artist.',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'experienceYears',
+      title: 'Years of Experience',
+      type: 'number',
+      validation: (rule) => rule.required().integer().min(0).max(60),
     }),
     defineField({
       name: 'specialties',
@@ -48,6 +69,13 @@ export const artistType = defineType({
       of: [{type: 'reference', to: [{type: 'branch'}]}],
       validation: (rule) => rule.required().min(1),
     }),
+    defineField({
+      name: 'certifications',
+      title: 'Certifications & Qualifications',
+      type: 'array',
+      of: [{type: 'reference', to: [{type: 'certification'}]}],
+      validation: (rule) => rule.required().min(1).unique(),
+    }),
     defineField({name: 'isActive', title: 'Active', type: 'boolean', initialValue: true}),
     defineField({
       name: 'displayOrder',
@@ -61,9 +89,13 @@ export const artistType = defineType({
     {title: 'Display order', name: 'displayOrderAsc', by: [{field: 'displayOrder', direction: 'asc'}]},
   ],
   preview: {
-    select: {title: 'name', media: 'photo', active: 'isActive'},
-    prepare({title, media, active}) {
-      return {title, subtitle: active ? 'Active artist' : 'Inactive artist', media}
+    select: {title: 'name', role: 'role', media: 'photo', active: 'isActive'},
+    prepare({title, role, media, active}) {
+      return {
+        title,
+        subtitle: `${role || 'Beauty Artist'} · ${active ? 'Active' : 'Inactive'}`,
+        media,
+      }
     },
   },
 })
