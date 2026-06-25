@@ -5,23 +5,22 @@ import {Branch, SiteSettings, WorkingHours} from "../types";
 interface FooterProps {
   setActiveTab: (tab: string) => void;
   onOpenBooking: () => void;
+  branches?: Branch[];
+  settings?: SiteSettings | null;
 }
 
-export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
-  const [branches, setBranches] = useState<Branch[]>([]);
+export default function Footer({
+  setActiveTab,
+  onOpenBooking,
+  branches = [],
+  settings = null,
+}: FooterProps) {
   const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/branches").then((response) => response.json()),
-      fetch("/api/working-hours").then((response) => response.json()),
-      fetch("/api/site-settings").then((response) => response.json()),
-    ]).then(([branchData, hoursData, settingsData]) => {
-      setBranches(Array.isArray(branchData) ? branchData : []);
-      setWorkingHours(Array.isArray(hoursData) ? hoursData : []);
-      setSettings(settingsData || null);
-    });
+    fetch("/api/working-hours")
+      .then((response) => response.json())
+      .then((hoursData) => setWorkingHours(Array.isArray(hoursData) ? hoursData : []));
   }, []);
 
   const firstSchedule = workingHours[0]?.schedule ?? [];
@@ -144,7 +143,7 @@ export default function Footer({ setActiveTab, onOpenBooking }: FooterProps) {
         </div>
 
         {/* Divider & Copyright */}
-        <div className="border-t border-stone-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-500">
+        <div className="border-t border-stone-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-300">
           <p>© 2026 Elora Beauty Parlour (Colombo, Sri Lanka). All rights reserved.</p>
           <div className="flex items-center space-x-4 mt-4 sm:mt-0">
             <button onClick={() => setActiveTab("admin")} className="hover:text-[#C5A059] transition cursor-pointer flex items-center space-x-1">

@@ -1,30 +1,42 @@
-import React, { useState, useEffect } from "react";
+"use client";
+
+import React, {Suspense, lazy, useState, useEffect} from "react";
 import Image from "next/image";
 import { 
   ArrowRight, Check, Facebook, Instagram, MapPin, Scissors, Hand, HeartHandshake, SmilePlus
 } from "lucide-react";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import BookingWizard from "./components/BookingWizard";
-import Services from "./components/Services";
-import Artists from "./components/Artists";
-import Gallery from "./components/Gallery";
-import Locations from "./components/Locations";
-import Reviews from "./components/Reviews";
-import ManageBookings from "./components/ManageBookings";
-import AdminPanel from "./components/AdminPanel";
 import About from "./components/About";
-import Faq from "./components/Faq";
+import DeferredSection from "./components/ui/DeferredSection";
+import LoadingSkeleton from "./components/ui/LoadingSkeleton";
 import {Branch, SiteSettings} from "./types";
 
-export default function App() {
+const BookingWizard = lazy(() => import("./components/BookingWizard"));
+const Services = lazy(() => import("./components/Services"));
+const Artists = lazy(() => import("./components/Artists"));
+const Gallery = lazy(() => import("./components/Gallery"));
+const Locations = lazy(() => import("./components/Locations"));
+const Reviews = lazy(() => import("./components/Reviews"));
+const ManageBookings = lazy(() => import("./components/ManageBookings"));
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
+const Faq = lazy(() => import("./components/Faq"));
+const Footer = lazy(() => import("./components/Footer"));
+
+interface AppProps {
+  initialSiteSettings?: SiteSettings | null;
+  initialBranches?: Branch[];
+}
+
+export default function App({
+  initialSiteSettings = null,
+  initialBranches = [],
+}: AppProps) {
   // Routes: "home" | "services" | "artists" | "work" | "locations" | "reviews" | "manage" | "admin" | "book_now"
   const [activeTab, setActiveTab] = useState<string>("home");
 
   // Pre-selected parameters for booking flow launcher
-  const [preSelectedBranch, setPreSelectedBranch] = useState("");
-  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
-  const [branches, setBranches] = useState<Branch[]>([]);
+  const [siteSettings] = useState<SiteSettings | null>(initialSiteSettings);
+  const [branches] = useState<Branch[]>(initialBranches);
   const [selectedBranch, setSelectedBranch] = useState("");
   
   // Contact form state
@@ -37,18 +49,11 @@ export default function App() {
   const [sendingMsg, setSendingMsg] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/site-settings").then((response) => response.json()),
-      fetch("/api/branches").then((response) => response.json()),
-    ]).then(([settingsData, branchData]) => {
-      setSiteSettings(settingsData || null);
-      setBranches(Array.isArray(branchData) ? branchData : []);
-      const savedBranch = window.localStorage.getItem("elora-preferred-branch") || "";
-      if (savedBranch && branchData.some((branch: Branch) => branch.id === savedBranch)) {
-        setSelectedBranch(savedBranch);
-      }
-    });
-  }, []);
+    const savedBranch = window.localStorage.getItem("elora-preferred-branch") || "";
+    if (savedBranch && branches.some((branch) => branch.id === savedBranch)) {
+      setSelectedBranch(savedBranch);
+    }
+  }, [branches]);
 
   useEffect(() => {
     document.title =
@@ -73,8 +78,7 @@ export default function App() {
     }
   };
 
-  const handleOpenBooking = (branchId = selectedBranch) => {
-    setPreSelectedBranch(branchId || selectedBranch);
+  const handleOpenBooking = () => {
     setActiveTab("book_now");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -148,7 +152,7 @@ export default function App() {
                   src="/images/makeup-showcase.jpg"
                   alt=""
                   fill
-                  priority
+                  quality={60}
                   sizes="48vw"
                 />
               </div>
@@ -173,7 +177,7 @@ export default function App() {
                   <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
                     <button
                       onClick={() => handleOpenBooking()}
-                      className="group inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#C5A059] px-7 text-sm font-semibold text-white transition hover:bg-[#AA823B] sm:w-auto cursor-pointer"
+                      className="group inline-flex min-h-12 w-full items-center justify-center gap-2 bg-brand-gold-dark px-7 text-sm font-semibold text-white transition hover:bg-[#76511c] sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                     >
                       {siteSettings?.heroButtonLabel || "Book Appointment"}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -242,6 +246,8 @@ export default function App() {
                         alt={siteSettings?.heroImageAlt || "Bridal makeup artistry at Elora Beauty"}
                         fill
                         priority
+                        fetchPriority="high"
+                        quality={72}
                         sizes="(max-width: 1023px) 68vw, 32vw"
                       />
                     </div>
@@ -257,10 +263,10 @@ export default function App() {
             <About settings={siteSettings} />
 
             {/* QUICK FEATURES BENTO (Looklike UI Image 1 category cards) */}
-            <section className="space-y-6">
+            <section className="content-auto space-y-6">
               <div className="text-center max-w-lg mx-auto space-y-1">
                 <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] tracking-tight">Our Specialized Treatments</h2>
-                <p className="text-stone-500 text-xs font-light">Elora Beauty provides high-end skin care and styling using certified organic international products.</p>
+                <p className="text-xs font-normal text-stone-600">Elora Beauty provides high-end skin care and styling using certified organic international products.</p>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -272,15 +278,15 @@ export default function App() {
                 ].map((item, idx) => (
                   <div key={idx} className="bg-white p-5 rounded-3xl border border-[#C5A059]/10 shadow-sm flex flex-col justify-between hover:border-[#C5A059]/40 transition group">
                     <div>
-                      <div className="p-3 rounded-2xl bg-[#C5A059]/10 text-[#C5A059] w-fit group-hover:bg-[#C5A059] group-hover:text-white transition duration-300">
+                      <div className="w-fit rounded-2xl bg-brand-gold-soft p-3 text-brand-gold-dark transition duration-300 group-hover:bg-brand-gold-dark group-hover:text-white">
                         <item.icon className="w-5 h-5" />
                       </div>
                       <h3 className="font-serif font-bold text-sm text-[#1A1A1A] mt-4 leading-tight">{item.title}</h3>
-                      <p className="text-stone-400 text-[10px] sm:text-xs mt-1 leading-snug">{item.desc}</p>
+                      <p className="mt-1 text-[10px] leading-snug text-stone-600 sm:text-xs">{item.desc}</p>
                     </div>
                     <button
                       onClick={() => handleOpenBooking()}
-                      className="text-xs text-[#C5A059] font-bold hover:underline text-left mt-4 cursor-pointer"
+                      className="mt-4 text-left text-xs font-bold text-brand-gold-dark hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark"
                     >
                       Book Session →
                     </button>
@@ -290,20 +296,36 @@ export default function App() {
             </section>
 
             {/* GALLERY, REVIEWS AND LOCATIONS */}
-            <Gallery
-              preview
-              onViewMore={() => {
-                setActiveTab("work");
-                window.scrollTo({top: 0, behavior: "smooth"});
-              }}
-            />
-            <Reviews />
-            <Locations
-              selectedBranchId={selectedBranch}
-              onSelectBranch={handleSelectBranch}
-              onSelectBranchForBooking={(bid) => handleOpenBooking(bid)}
-            />
-            <Faq />
+            <DeferredSection fallback={<LoadingSkeleton count={3} />}>
+              <Suspense fallback={<LoadingSkeleton count={3} />}>
+                <Gallery
+                  preview
+                  onViewMore={() => {
+                    setActiveTab("work");
+                    window.scrollTo({top: 0, behavior: "smooth"});
+                  }}
+                />
+              </Suspense>
+            </DeferredSection>
+            <DeferredSection fallback={<LoadingSkeleton count={3} />}>
+              <Suspense fallback={<LoadingSkeleton count={3} />}>
+                <Reviews showForm={false} />
+              </Suspense>
+            </DeferredSection>
+            <DeferredSection fallback={<LoadingSkeleton count={2} className="lg:grid-cols-2" />}>
+              <Suspense fallback={<LoadingSkeleton count={2} className="lg:grid-cols-2" />}>
+                <Locations
+                  selectedBranchId={selectedBranch}
+                  onSelectBranch={handleSelectBranch}
+                  onSelectBranchForBooking={() => handleOpenBooking()}
+                />
+              </Suspense>
+            </DeferredSection>
+            <DeferredSection fallback={<LoadingSkeleton count={3} className="grid-cols-1" />}>
+              <Suspense fallback={<LoadingSkeleton count={3} className="grid-cols-1" />}>
+                <Faq />
+              </Suspense>
+            </DeferredSection>
 
             {/* INTERACTIVE IN-PAGE CONTACT FORM (Saranjah, Section 5) */}
             <section className="bg-gradient-to-r from-stone-50 to-amber-50/10 border border-[#C5A059]/15 rounded-2xl p-6 md:p-8 max-w-xl mx-auto space-y-4 shadow-sm">
@@ -312,13 +334,16 @@ export default function App() {
                 <p className="text-stone-500 text-xs font-light">Have custom styling inquiries? Send us a direct inbox inquiry.</p>
               </div>
 
-              {cStatus && <p className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg font-bold">{cStatus}</p>}
-              {cError && <p className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-bold text-red-700">{cError}</p>}
+              {cStatus && <p role="status" aria-live="polite" className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg font-bold">{cStatus}</p>}
+              {cError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-bold text-red-700">{cError}</p>}
 
               <form onSubmit={handleContactSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Your Full Name *</label>
+                  <label htmlFor="contact-name" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Your Full Name *</label>
                   <input
+                    id="contact-name"
+                    name="name"
+                    autoComplete="name"
                     type="text"
                     required
                     value={cName}
@@ -330,9 +355,13 @@ export default function App() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Phone Number *</label>
+                    <label htmlFor="contact-phone" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Phone Number *</label>
                     <input
-                      type="text"
+                      id="contact-phone"
+                      name="phone"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
                       required
                       value={cPhone}
                       onChange={(e) => setCPhone(e.target.value)}
@@ -341,9 +370,12 @@ export default function App() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Email Address</label>
+                    <label htmlFor="contact-email" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Email Address</label>
                     <input
+                      id="contact-email"
+                      name="email"
                       type="email"
+                      autoComplete="email"
                       value={cEmail}
                       onChange={(e) => setCEmail(e.target.value)}
                       className="w-full p-2.5 rounded-lg border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-xs"
@@ -353,8 +385,10 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Message Detail *</label>
+                  <label htmlFor="contact-message" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Message Detail *</label>
                   <textarea
+                    id="contact-message"
+                    name="message"
                     required
                     value={cMessage}
                     onChange={(e) => setCMessage(e.target.value)}
@@ -379,66 +413,86 @@ export default function App() {
 
         {/* VIEW 2: SERVICES SECTION */}
         {activeTab === "services" && (
-          <Services
-            selectedBranchId={selectedBranch}
-            onSelectServiceForBooking={() => handleOpenBooking()}
-          />
+          <Suspense fallback={<LoadingSkeleton count={6} />}>
+            <Services
+              selectedBranchId={selectedBranch}
+              onSelectServiceForBooking={() => handleOpenBooking()}
+            />
+          </Suspense>
         )}
 
         {/* VIEW 3: STYLISTS SECTION */}
         {activeTab === "artists" && (
-          <Artists selectedBranchId={selectedBranch} onSelectArtistForBooking={(aid) => {
-            setPreSelectedBranch(selectedBranch);
-            setActiveTab("book_now");
-          }} />
+          <Suspense fallback={<LoadingSkeleton count={6} />}>
+            <Artists selectedBranchId={selectedBranch} onSelectArtistForBooking={() => {
+              setActiveTab("book_now");
+            }} />
+          </Suspense>
         )}
 
         {/* VIEW 4: PORTFOLIO / PREVIOUS WORK */}
         {activeTab === "work" && (
-          <Gallery />
+          <Suspense fallback={<LoadingSkeleton count={9} />}>
+            <Gallery />
+          </Suspense>
         )}
 
         {/* VIEW 5: LOCATIONS GUIDES */}
         {activeTab === "locations" && (
-          <Locations
-            selectedBranchId={selectedBranch}
-            onSelectBranch={handleSelectBranch}
-            onSelectBranchForBooking={(bid) => handleOpenBooking(bid)}
-          />
+          <Suspense fallback={<LoadingSkeleton count={2} className="lg:grid-cols-2" />}>
+            <Locations
+              selectedBranchId={selectedBranch}
+              onSelectBranch={handleSelectBranch}
+              onSelectBranchForBooking={() => handleOpenBooking()}
+            />
+          </Suspense>
         )}
 
         {/* VIEW 6: TESTIMONIALS */}
         {activeTab === "reviews" && (
-          <Reviews />
+          <Suspense fallback={<LoadingSkeleton count={3} />}>
+            <Reviews />
+          </Suspense>
         )}
 
         {/* VIEW 7: SELF-SERVICE MANAGEMENT LOOKUP */}
         {activeTab === "manage" && (
-          <ManageBookings />
+          <Suspense fallback={<LoadingSkeleton count={2} />}>
+            <ManageBookings />
+          </Suspense>
         )}
 
         {/* VIEW 8: BOOK NOMINATION FLOW WIZARD */}
         {activeTab === "book_now" && (
-          <BookingWizard 
-            initialBranchId={preSelectedBranch} 
-            onSuccess={(ref, pin) => {
-              // Successfully booked
-            }} 
-          />
+          <Suspense fallback={<LoadingSkeleton count={2} />}>
+            <BookingWizard />
+          </Suspense>
         )}
 
         {/* VIEW 9: STAFF ADMIN DOCK */}
         {activeTab === "admin" && (
-          <AdminPanel />
+          <Suspense fallback={<LoadingSkeleton count={3} />}>
+            <AdminPanel />
+          </Suspense>
         )}
 
       </main>
 
       {/* Footer */}
-      <Footer 
-        setActiveTab={setActiveTab} 
-        onOpenBooking={() => handleOpenBooking()}
-      />
+      <DeferredSection
+        rootMargin="300px"
+        minHeight={360}
+        fallback={<div className="min-h-[360px] bg-brand-ink" aria-hidden="true" />}
+      >
+        <Suspense fallback={<div className="min-h-[360px] bg-brand-ink" aria-hidden="true" />}>
+          <Footer
+            setActiveTab={setActiveTab}
+            onOpenBooking={() => handleOpenBooking()}
+            branches={branches}
+            settings={siteSettings}
+          />
+        </Suspense>
+      </DeferredSection>
 
     </div>
   );

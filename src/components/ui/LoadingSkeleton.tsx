@@ -5,7 +5,8 @@ interface LoadingSkeletonProps {
 
 export default function LoadingSkeleton({count = 3, className = ""}: LoadingSkeletonProps) {
   return (
-    <div className={`grid gap-6 md:grid-cols-2 lg:grid-cols-3 ${className}`} aria-label="Loading content">
+    <div className={`grid gap-6 md:grid-cols-2 lg:grid-cols-3 ${className}`} role="status" aria-live="polite">
+      <span className="sr-only">Loading content</span>
       {Array.from({length: count}).map((_, index) => (
         <div
           key={index}

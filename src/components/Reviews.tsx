@@ -5,7 +5,11 @@ import EmptyState from "./ui/EmptyState";
 import LoadingSkeleton from "./ui/LoadingSkeleton";
 import SectionHeading from "./ui/SectionHeading";
 
-export default function Reviews() {
+interface ReviewsProps {
+  showForm?: boolean;
+}
+
+export default function Reviews({showForm = true}: ReviewsProps) {
   const [reviews, setReviews] = useState<Testimonial[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -38,14 +42,16 @@ export default function Reviews() {
   useEffect(() => {
     refreshReviews();
 
-    fetch("/api/services")
-      .then((res) => res.json())
-      .then((data) => setServices(data));
+    if (showForm) {
+      fetch("/api/services")
+        .then((res) => res.json())
+        .then((data) => setServices(data));
 
-    fetch("/api/branches")
-      .then((res) => res.json())
-      .then((data) => setBranches(data));
-  }, []);
+      fetch("/api/branches")
+        .then((res) => res.json())
+        .then((data) => setBranches(data));
+    }
+  }, [showForm]);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,9 +169,9 @@ export default function Reviews() {
       </section>
 
       {/* Review Submission Form (Uses Testimonial schema with false approval, Section 3.2) */}
-      <section className="bg-[#FAF8F5] border border-[#C5A059]/20 rounded-3xl p-6 md:p-10 max-w-2xl mx-auto space-y-6 shadow-md">
+      {showForm && <section className="bg-[#FAF8F5] border border-[#C5A059]/20 rounded-3xl p-6 md:p-10 max-w-2xl mx-auto space-y-6 shadow-md">
         <div className="space-y-1 text-center">
-          <span className="inline-flex items-center text-[10px] font-mono tracking-wider uppercase text-[#C5A059] font-bold">
+          <span className="inline-flex items-center text-[10px] font-mono tracking-wider uppercase text-brand-gold-dark font-bold">
             <MessageSquareCode className="w-3 h-3 mr-1 inline" /> Share your experience
           </span>
           <h3 className="font-serif text-2xl font-bold text-stone-900">Write Elora Review</h3>
@@ -173,14 +179,14 @@ export default function Reviews() {
         </div>
 
         {successMsg && (
-          <div className="p-4 bg-emerald-50 border-l-4 border-emerald-600 text-emerald-700 rounded-r-xl flex items-start text-sm">
+          <div role="status" aria-live="polite" className="p-4 bg-emerald-50 border-l-4 border-emerald-600 text-emerald-700 rounded-r-xl flex items-start text-sm">
             <Check className="w-5 h-5 mr-2 shrink-0 text-emerald-600" />
             <span className="font-medium">{successMsg}</span>
           </div>
         )}
 
         {errorMsg && (
-          <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-xl flex items-start text-sm">
+          <div role="alert" className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-xl flex items-start text-sm">
             <AlertCircle className="mr-1.5 h-5 w-5 shrink-0 text-red-500" />
             <span className="font-medium">{errorMsg}</span>
           </div>
@@ -189,9 +195,12 @@ export default function Reviews() {
         <form onSubmit={handleSubmitReview} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1">Your Name *</label>
+              <label htmlFor="review-name" className="block text-xs font-semibold text-stone-700 mb-1">Your Name *</label>
               <input
+                id="review-name"
+                name="customerName"
                 type="text"
+                autoComplete="name"
                 required
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
@@ -200,8 +209,10 @@ export default function Reviews() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1">Studio Visited</label>
+              <label htmlFor="review-branch" className="block text-xs font-semibold text-stone-700 mb-1">Studio Visited</label>
               <select
+                id="review-branch"
+                name="branch"
                 value={selectedBranch}
                 onChange={(e) => setSelectedBranch(e.target.value)}
                 className="w-full p-3 rounded-xl border border-stone-300 bg-white text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/45"
@@ -216,8 +227,10 @@ export default function Reviews() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1">Treatment Received</label>
+              <label htmlFor="review-service" className="block text-xs font-semibold text-stone-700 mb-1">Treatment Received</label>
               <select
+                id="review-service"
+                name="service"
                 value={selectedService}
                 onChange={(e) => setSelectedService(e.target.value)}
                 className="w-full p-3 rounded-xl border border-stone-300 bg-white text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/45"
@@ -230,15 +243,18 @@ export default function Reviews() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1">Satisfactory Rating</label>
-              <div className="flex items-center space-x-1.5 h-11 bg-white border border-stone-300 rounded-xl px-3 justify-center">
+              <span id="review-rating-label" className="block text-xs font-semibold text-stone-700 mb-1">Satisfactory Rating</span>
+              <div role="radiogroup" aria-labelledby="review-rating-label" className="flex items-center space-x-1.5 h-11 bg-white border border-stone-300 rounded-xl px-3 justify-center">
                 {[1, 2, 3, 4, 5].map((starVal) => {
                   return (
                     <button
                       key={starVal}
                       type="button"
                       onClick={() => setRating(starVal)}
-                      className="p-1 cursor-pointer transition transform hover:scale-125 focus:outline-none"
+                      role="radio"
+                      aria-checked={rating === starVal}
+                      aria-label={`${starVal} star${starVal > 1 ? "s" : ""}`}
+                      className="rounded p-1 cursor-pointer transition transform hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark"
                     >
                       <Star 
                         className={`w-5 h-5 ${starVal <= rating ? "text-amber-400 fill-amber-400" : "text-stone-300"}`} 
@@ -251,8 +267,10 @@ export default function Reviews() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-stone-700 mb-1">Review Details *</label>
+            <label htmlFor="review-comment" className="block text-xs font-semibold text-stone-700 mb-1">Review Details *</label>
             <textarea
+              id="review-comment"
+              name="comment"
               required
               rows={4}
               value={comment}
@@ -265,13 +283,13 @@ export default function Reviews() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3.5 bg-[#1A1A1A] hover:bg-[#C5A059] text-white font-semibold text-sm rounded-xl tracking-wide transition flex items-center justify-center space-x-2 disabled:opacity-50 transition-colors cursor-pointer"
+            className="flex w-full items-center justify-center space-x-2 rounded-xl bg-brand-ink py-3.5 text-sm font-semibold tracking-wide text-white transition-colors hover:bg-brand-gold-dark disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark"
           >
             <Send className="w-4 h-4" />
             <span>{submitting ? "Submitting Review..." : "Pin Review For Approving"}</span>
           </button>
         </form>
-      </section>
+      </section>}
 
     </div>
   );

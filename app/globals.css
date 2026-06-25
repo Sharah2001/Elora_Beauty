@@ -5,7 +5,7 @@
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-playfair), Georgia, serif;
   --color-brand-gold: #c5a059;
-  --color-brand-gold-dark: #9b7535;
+  --color-brand-gold-dark: #8a6428;
   --color-brand-gold-soft: #f5ecdb;
   --color-brand-ink: #1a1a1a;
   --color-brand-surface: #faf6f4;
@@ -20,6 +20,12 @@ html {
 
 body {
   background: var(--color-brand-surface);
+  color: var(--color-brand-ink);
+}
+
+.content-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 button,

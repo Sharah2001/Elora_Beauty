@@ -1,4 +1,5 @@
 import {useEffect, useMemo, useState} from "react";
+import Image from "next/image";
 import {ArrowRight, Images, X} from "lucide-react";
 import BeforeAfter from "./BeforeAfter";
 import Button from "./ui/Button";
@@ -116,11 +117,13 @@ export default function Gallery({preview = false, onViewMore}: GalleryProps) {
               }`}
               aria-label={`View ${item.title}`}
             >
-              <img
+              <Image
                 src={item.image}
                 alt={item.imageAlt || item.title}
-                loading="lazy"
-                className="h-full min-h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                fill
+                sizes="(max-width: 767px) 50vw, 33vw"
+                quality={68}
+                className="object-cover transition duration-500 group-hover:scale-105"
               />
               <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90 transition group-hover:opacity-100" />
               <span className="absolute inset-x-0 bottom-0 p-4">
@@ -174,9 +177,13 @@ export default function Gallery({preview = false, onViewMore}: GalleryProps) {
             className="max-h-[90vh] max-w-5xl overflow-hidden rounded-2xl bg-brand-ink"
             onClick={(event) => event.stopPropagation()}
           >
-            <img
+            <Image
               src={selectedItem.image}
               alt={selectedItem.imageAlt || selectedItem.title}
+              width={1200}
+              height={900}
+              sizes="90vw"
+              quality={78}
               className="max-h-[76vh] w-full object-contain"
             />
             <figcaption className="p-5 text-white">
