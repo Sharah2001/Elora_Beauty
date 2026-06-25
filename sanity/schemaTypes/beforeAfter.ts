@@ -31,6 +31,7 @@ export const beforeAfterType = defineType({
           'Nails',
           'Skin',
           'Bridal',
+          'Threading',
           'Waxing',
           'Body & Spa',
         ],

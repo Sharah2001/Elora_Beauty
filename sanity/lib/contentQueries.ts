@@ -13,6 +13,7 @@ const branchProjection = groq`
     lng
   },
   "image": image.asset->url,
+  "imageAlt": image.alt,
   isActive,
   displayOrder
 `
@@ -26,6 +27,7 @@ const serviceProjection = groq`
   durationMinutes,
   basePrice,
   "image": image.asset->url,
+  "imageAlt": image.alt,
   "branches": branches[]->sourceId,
   isActive,
   displayOrder
@@ -49,9 +51,18 @@ export const artistsQuery = groq`
     name,
     "slug": slug.current,
     "photo": photo.asset->url,
+    "photoAlt": photo.alt,
     bio,
+    role,
+    experienceYears,
     "specialties": specialties[]->sourceId,
     "branches": branches[]->sourceId,
+    "certifications": certifications[]->{
+      "id": sourceId,
+      title,
+      issuer,
+      reference
+    },
     isActive,
     displayOrder
   }
@@ -61,11 +72,14 @@ export const packagesQuery = groq`
   *[_type == "package" && isActive == true] | order(displayOrder asc, name asc) {
     "id": sourceId,
     name,
+    "slug": slug.current,
     "includedServices": includedServices[]->sourceId,
+    "branches": branches[]->sourceId,
     totalPrice,
     discountNote,
     description,
     "image": image.asset->url,
+    "imageAlt": image.alt,
     isActive,
     displayOrder
   }
@@ -87,6 +101,7 @@ export const offersQuery = groq`
     validUntil,
     "applicableServices": applicableServices[]->sourceId,
     "image": image.asset->url,
+    "imageAlt": image.alt,
     isActive
   }
 `
@@ -107,6 +122,7 @@ export const galleryItemsQuery = groq`
     title,
     category,
     "image": image.asset->url,
+    "imageAlt": image.alt,
     description,
     "createdAt": _createdAt,
     displayOrder
@@ -121,7 +137,9 @@ export const beforeAfterQuery = groq`
     serviceCategory,
     "service": service->sourceId,
     "beforeImage": beforeImage.asset->url,
+    "beforeImageAlt": beforeImage.alt,
     "afterImage": afterImage.asset->url,
+    "afterImageAlt": afterImage.alt,
     isActive,
     displayOrder
   }
@@ -135,6 +153,7 @@ export const certificationsQuery = groq`
     reference,
     description,
     "image": image.asset->url,
+    "imageAlt": image.alt,
     isActive,
     displayOrder
   }
@@ -188,9 +207,11 @@ export const siteSettingsQuery = groq`
     heroServiceLabel,
     heroButtonLabel,
     "heroImage": heroImage.asset->url,
+    "heroImageAlt": heroImage.alt,
     aboutTitle,
     aboutDescription,
     "aboutImage": aboutImage.asset->url,
+    "aboutImageAlt": aboutImage.alt,
     aboutHighlights,
     contactEmail,
     instagramUrl,

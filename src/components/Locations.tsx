@@ -1,132 +1,216 @@
-import React, { useState, useEffect } from "react";
-import { MapPin, Phone, Building, MessageSquare, Clock } from "lucide-react";
-import { Branch, WorkingHours } from "../types";
+import {useEffect, useMemo, useState} from "react";
+import {Building2, Clock, ExternalLink, MapPin, MessageCircle, Phone} from "lucide-react";
+import {Branch, DaySchedule, WorkingHours} from "../types";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
+import EmptyState from "./ui/EmptyState";
+import LoadingSkeleton from "./ui/LoadingSkeleton";
+import SectionHeading from "./ui/SectionHeading";
+import {fetchJson} from "../lib/fetchJson";
 
 interface LocationsProps {
   onSelectBranchForBooking: (branchId: string) => void;
+  selectedBranchId?: string;
+  onSelectBranch?: (branchId: string) => void;
 }
 
-export default function Locations({ onSelectBranchForBooking }: LocationsProps) {
+const dayLabels: Record<string, string> = {
+  Mon: "Monday",
+  Tue: "Tuesday",
+  Wed: "Wednesday",
+  Thu: "Thursday",
+  Fri: "Friday",
+  Sat: "Saturday",
+  Sun: "Sunday",
+};
+
+function formatSchedule(schedule: DaySchedule) {
+  return schedule.isClosed ? "Closed" : `${schedule.openTime} – ${schedule.closeTime}`;
+}
+
+function cleanPhone(value: string) {
+  return value.replace(/[^\d+]/g, "");
+}
+
+export default function Locations({
+  onSelectBranchForBooking,
+  selectedBranchId = "",
+  onSelectBranch,
+}: LocationsProps) {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/branches")
-      .then((res) => res.json())
-      .then((data) => setBranches(data));
-
-    fetch("/api/working-hours")
-      .then((res) => res.json())
-      .then((data) => setWorkingHours(data));
+    Promise.all([
+      fetchJson<Branch[]>("/api/branches"),
+      fetchJson<WorkingHours[]>("/api/working-hours"),
+    ])
+      .then(([branchData, hoursData]) => {
+        setBranches(Array.isArray(branchData) ? branchData : []);
+        setWorkingHours(Array.isArray(hoursData) ? hoursData : []);
+      })
+      .catch((caught) => setError(caught instanceof Error ? caught.message : "Unable to load locations."))
+      .finally(() => setLoading(false));
   }, []);
 
+  const visibleBranches = useMemo(
+    () =>
+      selectedBranchId
+        ? branches.filter((branch) => branch.id === selectedBranchId)
+        : branches,
+    [branches, selectedBranchId],
+  );
+
   return (
-    <div className="space-y-12 py-4">
-      <div className="text-center max-w-xl mx-auto space-y-2">
-        <h2 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Our Colombo Studios</h2>
-        <p className="text-stone-500 text-sm font-light">Visit one of our six fully serviced studios across Colombo and nearby areas.</p>
-      </div>
+    <section className="space-y-10 py-4">
+      <SectionHeading
+        eyebrow="Find your studio"
+        title="Our Colombo Locations"
+        description={`Choose from ${branches.length || "our"} professionally equipped ${
+          branches.length === 1 ? "studio" : "studios"
+        }, each with its own team, services and opening hours.`}
+      />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {branches.map((branch) => {
-          const branchHours = workingHours.find((hours) => hours.branchId === branch.id);
-          const weekday = branchHours?.schedule.find((day) => day.dayOfWeek === "Mon");
-          const saturday = branchHours?.schedule.find((day) => day.dayOfWeek === "Sat");
-          const sunday = branchHours?.schedule.find((day) => day.dayOfWeek === "Sun");
-          // Generate a Colombo Google Map embed source based on latitude & longitude
-          // Or search queries for Kollupitiya/Cinnamon Gardens
-          const mapQuery = encodeURIComponent(branch.address + ", " + branch.city);
-          const embedUrl = `https://maps.google.com/maps?q=${mapQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      {selectedBranchId && (
+        <div className="flex items-center justify-center gap-3 rounded-2xl border border-brand-gold/20 bg-brand-gold-soft/60 px-4 py-3 text-sm text-stone-700">
+          <MapPin className="h-4 w-4 text-brand-gold" />
+          <span>Showing your preferred studio.</span>
+          <button
+            type="button"
+            onClick={() => onSelectBranch?.("")}
+            className="font-semibold text-brand-gold-dark underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+          >
+            View all locations
+          </button>
+        </div>
+      )}
 
-          return (
-            <div key={branch.id} className="bg-[#FAF8F5] rounded-3xl border border-[#C5A059]/15 p-6 md:p-8 space-y-6 flex flex-col justify-between hover:shadow-md transition">
-              
-              <div className="space-y-4">
-                {/* Header */}
-                <div className="flex justify-between items-start">
-                  <div className="p-3 bg-[#C5A059]/10 text-[#C5A059] rounded-2xl">
-                    <Building className="w-6 h-6" />
-                  </div>
-                  <span className="text-xs text-stone-400 font-mono">ID: {branch.id.toUpperCase()}</span>
-                </div>
+      {loading ? (
+        <LoadingSkeleton count={2} className="lg:grid-cols-2" />
+      ) : error ? (
+        <EmptyState title="Locations unavailable" description={error} />
+      ) : visibleBranches.length === 0 ? (
+        <EmptyState
+          title="No matching studio"
+          description="Choose another preferred branch or view all Elora Beauty locations."
+          action={
+            <Button variant="outline" onClick={() => onSelectBranch?.("")}>
+              View all branches
+            </Button>
+          }
+        />
+      ) : (
+        <div className="grid gap-8 lg:grid-cols-2">
+          {visibleBranches.map((branch) => {
+            const branchHours = workingHours.find((hours) => hours.branchId === branch.id);
+            const mapTarget = branch.geo
+              ? `${branch.geo.lat},${branch.geo.lng}`
+              : `${branch.address}, ${branch.city}`;
+            const encodedTarget = encodeURIComponent(mapTarget);
+            const embedUrl = `https://maps.google.com/maps?q=${encodedTarget}&z=15&output=embed`;
+            const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedTarget}`;
+            const whatsappNumber = branch.whatsapp ? cleanPhone(branch.whatsapp).replace(/^\+/, "") : "";
 
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-stone-900">{branch.name}</h3>
-                  <p className="text-xs text-[#C5A059] font-semibold mt-1 uppercase font-mono">{branch.city}</p>
-                </div>
-
-                {/* Info block */}
-                <div className="space-y-2.5 text-sm text-stone-700">
-                  <p className="flex items-start">
-                    <MapPin className="w-4 h-4 text-[#C5A059] mr-2 mt-0.5 shrink-0" />
-                    <span>{branch.address}</span>
-                  </p>
-                  <p className="flex items-center">
-                    <Phone className="w-4 h-4 text-[#C5A059] mr-2 shrink-0" />
-                    <span>{branch.phone}</span>
-                  </p>
-                  {branch.whatsapp && (
-                    <p className="flex items-center text-emerald-700 font-medium font-sans">
-                      <MessageSquare className="w-4 h-4 text-emerald-500 mr-2 shrink-0" />
-                      <span>{branch.whatsapp} (WhatsApp Support)</span>
-                    </p>
-                  )}
-                </div>
-
-                {/* Embedded google map */}
-                <div className="h-48 w-full rounded-2xl overflow-hidden border border-stone-200 bg-stone-100 shadow-inner">
+            return (
+              <Card key={branch.id} as="article" interactive className="overflow-hidden">
+                <div className="relative h-64 bg-stone-100">
                   <iframe
-                    title={`${branch.name} Map`}
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    scrolling="no"
-                    marginHeight={0}
-                    marginWidth={0}
+                    title={`${branch.name} location map`}
                     src={embedUrl}
-                    className="filter select-none grayscale invert contrast-90 md:contrast-100"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="h-full w-full border-0"
+                    allowFullScreen
                   />
+                  <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-gold-dark shadow-sm backdrop-blur">
+                    <Building2 className="h-3.5 w-3.5" />
+                    {branch.city}
+                  </span>
                 </div>
 
-                {branchHours && (
-                  <div className="grid grid-cols-3 gap-3 border-t border-[#C5A059]/15 pt-4 text-center">
-                    {[
-                      {label: "Mon–Fri", schedule: weekday},
-                      {label: "Saturday", schedule: saturday},
-                      {label: "Sunday", schedule: sunday},
-                    ].map(({label, schedule}) => (
-                      <div key={label} className="min-w-0">
-                        <p className="text-[9px] font-bold uppercase tracking-wider text-stone-400">{label}</p>
-                        <p className="mt-1 text-[10px] font-mono text-stone-700">
-                          {schedule?.isClosed
-                            ? "Closed"
-                            : `${schedule?.openTime || "—"}–${schedule?.closeTime || "—"}`}
-                        </p>
-                      </div>
-                    ))}
+                <div className="space-y-6 p-6 md:p-8">
+                  <div>
+                    <h3 className="font-serif text-2xl font-semibold text-brand-ink">{branch.name}</h3>
+                    <p className="mt-3 flex items-start gap-2 text-sm leading-6 text-stone-600">
+                      <MapPin className="mt-1 h-4 w-4 shrink-0 text-brand-gold" />
+                      {branch.address}
+                    </p>
                   </div>
-                )}
-              </div>
 
-              {/* Action Button */}
-              <button
-                onClick={() => onSelectBranchForBooking(branch.id)}
-                className="w-full py-3.5 bg-[#C5A059] text-white font-bold text-sm tracking-wide rounded-xl shadow-lg shadow-amber-900/10 hover:bg-[#AA823B] hover:scale-[1.01] transition-all text-center cursor-pointer"
-              >
-                Book At This Branch
-              </button>
+                  <div className="flex flex-wrap gap-2">
+                    <a
+                      href={`tel:${cleanPhone(branch.phone)}`}
+                      className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-stone-200 px-4 text-xs font-semibold text-stone-700 transition hover:border-brand-gold hover:text-brand-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                    >
+                      <Phone className="h-4 w-4" />
+                      Call studio
+                    </a>
+                    {whatsappNumber && (
+                      <a
+                        href={`https://wa.me/${whatsappNumber}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-200 px-4 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        WhatsApp
+                      </a>
+                    )}
+                    <a
+                      href={directionsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-stone-200 px-4 text-xs font-semibold text-stone-700 transition hover:border-brand-gold hover:text-brand-gold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Directions
+                    </a>
+                  </div>
 
-            </div>
-          );
-        })}
-      </div>
+                  <div>
+                    <h4 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-stone-500">
+                      <Clock className="h-4 w-4 text-brand-gold" />
+                      Weekly opening hours
+                    </h4>
+                    {branchHours?.schedule?.length ? (
+                      <dl className="mt-3 grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+                        {branchHours.schedule.map((schedule) => (
+                          <div
+                            key={schedule.dayOfWeek}
+                            className="flex justify-between gap-4 border-b border-stone-100 py-2.5 text-xs"
+                          >
+                            <dt className="font-medium text-stone-600">
+                              {dayLabels[schedule.dayOfWeek] || schedule.dayOfWeek}
+                            </dt>
+                            <dd className={schedule.isClosed ? "text-stone-400" : "font-mono text-stone-700"}>
+                              {formatSchedule(schedule)}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    ) : (
+                      <p className="mt-3 text-xs text-stone-400">Please contact this studio for current hours.</p>
+                    )}
+                  </div>
 
-      <div className="flex items-center justify-center gap-3 border-y border-[#C5A059]/20 py-5 text-center text-sm text-stone-600">
-        <Clock className="h-5 w-5 text-[#C5A059]" />
-        <p>
-          Opening times are maintained per branch and may change on blocked dates or public holidays.
-        </p>
-      </div>
-    </div>
+                  <Button
+                    fullWidth
+                    size="lg"
+                    onClick={() => {
+                      onSelectBranch?.(branch.id);
+                      onSelectBranchForBooking(branch.id);
+                    }}
+                  >
+                    Book at this branch
+                  </Button>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </section>
   );
 }

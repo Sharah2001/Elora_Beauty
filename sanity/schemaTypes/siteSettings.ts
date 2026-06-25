@@ -16,7 +16,14 @@ export const siteSettingsType = defineType({
       title: 'Hero Image',
       type: 'image',
       options: {hotspot: true},
-      fields: [{name: 'alt', title: 'Alternative Text', type: 'string'}],
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
     }),
     defineField({name: 'aboutTitle', title: 'About Title', type: 'string'}),
     defineField({name: 'aboutDescription', title: 'About Description', type: 'text', rows: 5}),
@@ -25,7 +32,14 @@ export const siteSettingsType = defineType({
       title: 'About Image',
       type: 'image',
       options: {hotspot: true},
-      fields: [{name: 'alt', title: 'Alternative Text', type: 'string'}],
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
     }),
     defineField({
       name: 'aboutHighlights',

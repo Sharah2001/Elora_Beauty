@@ -1,12 +1,18 @@
-import React, {useEffect, useState} from "react";
-import {ArrowRight, Images} from "lucide-react";
+import {useEffect, useMemo, useState} from "react";
+import {ArrowRight, Images, X} from "lucide-react";
 import BeforeAfter from "./BeforeAfter";
+import Button from "./ui/Button";
+import EmptyState from "./ui/EmptyState";
+import LoadingSkeleton from "./ui/LoadingSkeleton";
+import SectionHeading from "./ui/SectionHeading";
+import {fetchJson} from "../lib/fetchJson";
 
 type GalleryItem = {
   id: string;
   title: string;
   category?: string;
   image: string;
+  imageAlt?: string;
   description?: string;
   createdAt?: string;
 };
@@ -21,87 +27,169 @@ const HOME_PREVIEW_ITEMS = 6;
 
 export default function Gallery({preview = false, onViewMore}: GalleryProps) {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/gallery")
-      .then((response) => response.json())
+    fetchJson<GalleryItem[]>("/api/gallery")
       .then((items) => {
         setGalleryItems(Array.isArray(items) ? items.slice(0, MAX_GALLERY_ITEMS) : []);
       })
+      .catch(() => setError("Our gallery could not be loaded. Please try again shortly."))
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!selectedItem) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedItem(null);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [selectedItem]);
+
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(galleryItems.map((item) => item.category).filter(Boolean) as string[]))],
+    [galleryItems],
+  );
+
+  const filteredItems =
+    selectedCategory === "All"
+      ? galleryItems
+      : galleryItems.filter((item) => item.category === selectedCategory);
   const visibleItems = preview
-    ? galleryItems.slice(0, HOME_PREVIEW_ITEMS)
-    : galleryItems.slice(0, MAX_GALLERY_ITEMS);
+    ? filteredItems.slice(0, HOME_PREVIEW_ITEMS)
+    : filteredItems.slice(0, MAX_GALLERY_ITEMS);
 
   return (
     <section className="space-y-8 py-4 animate-fadeIn">
-      <div className="mx-auto max-w-xl space-y-2 text-center">
-        <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#C5A059]">
-          <Images className="h-4 w-4" />
-          Our work
-        </span>
-        <h2 className="font-serif text-3xl font-bold text-[#1A1A1A]">
-          Elora Beauty Gallery
-        </h2>
-        <p className="text-sm font-light text-stone-500">
-          Explore our latest nail art, bridal makeup, threading, facial, waxing, hair, and spa work.
-        </p>
-      </div>
+      <SectionHeading
+        eyebrow={
+          <span className="inline-flex items-center gap-2">
+            <Images className="h-4 w-4" />
+            Our portfolio
+          </span>
+        }
+        title="Elora Beauty Gallery"
+        description="A closer look at our recent hair, makeup, nail, skin and bridal work."
+      />
 
-      {loading ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {Array.from({length: preview ? HOME_PREVIEW_ITEMS : 9}).map((_, index) => (
-            <div key={index} className="aspect-square animate-pulse bg-stone-200" />
+      {!preview && categories.length > 2 && (
+        <div className="flex flex-wrap justify-center gap-2" aria-label="Gallery categories">
+          {categories.map((category) => (
+            <button
+              key={category}
+              type="button"
+              onClick={() => setSelectedCategory(category)}
+              className={`min-h-9 rounded-full px-4 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold ${
+                selectedCategory === category
+                  ? "bg-brand-gold text-white"
+                  : "border border-stone-200 bg-white text-stone-600 hover:border-brand-gold"
+              }`}
+            >
+              {category}
+            </button>
           ))}
         </div>
+      )}
+
+      {loading ? (
+        <LoadingSkeleton count={preview ? HOME_PREVIEW_ITEMS : 9} />
+      ) : error ? (
+        <EmptyState title="Gallery unavailable" description={error} />
+      ) : visibleItems.length === 0 ? (
+        <EmptyState
+          title="No gallery work found"
+          description="New portfolio images for this category will appear here once published."
+        />
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {visibleItems.map((item) => (
-            <article
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5">
+          {visibleItems.map((item, index) => (
+            <button
               key={item.id}
-              className="group relative aspect-square overflow-hidden border border-[#C5A059]/15 bg-stone-100"
+              type="button"
+              onClick={() => setSelectedItem(item)}
+              className={`group relative overflow-hidden rounded-2xl bg-stone-100 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 ${
+                !preview && index % 5 === 0 ? "md:row-span-2 md:aspect-auto" : "aspect-square"
+              }`}
+              aria-label={`View ${item.title}`}
             >
               <img
                 src={item.image}
-                alt={item.title}
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                alt={item.imageAlt || item.title}
+                loading="lazy"
+                className="h-full min-h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent px-4 pb-4 pt-16">
-                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-[#D8B96E]">
+              <span className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90 transition group-hover:opacity-100" />
+              <span className="absolute inset-x-0 bottom-0 p-4">
+                <span className="block text-[9px] font-bold uppercase tracking-[0.16em] text-[#E0C17C]">
                   {item.category || "Beauty"}
-                </p>
-                <h3 className="mt-1 font-serif text-sm font-semibold text-white sm:text-base">
+                </span>
+                <span className="mt-1 block font-serif text-sm font-semibold text-white sm:text-base">
                   {item.title}
-                </h3>
-              </div>
-            </article>
+                </span>
+              </span>
+            </button>
           ))}
         </div>
       )}
 
       {preview && galleryItems.length > HOME_PREVIEW_ITEMS && onViewMore && (
         <div className="flex justify-center pt-2">
-          <button
-            type="button"
-            onClick={onViewMore}
-            className="inline-flex min-h-11 items-center gap-2 border border-[#C5A059] px-6 text-sm font-bold text-[#AA823B] transition hover:bg-[#C5A059] hover:text-white cursor-pointer"
-          >
-            View More Work
+          <Button variant="outline" onClick={onViewMore}>
+            View more work
             <ArrowRight className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
       )}
 
       {!preview && (
         <>
           <p className="text-center text-xs text-stone-400">
-            Showing the latest {visibleItems.length} gallery images.
+            Showing {visibleItems.length} {selectedCategory === "All" ? "portfolio images" : selectedCategory.toLowerCase() + " images"}.
           </p>
           <BeforeAfter />
         </>
+      )}
+
+      {selectedItem && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-black/90 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={selectedItem.title}
+          onClick={() => setSelectedItem(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setSelectedItem(null)}
+            className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+            aria-label="Close gallery image"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <figure
+            className="max-h-[90vh] max-w-5xl overflow-hidden rounded-2xl bg-brand-ink"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <img
+              src={selectedItem.image}
+              alt={selectedItem.imageAlt || selectedItem.title}
+              className="max-h-[76vh] w-full object-contain"
+            />
+            <figcaption className="p-5 text-white">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-brand-gold">
+                {selectedItem.category || "Beauty"}
+              </p>
+              <h3 className="mt-1 font-serif text-xl font-semibold">{selectedItem.title}</h3>
+              {selectedItem.description && (
+                <p className="mt-2 text-sm leading-6 text-stone-400">{selectedItem.description}</p>
+              )}
+            </figcaption>
+          </figure>
+        </div>
       )}
     </section>
   );

@@ -1866,17 +1866,24 @@
       "id": "samantha",
       "name": "Samantha Perera",
       "slug": "samantha-perera",
-      "photo": "/images/gallery/gallery-06.jpg",
+      "photo": "/images/artists/samantha-perera.png",
       "bio": "Samantha has over 10 years of experience in luxury hair styling and corrective balayage. She trained in London and excels in custom cuts for both local and expat clients.",
+      "role": "Senior Hair Stylist",
+      "experienceYears": 11,
       "specialties": [
-        "hair-cut",
-        "hair-coloring"
+        "ladies-haircut",
+        "global-hair-colour",
+        "balayage-ombré"
       ],
       "branches": [
         "colombo-03",
         "colombo-07",
         "bambalapitiya",
         "wellawatte"
+      ],
+      "certifications": [
+        "c2",
+        "c3"
       ],
       "isActive": true,
       "displayOrder": 1
@@ -1885,15 +1892,22 @@
       "id": "priyanthi",
       "name": "Priyanthi Silva",
       "slug": "priyanthi-silva",
-      "photo": "/images/gallery/gallery-01.jpg",
+      "photo": "/images/artists/priyanthi-silva.png",
       "bio": "Priyanthi is certified in Russian manicure techniques and is the go-to nail artist in Colombo. She crafts gorgeous nail extensions and designs customized for weddings.",
+      "role": "Senior Nail Artist",
+      "experienceYears": 8,
       "specialties": [
-        "nail-gel"
+        "gel-manicure",
+        "nail-art-per-set",
+        "gel-nail-extensions"
       ],
       "branches": [
         "colombo-03",
         "dehiwala",
         "wattala"
+      ],
+      "certifications": [
+        "c4"
       ],
       "isActive": true,
       "displayOrder": 2
@@ -1902,11 +1916,13 @@
       "id": "elora",
       "name": "Elora Jayawardena",
       "slug": "elora-jayawardena",
-      "photo": "/images/gallery/gallery-02.jpg",
+      "photo": "/images/artists/elora-jayawardena.png",
       "bio": "Founder of Elora Beauty and a celebrity makeup artist in Sri Lanka. Elora specializes in traditional Kandyan and modern western bridal looks that look flawless on camera.",
+      "role": "Creative Director & Bridal Makeup Artist",
+      "experienceYears": 15,
       "specialties": [
-        "pro-makeup",
-        "skin-glow",
+        "hd-makeup",
+        "airbrush-makeup",
         "bridal-styling"
       ],
       "branches": [
@@ -1917,8 +1933,84 @@
         "dehiwala",
         "wattala"
       ],
+      "certifications": [
+        "c1",
+        "c5"
+      ],
       "isActive": true,
       "displayOrder": 3
+    },
+    {
+      "id": "nisali",
+      "name": "Nisali Fernando",
+      "slug": "nisali-fernando",
+      "photo": "/images/artists/nisali-fernando.png",
+      "bio": "Nisali is a qualified skin therapist known for calm consultations and carefully tailored facial programmes. She focuses on hydration, brightening, acne care and long-term skin health.",
+      "role": "Skin Therapist & Facial Specialist",
+      "experienceYears": 7,
+      "specialties": [
+        "hydrating-glow-facial",
+        "brightening-facial",
+        "acne-control-facial"
+      ],
+      "branches": [
+        "colombo-07",
+        "bambalapitiya",
+        "dehiwala"
+      ],
+      "certifications": [
+        "c6"
+      ],
+      "isActive": true,
+      "displayOrder": 4
+    },
+    {
+      "id": "kavindi",
+      "name": "Kavindi Ranasinghe",
+      "slug": "kavindi-ranasinghe",
+      "photo": "/images/artists/kavindi-ranasinghe.png",
+      "bio": "Kavindi combines modern colour theory with protective hair-care techniques. Her work includes dimensional balayage, seamless highlights and personalised colour correction.",
+      "role": "Hair Colourist",
+      "experienceYears": 6,
+      "specialties": [
+        "global-hair-colour",
+        "highlights-full-head",
+        "balayage-ombré"
+      ],
+      "branches": [
+        "colombo-03",
+        "wellawatte",
+        "wattala"
+      ],
+      "certifications": [
+        "c3"
+      ],
+      "isActive": true,
+      "displayOrder": 5
+    },
+    {
+      "id": "amaya",
+      "name": "Amaya Wickramasinghe",
+      "slug": "amaya-wickramasinghe",
+      "photo": "/images/artists/amaya-wickramasinghe.png",
+      "bio": "Amaya specialises in precise brow shaping, lash lifts and natural-looking lash enhancements. Her detail-focused approach creates polished results suited to each client's features.",
+      "role": "Lash & Brow Specialist",
+      "experienceYears": 5,
+      "specialties": [
+        "threading-eyebrow",
+        "eyelash-lift",
+        "eyelash-extensions-classic"
+      ],
+      "branches": [
+        "bambalapitiya",
+        "wellawatte",
+        "dehiwala"
+      ],
+      "certifications": [
+        "c7"
+      ],
+      "isActive": true,
+      "displayOrder": 6
     }
   ],
   "testimonials": [
@@ -2043,7 +2135,10 @@
       "title": "Sri Lanka Elite Salon Award 2025",
       "issuer": "Lanka Beauty Pageants Association",
       "image": "",
+      "description": "Recognised for excellence in bridal artistry, client care and multi-branch salon standards.",
+      "reference": "ELITE-SALON-2025",
       "yearAwarded": 2025,
+      "isActive": true,
       "displayOrder": 1
     },
     {
@@ -2051,24 +2146,101 @@
       "title": "Master Academy of Hair Styling Certified",
       "issuer": "Toni&Guy London Affiliated",
       "image": "",
+      "description": "Advanced professional training in precision cutting and contemporary salon styling.",
+      "reference": "HAIR-MASTER-2023",
       "yearAwarded": 2023,
+      "isActive": true,
       "displayOrder": 2
+    },
+    {
+      "id": "c3",
+      "title": "Advanced Colour & Balayage Certification",
+      "issuer": "International Hair Colour Academy",
+      "image": "",
+      "description": "Professional certification in colour theory, balayage placement and corrective colour services.",
+      "reference": "COLOUR-ADV-2024",
+      "yearAwarded": 2024,
+      "isActive": true,
+      "displayOrder": 3
+    },
+    {
+      "id": "c4",
+      "title": "Russian Manicure & Gel Extension Certification",
+      "issuer": "Professional Nail Academy Asia",
+      "image": "",
+      "description": "Specialist training in precision manicure, structured gel and salon hygiene.",
+      "reference": "NAIL-PRO-2024",
+      "yearAwarded": 2024,
+      "isActive": true,
+      "displayOrder": 4
+    },
+    {
+      "id": "c5",
+      "title": "Professional Bridal & HD Makeup Diploma",
+      "issuer": "Asian Academy of Makeup Artistry",
+      "image": "",
+      "description": "Advanced bridal, high-definition and camera-ready makeup artistry qualification.",
+      "reference": "BRIDAL-HD-2022",
+      "yearAwarded": 2022,
+      "isActive": true,
+      "displayOrder": 5
+    },
+    {
+      "id": "c6",
+      "title": "Advanced Skin Therapy Certification",
+      "issuer": "International Dermal Institute",
+      "image": "",
+      "description": "Professional study in skin analysis, facial protocols and safe treatment planning.",
+      "reference": "SKIN-THERAPY-2024",
+      "yearAwarded": 2024,
+      "isActive": true,
+      "displayOrder": 6
+    },
+    {
+      "id": "c7",
+      "title": "Lash Lift, Extension & Brow Design Certification",
+      "issuer": "Beauty Pro Training Institute",
+      "image": "",
+      "description": "Certified technical training in lash enhancement, brow mapping and hygiene standards.",
+      "reference": "LASH-BROW-2025",
+      "yearAwarded": 2025,
+      "isActive": true,
+      "displayOrder": 7
     }
   ],
   "beforeAfter": [
     {
       "id": "ba1",
-      "beforeImage": "https://picsum.photos/seed/beforehair/500/500",
-      "afterImage": "https://picsum.photos/seed/afterhair/500/500",
-      "caption": "Stunning Hair transformation - From frizzy to absolute silk finish",
-      "serviceCategory": "Hair"
+      "title": "Refined Sri Lankan Bridal Makeup",
+      "beforeImage": "/images/before-after/bridal-makeup-before.png",
+      "afterImage": "/images/before-after/bridal-makeup-after.png",
+      "caption": "A polished bridal transformation with luminous skin, softly defined eyes and an elegant traditional finish.",
+      "serviceCategory": "Bridal",
+      "service": "bridal-styling",
+      "isActive": true,
+      "displayOrder": 1
     },
     {
       "id": "ba2",
-      "beforeImage": "https://picsum.photos/seed/beforenail/500/500",
-      "afterImage": "https://picsum.photos/seed/afternail/500/500",
-      "caption": "Creative Gel Nail Styling with elegant gold sparkles",
-      "serviceCategory": "Nails"
+      "title": "Champagne Gold Bridal Nail Art",
+      "beforeImage": "/images/before-after/nail-art-before.png",
+      "afterImage": "/images/before-after/nail-art-after.png",
+      "caption": "Natural nails shaped and finished with a sheer blush gel, delicate gold leaf and minimal botanical detailing.",
+      "serviceCategory": "Nails",
+      "service": "nail-art-per-set",
+      "isActive": true,
+      "displayOrder": 2
+    },
+    {
+      "id": "ba3",
+      "title": "Precision Eyebrow Threading",
+      "beforeImage": "/images/before-after/threading-before.png",
+      "afterImage": "/images/before-after/threading-after.png",
+      "caption": "A naturally full brow carefully cleaned and shaped into a soft, balanced arch through precision threading.",
+      "serviceCategory": "Threading",
+      "service": "threading-eyebrow",
+      "isActive": true,
+      "displayOrder": 3
     }
 
   ],

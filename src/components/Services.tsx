@@ -1,198 +1,308 @@
-import React, { useState, useEffect } from "react";
-import { Sparkles, Check, Flame, Star } from "lucide-react";
-import { Service, Package, Offer } from "../types";
+import {useEffect, useMemo, useState} from "react";
+import {Check, Clock3, Flame, Sparkles, Star} from "lucide-react";
+import {Offer, Package, Service} from "../types";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
+import EmptyState from "./ui/EmptyState";
+import LoadingSkeleton from "./ui/LoadingSkeleton";
+import SectionHeading from "./ui/SectionHeading";
+import {fetchJson} from "../lib/fetchJson";
 
 interface ServicesProps {
   onSelectServiceForBooking: (serviceId: string) => void;
+  selectedBranchId?: string;
 }
 
-export default function Services({ onSelectServiceForBooking }: ServicesProps) {
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-LK", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(`${value}T00:00:00`));
+}
+
+export default function Services({
+  onSelectServiceForBooking,
+  selectedBranchId = "",
+}: ServicesProps) {
   const [services, setServices] = useState<Service[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
   const [offers, setOffers] = useState<Offer[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("/api/services")
-      .then((res) => res.json())
-      .then((data) => setServices(data));
-
-    fetch("/api/packages")
-      .then((res) => res.json())
-      .then((data) => setPackages(data));
-
-    fetch("/api/offers")
-      .then((res) => res.json())
-      .then((data) => setOffers(data.filter((o: any) => o.isActive)));
+    Promise.all([
+      fetchJson<Service[]>("/api/services"),
+      fetchJson<Package[]>("/api/packages"),
+      fetchJson<Offer[]>("/api/offers"),
+    ])
+      .then(([serviceData, packageData, offerData]) => {
+        setServices(Array.isArray(serviceData) ? serviceData : []);
+        setPackages(Array.isArray(packageData) ? packageData : []);
+        setOffers(Array.isArray(offerData) ? offerData : []);
+      })
+      .catch(() => setError("Services could not be loaded. Please try again shortly."))
+      .finally(() => setLoading(false));
   }, []);
 
-  const categories = ["All", "Hair", "Makeup", "Nails", "Skin", "Bridal"];
+  const branchServices = useMemo(
+    () =>
+      selectedBranchId
+        ? services.filter((service) => service.branches.includes(selectedBranchId))
+        : services,
+    [selectedBranchId, services],
+  );
 
-  const filteredServices = selectedCategory === "All" 
-    ? services 
-    : services.filter((s) => s.category.toLowerCase() === selectedCategory.toLowerCase());
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(branchServices.map((service) => service.category)))],
+    [branchServices],
+  );
+
+  useEffect(() => {
+    if (!categories.includes(selectedCategory)) {
+      setSelectedCategory("All");
+    }
+  }, [categories, selectedCategory]);
+
+  const filteredServices =
+    selectedCategory === "All"
+      ? branchServices
+      : branchServices.filter((service) => service.category === selectedCategory);
+
+  const visiblePackages = selectedBranchId
+    ? packages.filter((item) => !item.branches?.length || item.branches.includes(selectedBranchId))
+    : packages;
+
+  if (loading) {
+    return <LoadingSkeleton count={6} className="py-8 md:grid-cols-2" />;
+  }
+
+  if (error) {
+    return <EmptyState title="Services unavailable" description={error} />;
+  }
 
   return (
     <div className="space-y-16 py-4">
-      {/* Featured Promotions / Active Shows (Sathurgini, 2 hrs line item) */}
       {offers.length > 0 && (
-        <section className="bg-gradient-to-r from-amber-50/60 to-stone-50 border border-[#C5A059]/20 rounded-3xl p-6 md:p-8">
-          <div className="text-center md:text-left md:flex justify-between items-center mb-6">
-            <div className="mb-4 md:mb-0">
-              <span className="inline-flex items-center text-xs font-mono font-bold uppercase tracking-wider text-[#C5A059] bg-[#C5A059]/15 px-3 py-1 rounded-full border border-[#C5A059]/20">
-                <Flame className="w-3.5 h-3.5 mr-1 fill-[#C5A059] inline text-[#C5A059]" />
-                Featured Exclusive Offer
+        <section className="overflow-hidden rounded-3xl border border-brand-gold/20 bg-brand-surface-muted p-6 md:p-9">
+          <SectionHeading
+            align="left"
+            eyebrow={
+              <span className="inline-flex items-center gap-2">
+                <Flame className="h-4 w-4" />
+                Limited-time offers
               </span>
-              <h3 className="font-serif text-2xl font-bold text-[#1A1A1A] mt-2">Active Salon Promotions</h3>
-            </div>
-            <p className="text-stone-500 text-xs italic">Offers auto-applied during your custom checkout</p>
-          </div>
+            }
+            title="Current Promotions"
+            description="Explore active salon offers and check the applicable treatments before booking."
+          />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {offers.map((off) => (
-              <div key={off.id} className="bg-white rounded-2xl p-6 border border-[#C5A059]/10 shadow-sm relative overflow-hidden flex flex-col justify-between">
-                <div>
-                  <h4 className="font-serif font-bold text-lg text-[#1A1A1A] leading-snug">{off.title}</h4>
-                  <p className="text-xs text-stone-500 mt-2 leading-relaxed font-light">{off.description}</p>
-                </div>
-                <div className="flex justify-between items-center pt-4 mt-4 border-t border-[#C5A059]/10">
-                  <div className="text-xs text-stone-400 font-mono">
-                    Valid until: <span className="font-semibold text-[#C5A059]">{off.validUntil}</span>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {offers.map((offer) => {
+              const applicableNames = offer.applicableServices
+                ?.map((serviceId) => services.find((service) => service.id === serviceId)?.name)
+                .filter(Boolean);
+
+              return (
+                <Card key={offer.id} as="article" interactive className="overflow-hidden">
+                  {offer.image && (
+                    <img
+                      src={offer.image}
+                      alt={offer.imageAlt || offer.title}
+                      loading="lazy"
+                      className="h-44 w-full object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-serif text-xl font-semibold text-brand-ink">{offer.title}</h3>
+                      <span className="shrink-0 rounded-full bg-brand-gold-soft px-3 py-1 text-xs font-bold text-brand-gold-dark">
+                        {offer.discountType === "percentage"
+                          ? `${offer.discountValue}% off`
+                          : `LKR ${offer.discountValue.toLocaleString()} off`}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-stone-600">{offer.description}</p>
+                    {applicableNames && applicableNames.length > 0 && (
+                      <p className="mt-4 text-xs leading-5 text-stone-500">
+                        <span className="font-semibold text-stone-700">Applies to:</span>{" "}
+                        {applicableNames.join(", ")}
+                      </p>
+                    )}
+                    <p className="mt-5 border-t border-stone-100 pt-4 text-[10px] font-bold uppercase tracking-wider text-brand-gold-dark">
+                      Valid until {formatDate(offer.validUntil)}
+                    </p>
                   </div>
-                  <span className="text-xs font-bold text-[#C5A059] font-mono bg-[#C5A059]/10 px-2.5 py-1 rounded-full uppercase">
-                    {off.discountType === "percentage" ? `${off.discountValue}% OFF` : `LKR ${off.discountValue} OFF`}
-                  </span>
-                </div>
-              </div>
-            ))}
+                </Card>
+              );
+            })}
           </div>
         </section>
       )}
 
-      {/* Services Menu Section */}
-      <section className="space-y-6">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <h2 className="font-serif text-3xl font-bold tracking-tight text-[#1A1A1A]">Our Services & Price List</h2>
-          <p className="text-stone-500 text-sm font-light">Explore our wide array of premium head-to-toe beauty treatments tailored to perfection.</p>
-        </div>
+      <section className="space-y-8">
+        <SectionHeading
+          eyebrow="Treatments & pricing"
+          title="Services Designed Around You"
+          description={
+            selectedBranchId
+              ? "Showing treatments available at your selected studio."
+              : "Explore professional hair, beauty, skin, nail and bridal treatments across Elora Beauty."
+          }
+        />
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-1.5 border-b border-[#C5A059]/10 pb-4">
-          {categories.map((cat) => (
+        <div
+          className="flex flex-wrap justify-center gap-2"
+          role="tablist"
+          aria-label="Filter services by category"
+        >
+          {categories.map((category) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all cursor-pointer ${
-                selectedCategory === cat
-                  ? "bg-[#C5A059] text-white shadow-md shadow-amber-900/10"
-                  : "bg-stone-50 text-stone-600 hover:bg-[#C5A059]/10 hover:text-[#C5A059]"
+              key={category}
+              type="button"
+              role="tab"
+              aria-selected={selectedCategory === category}
+              onClick={() => setSelectedCategory(category)}
+              className={`min-h-10 rounded-full px-5 text-xs font-semibold uppercase tracking-wider transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold ${
+                selectedCategory === category
+                  ? "bg-brand-gold text-white shadow-sm"
+                  : "border border-stone-200 bg-white text-stone-600 hover:border-brand-gold hover:text-brand-gold-dark"
               }`}
             >
-              {cat}
+              {category}
             </button>
           ))}
         </div>
 
-        {/* Services Grid (Looklike UI Image 1 style) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-          {filteredServices.map((service) => (
-            <div 
-              key={service.id} 
-              className="bg-white rounded-2xl p-6 border border-[#C5A059]/10 flex flex-col justify-between hover:border-[#C5A059]/35 transition-colors"
-            >
-              <div>
-                <div className="flex justify-between items-start">
-                  <span className="text-[10px] font-mono tracking-widest text-[#C5A059] bg-[#C5A059]/10 px-2.5 py-0.5 rounded-md uppercase font-bold">
-                    {service.category}
-                  </span>
-                  <span className="text-sm font-bold font-mono text-stone-900">
-                    LKR {service.basePrice.toLocaleString()}
-                  </span>
-                </div>
-                <h3 className="font-serif text-md font-bold text-[#1A1A1A] mt-2.5 leading-snug">{service.name}</h3>
-                <p className="text-xs text-stone-500 font-light leading-relaxed mt-2">{service.description}</p>
-              </div>
-
-              <div className="flex justify-between items-center border-t border-stone-100 pt-4 mt-6">
-                <span className="text-xs text-stone-400 font-mono">
-                  Duration: {service.durationMinutes} mins
-                </span>
-                <button
-                  onClick={() => onSelectServiceForBooking(service.id)}
-                  className="px-4 py-1.5 bg-white border border-[#C5A059] text-[#C5A059] text-xs font-semibold rounded-full hover:bg-[#C5A059] hover:text-white hover:border-[#C5A059] transition duration-300 cursor-pointer"
-                >
-                  Book Treatment
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Spa Packages & Bundles */}
-      <section className="bg-[#1A1A1A] text-white rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-xl border border-[#C5A059]/20">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 rounded-full bg-[#C5A059]/10 blur-3xl"></div>
-        <div className="absolute left-0 bottom-0 -translate-x-12 translate-y-12 w-64 h-64 rounded-full bg-amber-900/10 blur-3xl"></div>
-        
-        <div className="relative z-10 space-y-10">
-          <div className="text-center max-w-xl mx-auto space-y-2">
-            <span className="inline-flex items-center text-xs font-mono text-[#C5A059] uppercase tracking-widest font-bold">
-              <Star className="w-4 h-4 mr-1 text-[#C5A059] fill-[#C5A059] inline" />
-              Sathurgini's Premium Selection
-            </span>
-            <h2 className="font-serif text-3xl font-bold tracking-tight text-white">Luxury Spa Packages</h2>
-            <p className="text-stone-400 text-xs sm:text-sm font-light">Combining multiple treatments in sequential blocks for the ultimate therapeutic restoration.</p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {packages.map((pkg) => (
-              <div key={pkg.id} className="bg-stone-900/50 border border-[#C5A059]/10 rounded-2xl p-6 md:p-8 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-serif text-xl font-bold text-white">{pkg.name}</h3>
-                      {pkg.discountNote && (
-                        <span className="inline-block text-[10px] font-bold text-[#C5A059] bg-[#C5A059]/10 border border-[#C5A059]/25 px-2 py-0.5 rounded mt-1.5">
-                          {pkg.discountNote}
-                        </span>
-                      )}
+        {filteredServices.length === 0 ? (
+          <EmptyState
+            title="No treatments found"
+            description="There are no active treatments in this category for the selected studio."
+          />
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2">
+            {filteredServices.map((service) => (
+              <Card key={service.id} as="article" interactive className="overflow-hidden">
+                <div className="grid h-full sm:grid-cols-[9rem_1fr]">
+                  {service.image ? (
+                    <img
+                      src={service.image}
+                      alt={service.imageAlt || service.name}
+                      loading="lazy"
+                      className="h-52 w-full object-cover sm:h-full"
+                    />
+                  ) : (
+                    <div className="flex min-h-36 items-center justify-center bg-brand-gold-soft">
+                      <Sparkles className="h-8 w-8 text-brand-gold/60" />
                     </div>
-                    <span className="text-lg font-mono font-bold text-[#C5A059]">LKR {pkg.totalPrice.toLocaleString()}</span>
+                  )}
+                  <div className="flex flex-col justify-between p-6">
+                    <div>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-brand-gold">
+                          {service.category}
+                        </span>
+                        <span className="font-mono text-sm font-bold text-brand-ink">
+                          LKR {service.basePrice.toLocaleString()}
+                        </span>
+                      </div>
+                      <h3 className="mt-3 font-serif text-xl font-semibold text-brand-ink">{service.name}</h3>
+                      <p className="mt-2 text-sm leading-6 text-stone-600">{service.description}</p>
+                    </div>
+                    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 pt-4">
+                      <span className="inline-flex items-center gap-2 text-xs text-stone-500">
+                        <Clock3 className="h-4 w-4 text-brand-gold" />
+                        {service.durationMinutes} minutes
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => onSelectServiceForBooking(service.id)}
+                      >
+                        Book treatment
+                      </Button>
+                    </div>
                   </div>
-                  <p className="text-stone-400 text-xs leading-relaxed font-light">{pkg.description}</p>
                 </div>
-
-                <div className="space-y-3">
-                  <h4 className="text-xs font-mono uppercase tracking-wider text-stone-400">Included Sessions:</h4>
-                  <div className="space-y-2 text-xs">
-                    {pkg.includedServices.map((sid) => {
-                      const sObj = services.find((s) => s.id === sid);
-                      return (
-                        <div key={sid} className="flex items-center text-stone-300">
-                          <Check className="w-4 h-4 text-[#C5A059] mr-2 shrink-0" />
-                          <span>{sObj?.name || sid} ({sObj ? `${sObj.durationMinutes} mins` : ""})</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    // Preselect package's first service and open booking flow
-                    if (pkg.includedServices.length > 0) {
-                      onSelectServiceForBooking(pkg.includedServices[0]);
-                    }
-                  }}
-                  className="w-full py-3 bg-[#C5A059] text-white font-semibold text-xs tracking-wider rounded-xl uppercase hover:bg-[#AA823B] transition-all text-center cursor-pointer"
-                >
-                  Book Package Block
-                </button>
-              </div>
+              </Card>
             ))}
           </div>
-        </div>
+        )}
       </section>
+
+      {visiblePackages.length > 0 && (
+        <section className="relative overflow-hidden rounded-3xl bg-brand-ink p-7 text-white md:p-12">
+          <div className="absolute right-0 top-0 h-72 w-72 translate-x-1/3 -translate-y-1/3 rounded-full bg-brand-gold/10 blur-3xl" />
+          <div className="relative">
+            <SectionHeading
+              inverse
+              eyebrow={
+                <span className="inline-flex items-center gap-2">
+                  <Star className="h-4 w-4 fill-current" />
+                  Curated combinations
+                </span>
+              }
+              title="Signature Packages"
+              description="Thoughtfully grouped treatments with clear pricing for complete beauty and wellness experiences."
+            />
+
+            <div className="mt-9 grid gap-6 lg:grid-cols-2">
+              {visiblePackages.map((item) => (
+                <article key={item.id} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04]">
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.imageAlt || item.name}
+                      loading="lazy"
+                      className="h-48 w-full object-cover"
+                    />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h3 className="font-serif text-xl font-semibold text-white">{item.name}</h3>
+                        {item.discountNote && (
+                          <p className="mt-1 text-xs font-semibold text-brand-gold">{item.discountNote}</p>
+                        )}
+                      </div>
+                      <span className="shrink-0 font-mono text-base font-bold text-brand-gold">
+                        LKR {item.totalPrice.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-stone-400">{item.description}</p>
+                    <ul className="mt-5 space-y-2">
+                      {item.includedServices.map((serviceId) => {
+                        const service = services.find((candidate) => candidate.id === serviceId);
+                        return (
+                          <li key={serviceId} className="flex items-start gap-2 text-xs text-stone-300">
+                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-gold" />
+                            <span>
+                              {service?.name || serviceId}
+                              {service ? ` · ${service.durationMinutes} min` : ""}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <Button
+                      fullWidth
+                      className="mt-6"
+                      onClick={() => {
+                        const firstService = item.includedServices[0];
+                        if (firstService) onSelectServiceForBooking(firstService);
+                      }}
+                    >
+                      Book this package
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -45,7 +45,14 @@ export const branchType = defineType({
       title: 'Branch Image',
       type: 'image',
       options: {hotspot: true},
-      fields: [{name: 'alt', title: 'Alternative Text', type: 'string'}],
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
     }),
     defineField({name: 'isActive', title: 'Active', type: 'boolean', initialValue: true}),
     defineField({
