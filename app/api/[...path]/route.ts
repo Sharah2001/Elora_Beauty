@@ -251,36 +251,45 @@ function getAvailability(
         ),
     );
 
-    if (blocked) {
-      continue;
-    }
-
-    const availableArtists = artists
-      .filter((artist: any) => {
-        return !dayBookings
-          .filter((booking: any) => booking.artist === artist.id)
-          .some((booking: any) =>
-            overlaps(
-              startTime,
-              endTime,
-              booking.startTime,
-              booking.endTime,
-            ),
-          );
-      })
-      .map((artist: any) => ({ id: artist.id, name: artist.name }));
-
-    if (availableArtists.length > 0) {
-      groupedSlots.set(startTime, availableArtists);
-    }
-  }
-
-  return [...groupedSlots.entries()].map(([time, availableArtists]) => ({
-    time,
-    availableArtists,
-  }));
+   if (blocked) {
+  continue;
 }
 
+const availableArtists = artists
+  .filter((artist: any) => {
+    const hasConflict = dayBookings.some((booking: any) => {
+      return (
+        booking.artist === artist.id &&
+        overlaps(
+          startTime,
+          endTime,
+          booking.startTime,
+          booking.endTime
+        )
+      );
+    });
+
+    return !hasConflict;
+  })
+  .map((artist: any) => ({
+    id: artist.id,
+    name: artist.name,
+  }));
+
+if (availableArtists.length > 0) {
+  groupedSlots.set(startTime, availableArtists);
+}
+
+}
+
+return [...groupedSlots.entries()].map(
+  ([time, availableArtists]) => ({
+    time,
+    availableArtists,
+  })
+);
+
+}
 async function getPath(context: RouteContext): Promise<string[]> {
   return (await context.params).path;
 }
@@ -591,106 +600,139 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     if (route === "bookings") {
-      const {
-        branchId,
-        artistId = "any",
-        serviceIds,
-        customerName,
-        customerPhone,
-        date,
-        startTime,
-        notes,
-      } = body;
+  const branchId = body.branchId || body.branch;
+  const artistId = body.artistId || body.artist || "any";
+  const rawServiceIds = body.serviceIds || body.services;
 
-      if (
-        !branchId ||
-        !serviceIds ||
-        !customerName ||
-        !customerPhone ||
-        !date ||
-        !startTime
-      ) {
-        return error("Missing required fields for booking insertion.", 400);
-      }
+  const serviceIds = Array.isArray(rawServiceIds)
+    ? rawServiceIds
+    : String(rawServiceIds || "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean);
 
-      const services = Array.isArray(serviceIds)
-        ? serviceIds
-        : String(serviceIds).split(",");
+  const customerName = body.customerName || body.clientName;
+  const customerPhone = body.customerPhone || body.clientPhone;
+  const date = body.date;
+  const startTime = body.startTime || body.selectedTimeSlot;
+  const notes = body.notes || body.clientNotes || "";
 
-      const result = await mutateDatabase((database) => {
-        const slot = getAvailability(database, {
-          branchId,
-          date,
-          serviceIds: services,
-          artistId,
-        }).find((item) => item.time === startTime);
+  if (
+    !branchId ||
+    serviceIds.length === 0 ||
+    !customerName ||
+    !customerPhone ||
+    !date ||
+    !startTime
+  ) {
+    console.log("Missing booking fields:", {
+      branchId,
+      artistId,
+      serviceIds,
+      customerName,
+      customerPhone,
+      date,
+      startTime,
+    });
 
-        if (!slot) {
-          return {
-            failure: "This slot is no longer available.",
-            status: 409,
-          };
-        }
+    return error("Missing required fields for booking insertion.", 400);
+  }
 
-        const assignedArtist = slot.availableArtists[0];
-        const duration = totalServiceDuration(database, services);
-        const endTime = minutesToTime(
-          timeToMinutes(startTime) + duration,
-        );
-        const bookingReference = generateReference();
-        const pin = generatePin();
-        const timestamp = new Date().toISOString();
+  const result = await mutateDatabase((database) => {
+    const duration = totalServiceDuration(database, serviceIds);
+    const endTime = minutesToTime(timeToMinutes(startTime) + duration);
 
-        database.bookings = [
-          ...(database.bookings ?? []),
-          {
-            id: `bk_${Date.now()}`,
-            branch: branchId,
-            artist: assignedArtist.id,
-            services,
-            customerName,
-            customerPhone,
-            date,
-            startTime,
-            endTime,
-            status: "confirmed",
-            bookingSource: "online",
-            bookingReference,
-            pin,
-            notes: notes ?? "",
-            createdAt: timestamp,
-            updatedAt: timestamp,
-          },
-        ];
+    const availableSlots = getAvailability(database, {
+      branchId,
+      date,
+      serviceIds,
+      artistId,
+    });
 
-        return {
-          booking: {
-            bookingReference,
-            pin,
-            customerName,
-            date,
-            startTime,
-            endTime,
-            artistName: assignedArtist.name,
-            branchName:
-              database.branches.find(
-                (branch: any) => branch.id === branchId,
-              )?.name ?? "Elora Beauty Branch",
-          },
-        };
-      });
+    const selectedSlot = availableSlots.find(
+      (slot) => slot.time === startTime,
+    );
 
-      if ("failure" in result) {
-        return error(
-          result.failure ?? "Booking could not be created.",
-          result.status ?? 500,
-        );
-      }
+    const assignedArtist =
+      artistId && artistId !== "any"
+        ? database.artists.find((artist: any) => artist.id === artistId)
+        : selectedSlot?.availableArtists?.[0];
 
-      return json({ success: true, booking: result.booking });
+    if (!assignedArtist) {
+      return {
+        failure: "This slot is no longer available.",
+        status: 409,
+      };
     }
 
-    if (route === "bookings/lookup") {
+    const hasConflict = (database.bookings ?? []).some((booking: any) => {
+      if (
+        booking.status === "cancelled" ||
+        booking.status === "completed" ||
+        booking.status === "no-show"
+      ) {
+        return false;
+      }
+
+      return (
+        booking.branch === branchId &&
+        booking.artist === assignedArtist.id &&
+        booking.date === date &&
+        overlaps(startTime, endTime, booking.startTime, booking.endTime)
+      );
+    });
+
+    if (hasConflict) {
+      return {
+        failure: "This slot is no longer available.",
+        status: 409,
+      };
+    }
+
+    const bookingReference = generateReference();
+    const pin = generatePin();
+    const timestamp = new Date().toISOString();
+
+    const newBooking = {
+      id: `bk_${Date.now()}`,
+      branch: branchId,
+      artist: assignedArtist.id,
+      services: serviceIds,
+      customerName,
+      customerPhone,
+      date,
+      startTime,
+      endTime,
+      status: "confirmed",
+      bookingSource: "online",
+      bookingReference,
+      pin,
+      notes,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+
+    database.bookings = [...(database.bookings ?? []), newBooking];
+
+    return {
+      booking: {
+        ...newBooking,
+        artistName: assignedArtist.name,
+        branchName:
+          database.branches.find((branch: any) => branch.id === branchId)
+            ?.name ?? "Elora Beauty Branch",
+      },
+    };
+  });
+
+  if ("failure" in result && result.failure) {
+  return error(result.failure, result.status ?? 500);
+}
+
+return json({ success: true, booking: result.booking });
+}
+
+if (route === "bookings/lookup") {
       if (!body.phone) {
         return error("Phone number is required.", 400);
       }
