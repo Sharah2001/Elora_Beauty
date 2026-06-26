@@ -128,77 +128,136 @@ export default function ManageBookings() {
   }, [authedBooking, newDate]);
 
   // Execute cancel action
-  const handleCancelBooking = async () => {
-    if (!window.confirm("Are you absolutely sure you wish to cancel this beauty appointment? This cannot be undone.")) return;
+ const handleCancelBooking = async () => {
+  if (!authedBooking) {
+    setActionError("Please verify a booking before cancelling.");
+    return;
+  }
 
-    setSubmittingAction(true);
-    setActionError("");
+  if (
+    !window.confirm(
+      "Are you absolutely sure you wish to cancel this beauty appointment? This cannot be undone."
+    )
+  ) {
+    return;
+  }
 
-    try {
-      const res = await fetch("/api/bookings/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reference: authedBooking.bookingReference,
-          pin,
-          action: "cancel"
-        })
-      });
+  setSubmittingAction(true);
+  setActionError("");
 
-      const data = await res.json();
-      if (!res.ok) {
-        setActionError(data.error || "Failed to cancel.");
-      } else {
-        setMode("cancelled_success");
-        // Update list
-        setLookups(lookups.map(bk => bk.bookingReference === authedBooking.bookingReference ? { ...bk, status: "cancelled" } : bk));
-      }
-    } catch (err) {
-      setActionError("Internal cancellation error. Try again.");
-    } finally {
-      setSubmittingAction(false);
-    }
-  };
+  try {
+    const bookingReference = authedBooking.bookingReference;
 
-  // Execute reschedule action
-  const handleRescheduleBooking = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newDate || !newTime) {
-      setActionError("Please select a new date and time slot.");
+    const res = await fetch("/api/bookings/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reference: bookingReference,
+        pin,
+        action: "cancel",
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setActionError(data.error || "Failed to cancel.");
       return;
     }
 
-    setSubmittingAction(true);
-    setActionError("");
+    setAuthedBooking((prev) =>
+      prev ? { ...prev, status: "cancelled" } : prev
+    );
 
-    try {
-      const res = await fetch("/api/bookings/update", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reference: authedBooking.bookingReference,
-          pin,
-          action: "reschedule",
-          newDate,
-          newStartTime: newTime
-        })
-      });
+    setLookups((prev) =>
+      prev.map((bk) =>
+        bk.bookingReference === bookingReference
+          ? { ...bk, status: "cancelled" }
+          : bk
+      )
+    );
 
-      const data = await res.json();
-      if (!res.ok) {
-        setActionError(data.error || "The selected slot is busy. Please pick another.");
-      } else {
-        setMode("rescheduled_success");
-        // Update list
-        setLookups(lookups.map(bk => bk.bookingReference === authedBooking.bookingReference ? { ...bk, date: newDate, startTime: newTime, status: "confirmed" } : bk));
-      }
-    } catch (err) {
-      setActionError("Error updating reservation. Please re-try.");
-    } finally {
-      setSubmittingAction(false);
+    setMode("cancelled_success");
+  } catch (err) {
+    setActionError("Internal cancellation error. Try again.");
+  } finally {
+    setSubmittingAction(false);
+  }
+};
+
+  // Execute reschedule action
+  const handleRescheduleBooking = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!authedBooking) {
+    setActionError("Please verify a booking before rescheduling.");
+    return;
+  }
+
+  if (!newDate || !newTime) {
+    setActionError("Please select a new date and time slot.");
+    return;
+  }
+
+  setSubmittingAction(true);
+  setActionError("");
+
+  try {
+    const bookingReference = authedBooking.bookingReference;
+
+    const res = await fetch("/api/bookings/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        reference: bookingReference,
+        pin,
+        action: "reschedule",
+        newDate,
+        newStartTime: newTime,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setActionError(
+        data.error ||
+        "The selected slot is busy. Please pick another."
+      );
+      return;
     }
-  };
 
+    setAuthedBooking((prev) =>
+      prev
+        ? {
+            ...prev,
+            date: newDate,
+            startTime: newTime,
+            status: "confirmed",
+          }
+        : prev
+    );
+
+    setLookups((prev) =>
+      prev.map((bk) =>
+        bk.bookingReference === bookingReference
+          ? {
+              ...bk,
+              date: newDate,
+              startTime: newTime,
+              status: "confirmed",
+            }
+          : bk
+      )
+    );
+
+    setMode("rescheduled_success");
+  } catch (err) {
+    setActionError("Error updating reservation. Please re-try.");
+  } finally {
+    setSubmittingAction(false);
+  }
+};
   return (
     <div className="max-w-2xl mx-auto py-4 space-y-10 animate-fadeIn">
       
@@ -452,14 +511,14 @@ export default function ManageBookings() {
       )}
 
       {/* CANCELLED SUCCESS STATUS CARD */}
-      {mode === "cancelled_success" && (
+      {mode === "cancelled_success" && authedBooking && (
         <section className="bg-emerald-50 rounded-2xl p-6 border border-emerald-250 text-center space-y-4 animate-fadeIn">
           <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="w-6 h-6" />
           </div>
           <h4 className="font-serif font-bold text-emerald-900 text-lg leading-tight">Session Cancelled Successfully</h4>
           <p className="text-emerald-700 text-xs leading-relaxed max-w-sm mx-auto font-light">
-            Your beauty appointment under reference {authedBooking.bookingReference} has been cancelled correctly in Colombo registers. Feel free to book again at any time!
+            Your beauty appointment under reference {authedBooking?.bookingReference ?? "N/A"} has been cancelled correctly in Colombo registers. Feel free to book again at any time!
           </p>
           <button
             onClick={() => {
@@ -477,7 +536,7 @@ export default function ManageBookings() {
       )}
 
       {/* RESCHEDULED SUCCESS STATUS CARD */}
-      {mode === "rescheduled_success" && (
+      {mode === "rescheduled_success" && authedBooking && (
         <section className="bg-emerald-50 rounded-2xl p-6 border border-emerald-250 text-center space-y-4 animate-fadeIn">
           <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="w-6 h-6" />
