@@ -142,8 +142,11 @@ export interface SiteSettings {
   heroEyebrow?: string;
   heroTitle?: string;
   heroDescription?: string;
+  heroTrustLine?: string;
   heroServiceLabel?: string;
   heroButtonLabel?: string;
+  heroBackgroundImage?: string;
+  heroBackgroundImageAlt?: string;
   heroImage?: string;
   heroImageAlt?: string;
   aboutTitle?: string;

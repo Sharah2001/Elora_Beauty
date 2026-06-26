@@ -55,6 +55,9 @@ const client = createClient({
 const db = JSON.parse(fs.readFileSync(sourcePath, 'utf8')) as JsonRecord
 const serviceIds = new Set(readCollection('services').map((item) => stringValue(item.id)))
 const branchIds = new Set(readCollection('branches').map((item) => stringValue(item.id)))
+const serviceBranchesById = new Map(
+  readCollection('services').map((item) => [stringValue(item.id), stringArray(item.branches)]),
+)
 
 const migrationCounts = {
   created: 0,
@@ -173,6 +176,25 @@ function branchReferences(value: unknown, owner: string) {
 
     return [keyedReference('branch', sourceId, index)]
   })
+}
+
+function packageBranchReferences(item: JsonRecord, owner: string) {
+  const explicitBranches = branchReferences(item.branches, owner)
+  if (explicitBranches.length > 0) return explicitBranches
+
+  const includedServiceIds = stringArray(item.includedServices).flatMap((sourceId) => {
+    const resolvedId = resolveServiceId(sourceId)
+    return resolvedId ? [resolvedId] : []
+  })
+  const inferredBranchIds = Array.from(
+    new Set(includedServiceIds.flatMap((serviceId) => serviceBranchesById.get(serviceId) ?? [])),
+  )
+
+  if (inferredBranchIds.length > 0) {
+    return branchReferences(inferredBranchIds, owner)
+  }
+
+  return branchReferences(Array.from(branchIds), owner)
 }
 
 function normalizeCategory(value: unknown): string {
@@ -447,6 +469,7 @@ async function migratePackages() {
       sourceId,
       name,
       includedServices: serviceReferences(item.includedServices, `package "${name}"`),
+      branches: packageBranchReferences(item, `package "${name}"`),
       totalPrice: numberValue(item.totalPrice),
       discountNote: stringValue(item.discountNote) || undefined,
       description: stringValue(item.description) || undefined,
@@ -617,8 +640,14 @@ async function migrateSiteSettings() {
       heroEyebrow: stringValue(item.heroEyebrow) || undefined,
       heroTitle: stringValue(item.heroTitle) || undefined,
       heroDescription: stringValue(item.heroDescription) || undefined,
+      heroTrustLine: stringValue(item.heroTrustLine) || undefined,
       heroServiceLabel: stringValue(item.heroServiceLabel) || undefined,
       heroButtonLabel: stringValue(item.heroButtonLabel) || undefined,
+      heroBackgroundImage: await imageValue(
+        item.heroBackgroundImage || '/images/elora-hero-salon-luxury.jpg',
+        businessName,
+        'site settings hero background',
+      ),
       heroImage: await imageValue(item.heroImage, businessName, 'site settings hero'),
       aboutTitle: stringValue(item.aboutTitle) || undefined,
       aboutDescription: stringValue(item.aboutDescription) || undefined,
