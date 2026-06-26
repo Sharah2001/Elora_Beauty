@@ -12,8 +12,24 @@ export const siteSettingsType = defineType({
     defineField({name: 'heroServiceLabel', title: 'Hero Service Label', type: 'string'}),
     defineField({name: 'heroButtonLabel', title: 'Hero Button Label', type: 'string'}),
     defineField({
+      name: 'heroBackgroundImage',
+      title: 'Hero Background Image',
+      description: 'Wide background image behind the homepage hero text.',
+      type: 'image',
+      options: {hotspot: true},
+      fields: [
+        {
+          name: 'alt',
+          title: 'Alternative Text',
+          type: 'string',
+          validation: (rule) => rule.required(),
+        },
+      ],
+    }),
+    defineField({
       name: 'heroImage',
-      title: 'Hero Image',
+      title: 'Hero Featured Image',
+      description: 'Smaller featured image used in the hero review card.',
       type: 'image',
       options: {hotspot: true},
       fields: [

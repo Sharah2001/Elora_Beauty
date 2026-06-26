@@ -421,7 +421,20 @@ export async function GET(request: NextRequest, context: RouteContext) {
     }
 
     if (route === "admin/testimonials") {
-      return json(database.testimonials ?? []);
+      const testimonials = await writeClient.fetch(
+        `*[_type == "testimonial"] | order(submittedAt desc, _createdAt desc) {
+          "id": _id,
+          customerName,
+          rating,
+          comment,
+          "serviceReceived": serviceReceived->sourceId,
+          "branch": branch->sourceId,
+          isApproved,
+          submittedAt
+        }`,
+      );
+
+      return json(Array.isArray(testimonials) ? testimonials : []);
     }
 
     if (route === "admin/blocked-dates") {
@@ -1040,17 +1053,12 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     }
 
     if (route === "admin/testimonials") {
-      const updated = await mutateDatabase((database) => {
-        const testimonial = (database.testimonials ?? []).find(
-          (item: any) => item.id === id,
-        );
-        if (!testimonial) return false;
-        testimonial.isApproved = body.isApproved;
-        return true;
-      });
-      return updated
-        ? json({ success: true })
-        : error("Review not found.", 404);
+      const updated = await writeClient
+        .patch(id)
+        .set({ isApproved: Boolean(body.isApproved) })
+        .commit();
+
+      return updated ? json({ success: true }) : error("Review not found.", 404);
     }
 
     return error("API route not found", 404);

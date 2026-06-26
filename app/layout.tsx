@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import {JetBrains_Mono, Outfit, Playfair_Display} from "next/font/google";
+import {Outfit, Playfair_Display} from "next/font/google";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -11,12 +11,6 @@ const outfit = Outfit({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
   display: "swap",
 });
 
@@ -42,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} ${playfair.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${outfit.variable} ${playfair.variable}`}>
         {children}
       </body>
     </html>

@@ -26,6 +26,7 @@ export default function Navbar({
     { label: "Home", id: "home" },
     { label: "Services & Prices", id: "services" },
     { label: "Stylists", id: "artists" },
+    { label: "Reviews", id: "reviews" },
     { label: "My Booking", id: "manage" }
   ];
 
