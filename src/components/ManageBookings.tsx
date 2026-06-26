@@ -165,7 +165,7 @@ export default function ManageBookings() {
       return;
     }
 
-    setAuthedBooking((prev) =>
+    setAuthedBooking((prev: any | null) =>
       prev ? { ...prev, status: "cancelled" } : prev
     );
 
@@ -227,7 +227,7 @@ export default function ManageBookings() {
       return;
     }
 
-    setAuthedBooking((prev) =>
+    setAuthedBooking((prev: any | null) =>
       prev
         ? {
             ...prev,
