@@ -168,14 +168,14 @@ export default function Reviews({showForm = true}: ReviewsProps) {
         )}
       </section>
 
-      {/* Review Submission Form (Uses Testimonial schema with false approval, Section 3.2) */}
+      {/* Review Submission Form */}
       {showForm && <section className="bg-[#FAF8F5] border border-[#C5A059]/20 rounded-3xl p-6 md:p-10 max-w-2xl mx-auto space-y-6 shadow-md">
         <div className="space-y-1 text-center">
           <span className="inline-flex items-center text-[10px] font-mono tracking-wider uppercase text-brand-gold-dark font-bold">
             <MessageSquareCode className="w-3 h-3 mr-1 inline" /> Share your experience
           </span>
-          <h3 className="font-serif text-2xl font-bold text-stone-900">Write Elora Review</h3>
-          <p className="text-stone-500 text-xs font-light">Your review undergoes brief moderation for privacy before appearing live.</p>
+          <h3 className="font-serif text-2xl font-bold text-stone-900">Write a Review</h3>
+          <p className="text-stone-500 text-xs font-light">Your feedback is saved for staff approval before it appears on the website.</p>
         </div>
 
         {successMsg && (
@@ -204,7 +204,7 @@ export default function Reviews({showForm = true}: ReviewsProps) {
                 required
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Disna Kumarasinghe"
+                placeholder="Your full name"
                 className="w-full p-3 rounded-xl border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/45"
               />
             </div>
@@ -217,7 +217,7 @@ export default function Reviews({showForm = true}: ReviewsProps) {
                 onChange={(e) => setSelectedBranch(e.target.value)}
                 className="w-full p-3 rounded-xl border border-stone-300 bg-white text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/45"
               >
-                <option value="">Select Branch...</option>
+                <option value="">Select branch</option>
                 {branches.map(b => (
                   <option key={b.id} value={b.id}>{b.name.replace("Elora Beauty - ", "")}</option>
                 ))}
@@ -235,7 +235,7 @@ export default function Reviews({showForm = true}: ReviewsProps) {
                 onChange={(e) => setSelectedService(e.target.value)}
                 className="w-full p-3 rounded-xl border border-stone-300 bg-white text-stone-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/45"
               >
-                <option value="">Select Treatment...</option>
+                <option value="">Select treatment</option>
                 {services.map(s => (
                   <option key={s.id} value={s.id}>{s.name}</option>
                 ))}
@@ -243,7 +243,7 @@ export default function Reviews({showForm = true}: ReviewsProps) {
             </div>
 
             <div>
-              <span id="review-rating-label" className="block text-xs font-semibold text-stone-700 mb-1">Satisfactory Rating</span>
+              <span id="review-rating-label" className="block text-xs font-semibold text-stone-700 mb-1">Rating</span>
               <div role="radiogroup" aria-labelledby="review-rating-label" className="flex items-center space-x-1.5 h-11 bg-white border border-stone-300 rounded-xl px-3 justify-center">
                 {[1, 2, 3, 4, 5].map((starVal) => {
                   return (
@@ -275,7 +275,7 @@ export default function Reviews({showForm = true}: ReviewsProps) {
               rows={4}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="Tell us what you liked! Mention stylists, service qualities, or our reception hosting hospitality..."
+              placeholder="Tell us about your visit, stylist, treatment quality, or salon experience..."
               className="w-full p-3 rounded-xl border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/45"
             />
           </div>
@@ -286,7 +286,7 @@ export default function Reviews({showForm = true}: ReviewsProps) {
             className="flex w-full items-center justify-center space-x-2 rounded-xl bg-brand-ink py-3.5 text-sm font-semibold tracking-wide text-white transition-colors hover:bg-brand-gold-dark disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold-dark"
           >
             <Send className="w-4 h-4" />
-            <span>{submitting ? "Submitting Review..." : "Pin Review For Approving"}</span>
+            <span>{submitting ? "Submitting Review..." : "Submit Review"}</span>
           </button>
         </form>
       </section>}

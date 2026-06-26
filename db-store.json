@@ -2210,6 +2210,16 @@
       "branch": "colombo-07",
       "status": "new",
       "submittedAt": "2026-06-22T08:15:00Z"
+    },
+    {
+      "id": "msg_1782473188316",
+      "name": "Sathurgini Kalanantharasan",
+      "phone": "0771234567",
+      "email": "sathurgini@gmail.com",
+      "message": "how to help ",
+      "branch": "",
+      "status": "new",
+      "submittedAt": "2026-06-26T11:26:28.316Z"
     }
   ],
   "certifications": [
@@ -2575,6 +2585,7 @@
     "heroDescription": "Tailored beauty treatments delivered by experienced artists at our Colombo-area studios.",
     "heroServiceLabel": "Premium Salon Services",
     "heroButtonLabel": "Book Appointment",
+    "heroBackgroundImage": "/images/elora-hero-salon-luxury.png",
     "heroImage": "/images/bridal-makeup-hero.png",
     "aboutTitle": "Beauty expertise, thoughtfully personal",
     "aboutDescription": "Elora Beauty brings professional hair, makeup, nails, skin, spa, and bridal care together across six convenient studios. Our artists combine careful consultation, modern techniques, and warm hospitality so every appointment feels personal from the first conversation to the finished look.",

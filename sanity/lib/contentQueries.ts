@@ -206,6 +206,8 @@ export const siteSettingsQuery = groq`
     heroDescription,
     heroServiceLabel,
     heroButtonLabel,
+    "heroBackgroundImage": heroBackgroundImage.asset->url,
+    "heroBackgroundImageAlt": heroBackgroundImage.alt,
     "heroImage": heroImage.asset->url,
     "heroImageAlt": heroImage.alt,
     aboutTitle,

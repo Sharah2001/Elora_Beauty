@@ -3,7 +3,7 @@
 import React, {Suspense, lazy, useState, useEffect} from "react";
 import Image from "next/image";
 import { 
-  ArrowRight, Check, Facebook, Instagram, MapPin, Scissors, Hand, HeartHandshake, SmilePlus
+  ArrowRight, Calendar, Facebook, Instagram, MessageSquareText, Scissors, Hand, HeartHandshake, SmilePlus, Star
 } from "lucide-react";
 import Navbar from "./components/Navbar";
 import About from "./components/About";
@@ -27,6 +27,12 @@ interface AppProps {
   initialBranches?: Branch[];
 }
 
+type BookingDefaults = {
+  branchId?: string;
+  serviceIds?: string[];
+  artistId?: string;
+};
+
 export default function App({
   initialSiteSettings = null,
   initialBranches = [],
@@ -38,6 +44,7 @@ export default function App({
   const [siteSettings] = useState<SiteSettings | null>(initialSiteSettings);
   const [branches] = useState<Branch[]>(initialBranches);
   const [selectedBranch, setSelectedBranch] = useState("");
+  const [bookingDefaults, setBookingDefaults] = useState<BookingDefaults>({});
   
   // Contact form state
   const [cName, setCName] = useState("");
@@ -78,7 +85,17 @@ export default function App({
     }
   };
 
-  const handleOpenBooking = () => {
+  const handleOpenBooking = (defaults: BookingDefaults = {}) => {
+    const branchId = defaults.branchId ?? selectedBranch;
+    if (branchId && branchId !== selectedBranch) {
+      handleSelectBranch(branchId);
+    }
+
+    setBookingDefaults({
+      branchId,
+      serviceIds: defaults.serviceIds ?? [],
+      artistId: defaults.artistId ?? "any",
+    });
     setActiveTab("book_now");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -122,8 +139,16 @@ export default function App({
     }
   };
 
-  const heroTitle = siteSettings?.heroTitle || "Signature Beauty";
-  const [heroTitleFirst, ...heroTitleRest] = heroTitle.split(" ");
+  const heroTitle = siteSettings?.heroTitle?.trim() || "Where Beauty Meets Artistry";
+  const heroTitleWords = heroTitle.split(/\s+/);
+  const heroTitleMain =
+    heroTitleWords.length > 2 ? heroTitleWords.slice(0, -2).join(" ") : heroTitle;
+  const heroTitleAccent = heroTitleWords.length > 2 ? heroTitleWords.slice(-2).join(" ") : "";
+  const defaultHeroBackgroundImage = "/images/elora-hero-salon-luxury.png";
+  const heroBackgroundImage =
+    siteSettings?.heroBackgroundImage?.includes("floral-beauty-editorial")
+      ? defaultHeroBackgroundImage
+      : siteSettings?.heroBackgroundImage || defaultHeroBackgroundImage;
 
   return (
     <div className="min-h-screen bg-[#FAF6F4] text-stone-900 font-sans flex flex-col justify-between">
@@ -147,116 +172,137 @@ export default function App({
             
             {/* HERO BANNER SECTION */}
             <section className="hero-reference relative left-1/2 -mt-8 w-screen -translate-x-1/2 overflow-hidden">
-              <div className="hero-reference-right" aria-hidden="true">
-                <Image
-                  src="/images/makeup-showcase.jpg"
-                  alt=""
-                  fill
-                  quality={60}
-                  sizes="48vw"
-                />
-              </div>
+              <Image
+                src={heroBackgroundImage}
+                alt=""
+                fill
+                priority
+                fetchPriority="high"
+                quality={74}
+                sizes="100vw"
+                className="hero-reference-bg"
+              />
+              <div className="hero-reference-grid relative z-10 mx-auto grid max-w-[1440px] items-center gap-10 px-6 py-16 sm:px-10 lg:min-h-[720px] lg:grid-cols-[0.12fr_1fr_0.34fr] lg:px-14 lg:py-16 xl:px-20">
+                <div className="hidden lg:block" aria-hidden="true"></div>
 
-              <div className="hero-reference-grid relative z-10 mx-auto grid max-w-[1440px] items-center gap-12 px-6 py-16 sm:px-10 lg:min-h-[680px] lg:grid-cols-[0.82fr_1.08fr_0.8fr] lg:px-14 lg:py-14 xl:px-20">
-                <div className="hero-reference-copy mx-auto w-full max-w-xl text-center lg:mx-0 lg:text-left">
-                  <div className="hero-reference-eyebrow mx-auto lg:mx-0">
+                <div className="hero-reference-copy mx-auto w-full max-w-3xl text-center">
+                  <div className="hero-reference-status mx-auto">
                     <span></span>
+                    Now accepting new clients
+                  </div>
+
+                  <div className="hero-reference-eyebrow mx-auto">
                     {siteSettings?.heroEyebrow || "Hair · Makeup · Nails · Skin · Bridal"}
                   </div>
 
-                  <h1 className="mt-7 font-serif text-[3.5rem] font-medium leading-[0.94] tracking-[-0.045em] text-white sm:text-7xl lg:text-[5.35rem]">
-                    {heroTitleFirst}
-                    <span className="block text-[#D3AD63]">{heroTitleRest.join(" ")}</span>
+                  <h1 className="hero-reference-title">
+                    {heroTitleMain}
+                    {heroTitleAccent && <span>{heroTitleAccent}</span>}
                   </h1>
 
-                  <p className="mx-auto mt-7 max-w-lg text-base font-light leading-7 text-stone-300 lg:mx-0 lg:text-lg">
+                  <p className="hero-reference-description">
                     {siteSettings?.heroDescription ||
-                      "Personalised beauty care, refined by experienced artists and delivered with thoughtful attention to every detail."}
+                      "Luxury hair, makeup, nails and bridal styling by Colombo artists known for calm precision and polished, photo-ready finishes."}
                   </p>
 
-                  <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                  <div className="hero-reference-actions">
                     <button
                       onClick={() => handleOpenBooking()}
-                      className="group inline-flex min-h-12 w-full items-center justify-center gap-2 bg-brand-gold-dark px-7 text-sm font-semibold text-white transition hover:bg-[#76511c] sm:w-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                      className="hero-reference-primary"
                     >
+                      <Calendar className="h-4 w-4" />
                       {siteSettings?.heroButtonLabel || "Book Appointment"}
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </button>
                     <button
                       type="button"
                       onClick={() => setActiveTab("services")}
-                      className="inline-flex min-h-12 w-full items-center justify-center border border-white/25 px-7 text-sm font-medium text-white transition hover:border-[#C5A059] hover:text-[#D3AD63] sm:w-auto cursor-pointer"
+                      className="hero-reference-secondary"
                     >
-                      Explore Services
+                      Our Services
+                      <ArrowRight className="h-4 w-4" />
                     </button>
                   </div>
 
-                  <div className="mt-10 grid grid-cols-2 gap-4 border-t border-white/10 pt-6 sm:flex sm:gap-8">
+                  <div className="hero-reference-stats">
                     {[
-                      "Certified beauty artists",
-                      "Studios across Colombo",
+                      {value: "12+", label: "Years Experience"},
+                      {value: "5K+", label: "Happy Clients"},
+                      {value: "4.9", label: "Average Rating"},
                     ].map((item, index) => (
-                      <div key={item} className="flex items-center justify-center gap-2 text-left lg:justify-start">
-                        {index === 0 ? (
-                          <Check className="h-4 w-4 shrink-0 text-[#D3AD63]" />
-                        ) : (
-                          <MapPin className="h-4 w-4 shrink-0 text-[#D3AD63]" />
-                        )}
-                        <span className="text-xs leading-5 text-stone-400">{item}</span>
+                      <div key={item.label} className="hero-reference-stat">
+                        <strong>
+                          {item.value}
+                          {index === 2 && <Star className="h-5 w-5 fill-current" />}
+                        </strong>
+                        <span>{item.label}</span>
                       </div>
                     ))}
                   </div>
 
                   {(siteSettings?.instagramUrl || siteSettings?.facebookUrl) && (
-                    <div className="mt-6 flex items-center justify-center gap-3 lg:justify-start">
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+                    <div className="hero-reference-social">
+                      <span>
                         Follow Elora
                       </span>
                       {siteSettings.instagramUrl && (
                         <a
                           href={siteSettings.instagramUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label="Visit Elora Beauty on Instagram"
-                          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-stone-300 transition hover:border-brand-gold hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-                        >
-                          <Instagram className="h-4 w-4" />
-                        </a>
+	                      target="_blank"
+	                      rel="noreferrer"
+	                      aria-label="Visit Elora Beauty on Instagram"
+	                      className="hero-reference-social-link"
+	                    >
+	                      <Instagram className="h-4 w-4" />
+	                    </a>
                       )}
                       {siteSettings.facebookUrl && (
                         <a
                           href={siteSettings.facebookUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label="Visit Elora Beauty on Facebook"
-                          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-stone-300 transition hover:border-brand-gold hover:text-brand-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-                        >
-                          <Facebook className="h-4 w-4" />
-                        </a>
+	                      target="_blank"
+	                      rel="noreferrer"
+	                      aria-label="Visit Elora Beauty on Facebook"
+	                      className="hero-reference-social-link"
+	                    >
+	                      <Facebook className="h-4 w-4" />
+	                    </a>
                       )}
                     </div>
                   )}
                 </div>
 
-                <div className="hero-reference-center relative z-20 mx-auto flex w-full items-center justify-center">
-                  <div className="hero-reference-diamond">
-                    <div className="hero-reference-diamond-image">
+                <div className="hero-reference-feature">
+                  <div className="hero-reference-review">
+                    <div className="hero-reference-review-image">
                       <Image
                         src={siteSettings?.heroImage || "/images/bridal-makeup-hero.png"}
-                        alt={siteSettings?.heroImageAlt || "Bridal makeup artistry at Elora Beauty"}
+                        alt={siteSettings?.heroImageAlt || "Finished bridal makeup at Elora Beauty"}
                         fill
-                        priority
-                        fetchPriority="high"
-                        quality={72}
-                        sizes="(max-width: 1023px) 68vw, 32vw"
+                        quality={74}
+                        sizes="(max-width: 1023px) 78vw, 20vw"
                       />
                     </div>
+                    <div className="hero-reference-review-stars" aria-label="Five star review">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className="h-4 w-4 fill-current" />
+                      ))}
+                    </div>
+                    <p>
+                      “The calmest bridal styling experience, and the finish lasted beautifully.”
+                    </p>
+                    <div className="hero-reference-review-client">
+                      <Image
+                        src="/images/artists/elora-jayawardena.png"
+                        alt=""
+                        width={42}
+                        height={42}
+                      />
+                      <span>
+                        <strong>Elora Client</strong>
+                        Bridal appointment
+                      </span>
+                    </div>
                   </div>
-                  <div className="hero-reference-shape hero-reference-shape-top" aria-hidden="true"></div>
-                  <div className="hero-reference-shape hero-reference-shape-bottom" aria-hidden="true"></div>
                 </div>
-
-                <div className="hidden lg:block" aria-hidden="true"></div>
               </div>
             </section>
 
@@ -310,6 +356,19 @@ export default function App({
             <DeferredSection fallback={<LoadingSkeleton count={3} />}>
               <Suspense fallback={<LoadingSkeleton count={3} />}>
                 <Reviews showForm={false} />
+                <div className="mt-8 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab("reviews");
+                      window.scrollTo({top: 0, behavior: "smooth"});
+                    }}
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-brand-gold/30 bg-white px-6 text-sm font-semibold text-brand-gold-dark shadow-sm transition hover:border-brand-gold hover:bg-brand-gold-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                  >
+                    <MessageSquareText className="h-4 w-4" />
+                    Write a Review
+                  </button>
+                </div>
               </Suspense>
             </DeferredSection>
             <DeferredSection fallback={<LoadingSkeleton count={2} className="lg:grid-cols-2" />}>
@@ -317,7 +376,7 @@ export default function App({
                 <Locations
                   selectedBranchId={selectedBranch}
                   onSelectBranch={handleSelectBranch}
-                  onSelectBranchForBooking={() => handleOpenBooking()}
+                  onSelectBranchForBooking={(branchId) => handleOpenBooking({branchId})}
                 />
               </Suspense>
             </DeferredSection>
@@ -416,7 +475,7 @@ export default function App({
           <Suspense fallback={<LoadingSkeleton count={6} />}>
             <Services
               selectedBranchId={selectedBranch}
-              onSelectServiceForBooking={() => handleOpenBooking()}
+              onSelectServiceForBooking={(serviceIds) => handleOpenBooking({serviceIds})}
             />
           </Suspense>
         )}
@@ -424,9 +483,10 @@ export default function App({
         {/* VIEW 3: STYLISTS SECTION */}
         {activeTab === "artists" && (
           <Suspense fallback={<LoadingSkeleton count={6} />}>
-            <Artists selectedBranchId={selectedBranch} onSelectArtistForBooking={() => {
-              setActiveTab("book_now");
-            }} />
+            <Artists
+              selectedBranchId={selectedBranch}
+              onSelectArtistForBooking={(artistId) => handleOpenBooking({artistId})}
+            />
           </Suspense>
         )}
 
@@ -443,7 +503,7 @@ export default function App({
             <Locations
               selectedBranchId={selectedBranch}
               onSelectBranch={handleSelectBranch}
-              onSelectBranchForBooking={() => handleOpenBooking()}
+              onSelectBranchForBooking={(branchId) => handleOpenBooking({branchId})}
             />
           </Suspense>
         )}
@@ -465,7 +525,11 @@ export default function App({
         {/* VIEW 8: BOOK NOMINATION FLOW WIZARD */}
         {activeTab === "book_now" && (
           <Suspense fallback={<LoadingSkeleton count={2} />}>
-            <BookingWizard />
+            <BookingWizard
+              initialBranchId={bookingDefaults.branchId}
+              initialServiceIds={bookingDefaults.serviceIds}
+              initialArtistId={bookingDefaults.artistId}
+            />
           </Suspense>
         )}
 

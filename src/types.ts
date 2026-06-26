@@ -144,6 +144,8 @@ export interface SiteSettings {
   heroDescription?: string;
   heroServiceLabel?: string;
   heroButtonLabel?: string;
+  heroBackgroundImage?: string;
+  heroBackgroundImageAlt?: string;
   heroImage?: string;
   heroImageAlt?: string;
   aboutTitle?: string;

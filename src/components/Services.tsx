@@ -10,7 +10,7 @@ import SectionHeading from "./ui/SectionHeading";
 import {fetchJson} from "../lib/fetchJson";
 
 interface ServicesProps {
-  onSelectServiceForBooking: (serviceId: string) => void;
+  onSelectServiceForBooking: (serviceIds: string[]) => void;
   selectedBranchId?: string;
 }
 
@@ -226,7 +226,7 @@ export default function Services({
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => onSelectServiceForBooking(service.id)}
+                        onClick={() => onSelectServiceForBooking([service.id])}
                       >
                         Book treatment
                       </Button>
@@ -299,10 +299,7 @@ export default function Services({
                     <Button
                       fullWidth
                       className="mt-6"
-                      onClick={() => {
-                        const firstService = item.includedServices[0];
-                        if (firstService) onSelectServiceForBooking(firstService);
-                      }}
+                      onClick={() => onSelectServiceForBooking(item.includedServices)}
                     >
                       Book this package
                     </Button>

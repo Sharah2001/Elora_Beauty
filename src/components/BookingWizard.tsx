@@ -28,7 +28,17 @@ type AvailableSlot = {
   availableArtists: Artist[];
 };
 
-export default function BookingWizard() {
+interface BookingWizardProps {
+  initialBranchId?: string;
+  initialServiceIds?: string[];
+  initialArtistId?: string;
+}
+
+export default function BookingWizard({
+  initialBranchId = "",
+  initialServiceIds = [],
+  initialArtistId = "any",
+}: BookingWizardProps) {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -49,6 +59,7 @@ export default function BookingWizard() {
 
   const [error, setError] = useState("");
   const [successBooking, setSuccessBooking] = useState<any>(null);
+  const initialServiceKey = initialServiceIds.join("|");
 
   useEffect(() => {
     Promise.all([
@@ -66,6 +77,14 @@ export default function BookingWizard() {
         setError("Failed to load booking data.");
       });
   }, []);
+
+  useEffect(() => {
+    setSelectedBranch(initialBranchId);
+    setSelectedServices(initialServiceKey ? initialServiceKey.split("|") : []);
+    setSelectedArtist(initialArtistId || "any");
+    setSelectedTimeSlot("");
+    setSuccessBooking(null);
+  }, [initialBranchId, initialArtistId, initialServiceKey]);
 
   useEffect(() => {
   if (!selectedBranch || selectedServices.length === 0 || !selectedDate) {
