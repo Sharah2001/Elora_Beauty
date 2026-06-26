@@ -6,11 +6,11 @@ import {
   ArrowRight, Calendar, Facebook, Instagram, MessageSquareText, Scissors, Hand, HeartHandshake, SmilePlus, Star
 } from "lucide-react";
 import Navbar from "./components/Navbar";
-import About from "./components/About";
 import DeferredSection from "./components/ui/DeferredSection";
 import LoadingSkeleton from "./components/ui/LoadingSkeleton";
 import {Branch, SiteSettings} from "./types";
 
+const About = lazy(() => import("./components/About"));
 const BookingWizard = lazy(() => import("./components/BookingWizard"));
 const Services = lazy(() => import("./components/Services"));
 const Artists = lazy(() => import("./components/Artists"));
@@ -45,15 +45,6 @@ export default function App({
   const [branches] = useState<Branch[]>(initialBranches);
   const [selectedBranch, setSelectedBranch] = useState("");
   const [bookingDefaults, setBookingDefaults] = useState<BookingDefaults>({});
-  
-  // Contact form state
-  const [cName, setCName] = useState("");
-  const [cPhone, setCPhone] = useState("");
-  const [cEmail, setCEmail] = useState("");
-  const [cMessage, setCMessage] = useState("");
-  const [cStatus, setCStatus] = useState("");
-  const [cError, setCError] = useState("");
-  const [sendingMsg, setSendingMsg] = useState(false);
 
   useEffect(() => {
     const savedBranch = window.localStorage.getItem("elora-preferred-branch") || "";
@@ -100,45 +91,6 @@ export default function App({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cName || !cPhone || !cMessage) {
-      setCError("Please populate all required fields.");
-      return;
-    }
-
-    setSendingMsg(true);
-    setCError("");
-    setCStatus("");
-
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: cName,
-          phone: cPhone,
-          email: cEmail,
-          message: cMessage
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setCError(data.error || "Inquiry submission failed.");
-      } else {
-        setCStatus(data.message);
-        setCName("");
-        setCPhone("");
-        setCEmail("");
-        setCMessage("");
-      }
-    } catch (err) {
-      setCError("Server currently offline. Try again soon.");
-    } finally {
-      setSendingMsg(false);
-    }
-  };
-
   const heroTitle = siteSettings?.heroTitle?.trim() || "Where Beauty Meets Artistry";
   const heroTitleWords = heroTitle.split(/\s+/);
   const heroTitleMain =
@@ -177,9 +129,9 @@ export default function App({
                 src={heroBackgroundImage}
                 alt=""
                 fill
-                priority
+                preload
                 fetchPriority="high"
-                quality={62}
+                quality={40}
                 sizes="100vw"
                 className="hero-reference-bg"
               />
@@ -332,7 +284,11 @@ export default function App({
               </div>
             </section>
 
-            <About settings={siteSettings} />
+            <DeferredSection fallback={<LoadingSkeleton count={2} className="lg:grid-cols-2" />}>
+              <Suspense fallback={<LoadingSkeleton count={2} className="lg:grid-cols-2" />}>
+                <About settings={siteSettings} />
+              </Suspense>
+            </DeferredSection>
 
             {/* QUICK FEATURES BENTO (Looklike UI Image 1 category cards) */}
             <section className="content-auto space-y-6">
@@ -411,87 +367,6 @@ export default function App({
                 <Faq />
               </Suspense>
             </DeferredSection>
-
-            {/* INTERACTIVE IN-PAGE CONTACT FORM (Saranjah, Section 5) */}
-            <section className="bg-gradient-to-r from-stone-50 to-amber-50/10 border border-[#C5A059]/15 rounded-2xl p-6 md:p-8 max-w-xl mx-auto space-y-4 shadow-sm">
-              <div className="text-center space-y-1">
-                <h3 className="font-serif text-xl font-bold text-[#1A1A1A]">Connect With Elora</h3>
-                <p className="text-stone-500 text-xs font-light">Have custom styling inquiries? Send us a direct inbox inquiry.</p>
-              </div>
-
-              {cStatus && <p role="status" aria-live="polite" className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 p-2.5 rounded-lg font-bold">{cStatus}</p>}
-              {cError && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-bold text-red-700">{cError}</p>}
-
-              <form onSubmit={handleContactSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="contact-name" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Your Full Name *</label>
-                  <input
-                    id="contact-name"
-                    name="name"
-                    autoComplete="name"
-                    type="text"
-                    required
-                    value={cName}
-                    onChange={(e) => setCName(e.target.value)}
-                    className="w-full p-2.5 rounded-lg border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-xs"
-                    placeholder="Minoli de Silva"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="contact-phone" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Phone Number *</label>
-                    <input
-                      id="contact-phone"
-                      name="phone"
-                      type="tel"
-                      inputMode="tel"
-                      autoComplete="tel"
-                      required
-                      value={cPhone}
-                      onChange={(e) => setCPhone(e.target.value)}
-                      className="w-full p-2.5 rounded-lg border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-xs"
-                      placeholder="e.g. +94 77 822 5322"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="contact-email" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Email Address</label>
-                    <input
-                      id="contact-email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      value={cEmail}
-                      onChange={(e) => setCEmail(e.target.value)}
-                      className="w-full p-2.5 rounded-lg border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-xs"
-                      placeholder="minoli@gmail.com"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="contact-message" className="block text-[10px] font-bold uppercase tracking-wide text-stone-700 mb-1">Message Detail *</label>
-                  <textarea
-                    id="contact-message"
-                    name="message"
-                    required
-                    value={cMessage}
-                    onChange={(e) => setCMessage(e.target.value)}
-                    rows={3}
-                    className="w-full p-2.5 rounded-lg border border-stone-300 bg-white text-stone-900 placeholder-stone-400 text-xs"
-                    placeholder="Enter details of your inquiry, date requested, bridal groups size..."
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={sendingMsg}
-                  className="w-full py-3 bg-stone-900 hover:bg-stone-950 text-white font-bold text-xs uppercase tracking-wide rounded-xl cursor-pointer disabled:opacity-50"
-                >
-                  {sendingMsg ? "Sending Message..." : "Send Inquiry"}
-                </button>
-              </form>
-            </section>
 
           </div>
         )}
