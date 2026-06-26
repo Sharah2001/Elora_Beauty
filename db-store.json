@@ -2581,8 +2581,9 @@
   "siteSettings": {
     "businessName": "Elora Beauty",
     "heroEyebrow": "Hair · Makeup · Nails · Skin · Bridal",
-    "heroTitle": "Signature Beauty",
-    "heroDescription": "Tailored beauty treatments delivered by experienced artists at our Colombo-area studios.",
+    "heroTitle": "Where Beauty Meets Artistry",
+    "heroDescription": "Premium hair, makeup, nails, skin care and bridal styling across Colombo, delivered by experienced artists with calm precision and polished, photo-ready results.",
+    "heroTrustLine": "Trusted by brides, professionals and beauty lovers across Colombo.",
     "heroServiceLabel": "Premium Salon Services",
     "heroButtonLabel": "Book Appointment",
     "heroBackgroundImage": "/images/elora-hero-salon-luxury.jpg",

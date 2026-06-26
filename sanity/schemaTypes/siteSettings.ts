@@ -9,6 +9,7 @@ export const siteSettingsType = defineType({
     defineField({name: 'heroEyebrow', title: 'Hero Small Heading', type: 'string'}),
     defineField({name: 'heroTitle', title: 'Hero Title', type: 'string'}),
     defineField({name: 'heroDescription', title: 'Hero Description', type: 'text', rows: 3}),
+    defineField({name: 'heroTrustLine', title: 'Hero Trust Line', type: 'string'}),
     defineField({name: 'heroServiceLabel', title: 'Hero Service Label', type: 'string'}),
     defineField({name: 'heroButtonLabel', title: 'Hero Button Label', type: 'string'}),
     defineField({

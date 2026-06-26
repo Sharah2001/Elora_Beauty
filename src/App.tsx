@@ -203,7 +203,12 @@ export default function App({
 
                   <p className="hero-reference-description">
                     {siteSettings?.heroDescription ||
-                      "Luxury hair, makeup, nails and bridal styling by Colombo artists known for calm precision and polished, photo-ready finishes."}
+                      "Premium hair, makeup, nails, skin care and bridal styling across Colombo, delivered by experienced artists with calm precision and polished, photo-ready results."}
+                  </p>
+
+                  <p className="hero-reference-trust-line">
+                    {siteSettings?.heroTrustLine ||
+                      "Trusted by brides, professionals and beauty lovers across Colombo."}
                   </p>
 
                   <div className="hero-reference-actions">
@@ -222,6 +227,22 @@ export default function App({
                       Our Services
                       <ArrowRight className="h-4 w-4" />
                     </button>
+                  </div>
+
+                  <div className="hero-reference-badges" aria-label="Elora Beauty trust highlights">
+                    {[
+                      {label: "Certified Artists", icon: Scissors},
+                      {label: "Six Colombo Studios", icon: HeartHandshake},
+                      {label: "Online Booking", icon: Calendar},
+                    ].map((badge) => {
+                      const Icon = badge.icon;
+                      return (
+                        <span key={badge.label}>
+                          <Icon className="h-3.5 w-3.5" />
+                          {badge.label}
+                        </span>
+                      );
+                    })}
                   </div>
 
                   <div className="hero-reference-stats">
@@ -292,7 +313,7 @@ export default function App({
                       ))}
                     </div>
                     <p>
-                      “The calmest bridal styling experience, and the finish lasted beautifully.”
+                      “The team made my bridal appointment feel calm, elegant and effortless. The finish stayed flawless all day.”
                     </p>
                     <div className="hero-reference-review-client">
                       <Image

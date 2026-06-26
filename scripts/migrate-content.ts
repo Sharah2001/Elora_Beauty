@@ -640,6 +640,7 @@ async function migrateSiteSettings() {
       heroEyebrow: stringValue(item.heroEyebrow) || undefined,
       heroTitle: stringValue(item.heroTitle) || undefined,
       heroDescription: stringValue(item.heroDescription) || undefined,
+      heroTrustLine: stringValue(item.heroTrustLine) || undefined,
       heroServiceLabel: stringValue(item.heroServiceLabel) || undefined,
       heroButtonLabel: stringValue(item.heroButtonLabel) || undefined,
       heroBackgroundImage: await imageValue(
