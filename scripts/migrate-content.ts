@@ -643,7 +643,7 @@ async function migrateSiteSettings() {
       heroServiceLabel: stringValue(item.heroServiceLabel) || undefined,
       heroButtonLabel: stringValue(item.heroButtonLabel) || undefined,
       heroBackgroundImage: await imageValue(
-        item.heroBackgroundImage || '/images/elora-hero-salon-luxury.png',
+        item.heroBackgroundImage || '/images/elora-hero-salon-luxury.jpg',
         businessName,
         'site settings hero background',
       ),

@@ -2,7 +2,7 @@
 
 @theme {
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --font-serif: var(--font-playfair), Georgia, serif;
   --color-brand-gold: #c5a059;
   --color-brand-gold-dark: #8a6428;

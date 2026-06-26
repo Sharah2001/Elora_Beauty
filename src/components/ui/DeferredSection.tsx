@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, type ReactNode} from "react";
+import {useEffect, useRef, useState, type CSSProperties, type ReactNode} from "react";
 
 interface DeferredSectionProps {
   children: ReactNode;
@@ -39,8 +39,14 @@ export default function DeferredSection({
     return () => observer.disconnect();
   }, [rootMargin, shouldRender]);
 
+  const deferredStyle: CSSProperties = {
+    contentVisibility: "auto",
+    containIntrinsicSize: `${minHeight}px`,
+    ...(!shouldRender ? {minHeight} : {}),
+  };
+
   return (
-    <div ref={containerRef} style={!shouldRender ? {minHeight} : undefined}>
+    <div ref={containerRef} style={deferredStyle}>
       {shouldRender ? children : fallback}
     </div>
   );

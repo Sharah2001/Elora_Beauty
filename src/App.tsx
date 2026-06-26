@@ -144,9 +144,10 @@ export default function App({
   const heroTitleMain =
     heroTitleWords.length > 2 ? heroTitleWords.slice(0, -2).join(" ") : heroTitle;
   const heroTitleAccent = heroTitleWords.length > 2 ? heroTitleWords.slice(-2).join(" ") : "";
-  const defaultHeroBackgroundImage = "/images/elora-hero-salon-luxury.png";
+  const defaultHeroBackgroundImage = "/images/elora-hero-salon-luxury.jpg";
   const heroBackgroundImage =
-    siteSettings?.heroBackgroundImage?.includes("floral-beauty-editorial")
+    siteSettings?.heroBackgroundImage?.includes("floral-beauty-editorial") ||
+    siteSettings?.heroBackgroundImage?.endsWith("elora-hero-salon-luxury.png")
       ? defaultHeroBackgroundImage
       : siteSettings?.heroBackgroundImage || defaultHeroBackgroundImage;
 
@@ -178,7 +179,7 @@ export default function App({
                 fill
                 priority
                 fetchPriority="high"
-                quality={74}
+                quality={62}
                 sizes="100vw"
                 className="hero-reference-bg"
               />
@@ -274,10 +275,14 @@ export default function App({
                   <div className="hero-reference-review">
                     <div className="hero-reference-review-image">
                       <Image
-                        src={siteSettings?.heroImage || "/images/bridal-makeup-hero.png"}
+                        src={
+                          siteSettings?.heroImage?.endsWith("bridal-makeup-hero.png")
+                            ? "/images/bridal-makeup-hero.jpg"
+                            : siteSettings?.heroImage || "/images/bridal-makeup-hero.jpg"
+                        }
                         alt={siteSettings?.heroImageAlt || "Finished bridal makeup at Elora Beauty"}
                         fill
-                        quality={74}
+                        quality={64}
                         sizes="(max-width: 1023px) 78vw, 20vw"
                       />
                     </div>
