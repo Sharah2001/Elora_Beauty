@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { Calendar, ChevronDown, MapPin, Menu, X, Shield } from "lucide-react";
 import {Branch} from "../types";
 
@@ -40,13 +39,12 @@ export default function Navbar({
             className="flex items-center space-x-2 rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
             onClick={() => setActiveTab("home")}
           >
-            <Image
+            <img
               src="/images/elora-logo.svg"
               alt="Elora Beauty Colombo Premier Spa"
               width={220}
               height={58}
-              priority
-              sizes="220px"
+              fetchPriority="high"
               className="h-[58px] w-[220px]"
             />
           </button>

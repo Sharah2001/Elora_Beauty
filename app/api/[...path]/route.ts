@@ -994,7 +994,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
 
     const segments = await getPath(context);
     const route = segments.slice(0, -1).join("/");
-    const id = segments.at(-1);
+    const id = segments[segments.length - 1];
     const body = await getBody(request);
 
     if (!id) return error("Missing record id.", 400);
@@ -1055,7 +1055,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
 
     const segments = await getPath(context);
     const route = segments.slice(0, -1).join("/");
-    const id = segments.at(-1);
+    const id = segments[segments.length - 1];
 
     if (route !== "admin/blocked-dates" || !id) {
       return error("API route not found", 404);

@@ -7,6 +7,7 @@ import EmptyState from "./ui/EmptyState";
 import LoadingSkeleton from "./ui/LoadingSkeleton";
 import SectionHeading from "./ui/SectionHeading";
 import {fetchJson} from "../lib/fetchJson";
+import "./Gallery.module.css";
 
 type GalleryItem = {
   id: string;

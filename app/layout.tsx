@@ -4,14 +4,16 @@ import "./globals.css";
 
 const outfit = Outfit({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-outfit",
   display: "swap",
 });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
+  weight: ["700"],
   variable: "--font-playfair",
-  display: "swap",
+  display: "optional",
 });
 
 export const metadata: Metadata = {
