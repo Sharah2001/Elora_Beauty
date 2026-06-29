@@ -36,7 +36,6 @@ export interface BlockedDate {
   blockedEndTime?: string;
 }
 
-
 export interface Artist {
   id: string;
   name: string;
@@ -48,7 +47,10 @@ export interface Artist {
   experienceYears?: number;
   specialties: string[]; // List of service IDs
   branches: string[]; // List of branch IDs
-  certifications?: Pick<Certification, "id" | "title" | "issuer" | "reference">[];
+  certifications?: Pick<
+    Certification,
+    "id" | "title" | "issuer" | "reference"
+  >[];
   isActive: boolean;
   displayOrder: number;
 }
@@ -162,7 +164,12 @@ export interface SiteSettings {
   seoDescription?: string;
 }
 
-export type BookingStatus = "pending" | "confirmed" | "completed" | "no-show" | "cancelled";
+export type BookingStatus =
+  | "pending"
+  | "confirmed"
+  | "completed"
+  | "no-show"
+  | "cancelled";
 
 export interface Booking {
   id: string;
@@ -175,7 +182,7 @@ export interface Booking {
   startTime: string; // "14:30"
   endTime: string; // "15:30"
   status: BookingStatus;
-  bookingSource: "online" | "manual";
+  bookingSource: "online" | "manual" | "virtual"; // Source of the booking
   bookingReference: string; // e.g. "BK-7F3K2"
   pin: string; // 4-digit code e.g. "4932"
   notes?: string;
@@ -183,7 +190,7 @@ export interface Booking {
   updatedAt: string;
 }
 
-export interface TimeSlot{
+export interface TimeSlot {
   startTime: string;
   endTime: string;
   available: boolean;

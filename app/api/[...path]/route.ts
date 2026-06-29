@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  mutateDatabase,
-  readDatabase,
-  type Database,
-} from "@/lib/database";
+import { mutateDatabase, readDatabase, type Database } from "@/lib/database";
 import { client } from "@/sanity/lib/client";
 import {
   approvedTestimonialsQuery,
@@ -129,15 +125,12 @@ function artistSupportsService(
     return true;
   }
 
-  const service = database.services.find(
-    (item: any) => item.id === serviceId,
-  );
+  const service = database.services.find((item: any) => item.id === serviceId);
   const category = service?.category ?? "";
   const specialties = new Set<string>(artist.specialties);
 
   return (
-    ((specialties.has("hair-cut") ||
-      specialties.has("hair-coloring")) &&
+    ((specialties.has("hair-cut") || specialties.has("hair-coloring")) &&
       category.startsWith("Hair")) ||
     (specialties.has("nail-gel") && category === "Nails") ||
     (specialties.has("pro-makeup") && category === "Makeup") ||
@@ -224,10 +217,7 @@ function getAvailability(
     );
   });
 
-  const groupedSlots = new Map<
-    string,
-    { id: string; name: string }[]
-  >();
+  const groupedSlots = new Map<string, { id: string; name: string }[]>();
   const openMinutes = timeToMinutes(schedule.openTime);
   const closeMinutes = timeToMinutes(schedule.closeTime);
   const step = branchHours.slotDurationMinutes || 30;
@@ -251,44 +241,35 @@ function getAvailability(
         ),
     );
 
-   if (blocked) {
-  continue;
-}
+    if (blocked) {
+      continue;
+    }
 
-const availableArtists = artists
-  .filter((artist: any) => {
-    const hasConflict = dayBookings.some((booking: any) => {
-      return (
-        booking.artist === artist.id &&
-        overlaps(
-          startTime,
-          endTime,
-          booking.startTime,
-          booking.endTime
-        )
-      );
-    });
+    const availableArtists = artists
+      .filter((artist: any) => {
+        const hasConflict = dayBookings.some((booking: any) => {
+          return (
+            booking.artist === artist.id &&
+            overlaps(startTime, endTime, booking.startTime, booking.endTime)
+          );
+        });
 
-    return !hasConflict;
-  })
-  .map((artist: any) => ({
-    id: artist.id,
-    name: artist.name,
-  }));
+        return !hasConflict;
+      })
+      .map((artist: any) => ({
+        id: artist.id,
+        name: artist.name,
+      }));
 
-if (availableArtists.length > 0) {
-  groupedSlots.set(startTime, availableArtists);
-}
+    if (availableArtists.length > 0) {
+      groupedSlots.set(startTime, availableArtists);
+    }
+  }
 
-}
-
-return [...groupedSlots.entries()].map(
-  ([time, availableArtists]) => ({
+  return [...groupedSlots.entries()].map(([time, availableArtists]) => ({
     time,
     availableArtists,
-  })
-);
-
+  }));
 }
 async function getPath(context: RouteContext): Promise<string[]> {
   return (await context.params).path;
@@ -317,8 +298,10 @@ export async function GET(request: NextRequest, context: RouteContext) {
     if (route === "artists") return json(await client.fetch(artistsQuery));
     if (route === "faqs") return json(await client.fetch(faqsQuery));
     if (route === "gallery") return json(await client.fetch(galleryItemsQuery));
-    if (route === "before-after") return json(await client.fetch(beforeAfterQuery));
-    if (route === "certifications") return json(await client.fetch(certificationsQuery));
+    if (route === "before-after")
+      return json(await client.fetch(beforeAfterQuery));
+    if (route === "certifications")
+      return json(await client.fetch(certificationsQuery));
     if (route === "testimonials") {
       return json(await client.fetch(approvedTestimonialsQuery));
     }
@@ -339,8 +322,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       const branchId = request.nextUrl.searchParams.get("branchId");
       const date = request.nextUrl.searchParams.get("date");
       const serviceIds = request.nextUrl.searchParams.get("serviceIds");
-      const artistId =
-        request.nextUrl.searchParams.get("artistId") ?? "any";
+      const artistId = request.nextUrl.searchParams.get("artistId") ?? "any";
 
       if (!branchId || !date || !serviceIds) {
         return error(
@@ -349,15 +331,21 @@ export async function GET(request: NextRequest, context: RouteContext) {
         );
       }
 
-      const [branches, services, artists, workingHours, blockedDates, localDatabase] =
-        await Promise.all([
-          client.fetch(branchesQuery),
-          client.fetch(servicesQuery),
-          client.fetch(artistsQuery),
-          client.fetch(workingHoursQuery),
-          client.fetch(blockedDatesQuery, { fromDate: date }),
-          readDatabase(),
-        ]);
+      const [
+        branches,
+        services,
+        artists,
+        workingHours,
+        blockedDates,
+        localDatabase,
+      ] = await Promise.all([
+        client.fetch(branchesQuery),
+        client.fetch(servicesQuery),
+        client.fetch(artistsQuery),
+        client.fetch(workingHoursQuery),
+        client.fetch(blockedDatesQuery, { fromDate: date }),
+        readDatabase(),
+      ]);
       const availabilityDatabase: Database = {
         branches,
         services,
@@ -395,18 +383,16 @@ export async function GET(request: NextRequest, context: RouteContext) {
           ...booking,
           servicesList: booking.services.map(
             (serviceId: string) =>
-              database.services.find(
-                (service: any) => service.id === serviceId,
-              )?.name ?? serviceId,
+              database.services.find((service: any) => service.id === serviceId)
+                ?.name ?? serviceId,
           ),
           branchName:
             database.branches.find(
               (branch: any) => branch.id === booking.branch,
             )?.name ?? booking.branch,
           artistName:
-            database.artists.find(
-              (artist: any) => artist.id === booking.artist,
-            )?.name ?? "Unassigned",
+            database.artists.find((artist: any) => artist.id === booking.artist)
+              ?.name ?? "Unassigned",
         }))
         .sort(
           (a: any, b: any) =>
@@ -466,7 +452,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
       }
 
       const galleryDocuments = await writeClient.fetch<
-        {_id: string; assetId?: string}[]
+        { _id: string; assetId?: string }[]
       >(
         `*[_type == "galleryItem"] | order(_createdAt desc) {
           _id,
@@ -507,25 +493,20 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     if (route === "admin/auth") {
-      const configuredPassword =
-        process.env.ADMIN_PASSWORD_HASH ?? "admin123";
+      const configuredPassword = process.env.ADMIN_PASSWORD_HASH ?? "admin123";
 
       if (body.password !== configuredPassword) {
         return error("Invalid administrative pass code.", 401);
       }
 
       const response = json({ token: "Elora_Secure_Staff_Session" });
-      response.cookies.set(
-        "admin_token",
-        "Elora_Secure_Staff_Session",
-        {
-          httpOnly: true,
-          maxAge: 86400,
-          path: "/",
-          sameSite: "strict",
-          secure: process.env.NODE_ENV === "production",
-        },
-      );
+      response.cookies.set("admin_token", "Elora_Secure_Staff_Session", {
+        httpOnly: true,
+        maxAge: 86400,
+        path: "/",
+        sameSite: "strict",
+        secure: process.env.NODE_ENV === "production",
+      });
       return response;
     }
 
@@ -539,8 +520,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     if (route === "testimonials") {
-      const { customerName, rating, comment, serviceReceived, branch } =
-        body;
+      const { customerName, rating, comment, serviceReceived, branch } = body;
 
       if (!customerName || !rating || !comment) {
         return error("Name, rating and comments are required.", 400);
@@ -549,7 +529,11 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const sourceId = `t_${Date.now()}`;
       const numericRating = Number(rating);
 
-      if (!Number.isInteger(numericRating) || numericRating < 1 || numericRating > 5) {
+      if (
+        !Number.isInteger(numericRating) ||
+        numericRating < 1 ||
+        numericRating > 5
+      ) {
         return error("Rating must be between 1 and 5.", 400);
       }
 
@@ -578,8 +562,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
       return json({
         success: true,
-        message:
-          "Thank you! Your review has been submitted for moderation.",
+        message: "Thank you! Your review has been submitted for moderation.",
       });
     }
 
@@ -613,139 +596,155 @@ export async function POST(request: NextRequest, context: RouteContext) {
     }
 
     if (route === "bookings") {
-  const branchId = body.branchId || body.branch;
-  const artistId = body.artistId || body.artist || "any";
-  const rawServiceIds = body.serviceIds || body.services;
+      const branchId = body.branchId || body.branch;
+      const artistId = body.artistId || body.artist || "any";
+      const rawServiceIds = body.serviceIds || body.services;
+      const bookingSource = body.bookingSource || "online";
+      const validSources = ["online", "manual", "virtual"];
 
-  const serviceIds = Array.isArray(rawServiceIds)
-    ? rawServiceIds
-    : String(rawServiceIds || "")
-        .split(",")
-        .map((id) => id.trim())
-        .filter(Boolean);
+      if (!validSources.includes(bookingSource)) {
+        return error("Invalid booking source.", 400);
 
-  const customerName = body.customerName || body.clientName;
-  const customerPhone = body.customerPhone || body.clientPhone;
-  const date = body.date;
-  const startTime = body.startTime || body.selectedTimeSlot;
-  const notes = body.notes || body.clientNotes || "";
+        const serviceIds = Array.isArray(rawServiceIds)
+          ? rawServiceIds
+          : String(rawServiceIds || "")
+              .split(",")
+              .map((id) => id.trim())
+              .filter(Boolean);
 
-  if (
-    !branchId ||
-    serviceIds.length === 0 ||
-    !customerName ||
-    !customerPhone ||
-    !date ||
-    !startTime
-  ) {
-    console.log("Missing booking fields:", {
-      branchId,
-      artistId,
-      serviceIds,
-      customerName,
-      customerPhone,
-      date,
-      startTime,
-    });
+        const customerName = body.customerName || body.clientName;
+        const customerPhone = body.customerPhone || body.clientPhone;
+        const date = body.date;
+        const startTime = body.startTime || body.selectedTimeSlot;
+        const notes = body.notes || body.clientNotes || "";
+        const validSources = ["online", "manual", "virtual"];
 
-    return error("Missing required fields for booking insertion.", 400);
-  }
+        if (!validSources.includes(bookingSource)) {
+          return error("Invalid booking source.", 400);
+        }
 
-  const result = await mutateDatabase((database) => {
-    const duration = totalServiceDuration(database, serviceIds);
-    const endTime = minutesToTime(timeToMinutes(startTime) + duration);
+        if (
+          !branchId ||
+          serviceIds.length === 0 ||
+          !customerName ||
+          !customerPhone ||
+          !date ||
+          !startTime
+        ) {
+          console.log("Missing booking fields:", {
+            branchId,
+            artistId,
+            serviceIds,
+            customerName,
+            customerPhone,
+            date,
+            startTime,
+          });
 
-    const availableSlots = getAvailability(database, {
-      branchId,
-      date,
-      serviceIds,
-      artistId,
-    });
+          return error("Missing required fields for booking insertion.", 400);
+        }
 
-    const selectedSlot = availableSlots.find(
-      (slot) => slot.time === startTime,
-    );
+        const result = await mutateDatabase((database) => {
+          const duration = totalServiceDuration(database, serviceIds);
+          const endTime = minutesToTime(timeToMinutes(startTime) + duration);
 
-    const assignedArtist =
-      artistId && artistId !== "any"
-        ? database.artists.find((artist: any) => artist.id === artistId)
-        : selectedSlot?.availableArtists?.[0];
+          const availableSlots = getAvailability(database, {
+            branchId,
+            date,
+            serviceIds,
+            artistId,
+          });
 
-    if (!assignedArtist) {
-      return {
-        failure: "This slot is no longer available.",
-        status: 409,
-      };
-    }
+          const selectedSlot = availableSlots.find(
+            (slot) => slot.time === startTime,
+          );
 
-    const hasConflict = (database.bookings ?? []).some((booking: any) => {
-      if (
-        booking.status === "cancelled" ||
-        booking.status === "completed" ||
-        booking.status === "no-show"
-      ) {
-        return false;
+          const assignedArtist =
+            artistId && artistId !== "any"
+              ? database.artists.find((artist: any) => artist.id === artistId)
+              : selectedSlot?.availableArtists?.[0];
+
+          if (!assignedArtist) {
+            return {
+              failure: "This slot is no longer available.",
+              status: 409,
+            };
+          }
+
+          const hasConflict = (database.bookings ?? []).some((booking: any) => {
+            if (
+              booking.status === "cancelled" ||
+              booking.status === "completed" ||
+              booking.status === "no-show"
+            ) {
+              return false;
+            }
+
+            return (
+              booking.branch === branchId &&
+              booking.artist === assignedArtist.id &&
+              booking.date === date &&
+              overlaps(startTime, endTime, booking.startTime, booking.endTime)
+            );
+          });
+
+          if (hasConflict) {
+            return {
+              failure: "This slot is no longer available.",
+              status: 409,
+            };
+          }
+
+          const bookingReference = generateReference();
+          const pin = generatePin();
+          const timestamp = new Date().toISOString();
+
+          const newBooking = {
+            id: `bk_${Date.now()}`,
+            branch: branchId,
+            artist: assignedArtist.id,
+            services: serviceIds,
+            customerName,
+            customerPhone,
+            date,
+            startTime,
+            endTime,
+            status: "confirmed",
+            bookingSource, //online /manual / virtual
+            bookingReference,
+            pin,
+            notes,
+            createdAt: timestamp,
+            updatedAt: timestamp,
+          };
+
+          writeClient.create({
+            _type: "booking",
+            ...newBooking,
+          });
+          return {
+            booking: {
+              ...newBooking,
+              artistName: assignedArtist.name,
+              branchName:
+                database.branches.find((branch: any) => branch.id === branchId)
+                  ?.name ?? "Elora Beauty Branch",
+            },
+          };
+        });
+
+        if ("failure" in result && result.failure) {
+          return error(
+            result.failure ?? "Booking failed",
+            result.status ?? 500,
+          );
+        }
+
+        return json({ success: true, booking: result.booking });
       }
-
-      return (
-        booking.branch === branchId &&
-        booking.artist === assignedArtist.id &&
-        booking.date === date &&
-        overlaps(startTime, endTime, booking.startTime, booking.endTime)
-      );
-    });
-
-    if (hasConflict) {
-      return {
-        failure: "This slot is no longer available.",
-        status: 409,
-      };
     }
 
-    const bookingReference = generateReference();
-    const pin = generatePin();
-    const timestamp = new Date().toISOString();
-
-    const newBooking = {
-      id: `bk_${Date.now()}`,
-      branch: branchId,
-      artist: assignedArtist.id,
-      services: serviceIds,
-      customerName,
-      customerPhone,
-      date,
-      startTime,
-      endTime,
-      status: "confirmed",
-      bookingSource: "online",
-      bookingReference,
-      pin,
-      notes,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    };
-
-    database.bookings = [...(database.bookings ?? []), newBooking];
-
-    return {
-      booking: {
-        ...newBooking,
-        artistName: assignedArtist.name,
-        branchName:
-          database.branches.find((branch: any) => branch.id === branchId)
-            ?.name ?? "Elora Beauty Branch",
-      },
-    };
-  });
-
-  if ("failure" in result && result.failure) {
-  return error(result.failure, result.status ?? 500);
-}
-
-return json({ success: true, booking: result.booking });
-}
-
-if (route === "bookings/lookup") {
+    if (route === "bookings/lookup") {
       if (!body.phone) {
         return error("Phone number is required.", 400);
       }
@@ -768,18 +767,16 @@ if (route === "bookings/lookup") {
           status: booking.status,
           services: booking.services.map(
             (serviceId: string) =>
-              database.services.find(
-                (service: any) => service.id === serviceId,
-              )?.name ?? serviceId,
+              database.services.find((service: any) => service.id === serviceId)
+                ?.name ?? serviceId,
           ),
           branchName:
             database.branches.find(
               (branch: any) => branch.id === booking.branch,
             )?.name ?? booking.branch,
           artistName:
-            database.artists.find(
-              (artist: any) => artist.id === booking.artist,
-            )?.name ?? "Salon Expert",
+            database.artists.find((artist: any) => artist.id === booking.artist)
+              ?.name ?? "Salon Expert",
         }))
         .sort((a: any, b: any) => a.date.localeCompare(b.date));
 
@@ -790,10 +787,7 @@ if (route === "bookings/lookup") {
       const { reference, pin } = body;
 
       if (!reference || !pin) {
-        return error(
-          "Reference code and 4-digit PIN are required.",
-          400,
-        );
+        return error("Reference code and 4-digit PIN are required.", 400);
       }
 
       const database = await readDatabase();
@@ -880,16 +874,11 @@ if (route === "bookings/lookup") {
           slot.availableArtists.find(
             (artist) => artist.id === booking.artist,
           ) ?? slot.availableArtists[0];
-        const duration = totalServiceDuration(
-          database,
-          booking.services,
-        );
+        const duration = totalServiceDuration(database, booking.services);
 
         booking.date = newDate;
         booking.startTime = newStartTime;
-        booking.endTime = minutesToTime(
-          timeToMinutes(newStartTime) + duration,
-        );
+        booking.endTime = minutesToTime(timeToMinutes(newStartTime) + duration);
         booking.artist = preferredArtist.id;
         booking.status = "confirmed";
         booking.updatedAt = new Date().toISOString();
@@ -942,9 +931,7 @@ if (route === "bookings/lookup") {
         return error("Missing required walk-in parameters.", 400);
       }
 
-      const services = Array.isArray(serviceIds)
-        ? serviceIds
-        : [serviceIds];
+      const services = Array.isArray(serviceIds) ? serviceIds : [serviceIds];
       const booking = await mutateDatabase((database) => {
         const timestamp = new Date().toISOString();
         const newBooking = {
@@ -957,8 +944,7 @@ if (route === "bookings/lookup") {
           date,
           startTime,
           endTime: minutesToTime(
-            timeToMinutes(startTime) +
-              totalServiceDuration(database, services),
+            timeToMinutes(startTime) + totalServiceDuration(database, services),
           ),
           status: status ?? "confirmed",
           bookingSource: "manual",
@@ -969,37 +955,31 @@ if (route === "bookings/lookup") {
           updatedAt: timestamp,
         };
 
-        database.bookings = [
-          ...(database.bookings ?? []),
-          newBooking,
-        ];
+        database.bookings = [...(database.bookings ?? []), newBooking];
         return newBooking;
       });
 
       return json({ success: true, booking });
-    }
 
-    if (route === "admin/blocked-dates") {
-      if (!body.date) return error("Date is required.", 400);
+      if (route === "admin/blocked-dates") {
+        if (!body.date) return error("Date is required.", 400);
 
-      const block = await mutateDatabase((database) => {
-        const newBlock = {
-          id: `b_${Date.now()}`,
-          branchId: body.branchId ?? "",
-          date: body.date,
-          reason: body.reason ?? "Custom blocked date",
-          isFullDay: body.isFullDay ?? true,
-          blockedStartTime: body.blockedStartTime,
-          blockedEndTime: body.blockedEndTime,
-        };
-        database.blockedDates = [
-          ...(database.blockedDates ?? []),
-          newBlock,
-        ];
-        return newBlock;
-      });
+        const block = await mutateDatabase((database) => {
+          const newBlock = {
+            id: `b_${Date.now()}`,
+            branchId: body.branchId ?? "",
+            date: body.date,
+            reason: body.reason ?? "Custom blocked date",
+            isFullDay: body.isFullDay ?? true,
+            blockedStartTime: body.blockedStartTime,
+            blockedEndTime: body.blockedEndTime,
+          };
+          database.blockedDates = [...(database.blockedDates ?? []), newBlock];
+          return newBlock;
+        });
 
-      return json({ success: true, block });
+        return json({ success: true, block });
+      }
     }
 
     return error("API route not found", 404);
@@ -1058,7 +1038,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         .set({ isApproved: Boolean(body.isApproved) })
         .commit();
 
-      return updated ? json({ success: true }) : error("Review not found.", 404);
+      return updated
+        ? json({ success: true })
+        : error("Review not found.", 404);
     }
 
     return error("API route not found", 404);
@@ -1067,10 +1049,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  context: RouteContext,
-) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     if (!isAdmin(request)) return error("Unauthorized", 401);
 

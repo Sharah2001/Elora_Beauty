@@ -6,7 +6,6 @@ import {
   servicesQuery,
   workingHoursQuery,
 } from "@/sanity/lib/contentQueries";
-import { readDatabase } from "@/lib/database";
 
 function timeToMinutes(time: string) {
   const [h, m] = time.split(":").map(Number);
@@ -25,7 +24,10 @@ function getDayName(date: string) {
 }
 
 function overlaps(startA: string, endA: string, startB: string, endB: string) {
-  return timeToMinutes(startA) < timeToMinutes(endB) && timeToMinutes(endA) > timeToMinutes(startB);
+  return (
+    timeToMinutes(startA) < timeToMinutes(endB) &&
+    timeToMinutes(endA) > timeToMinutes(startB)
+  );
 }
 
 export async function GET(request: Request) {
@@ -46,40 +48,62 @@ export async function GET(request: Request) {
       return NextResponse.json([]);
     }
 
-    const [services, artists, workingHours, blockedDates, localDatabase] =
+    const bookingsQuery = `
+      *[
+        _type == "booking" &&
+        date == $date &&
+        branch == $branchId &&
+        !(status in ["cancelled", "completed", "no-show"])
+      ]{
+        id,
+        branch,
+        artist,
+        date,
+        startTime,
+        endTime,
+        status
+      }
+    `;
+
+    const [services, artists, workingHours, blockedDates, bookings] =
       await Promise.all([
         client.fetch<any[]>(servicesQuery),
         client.fetch<any[]>(artistsQuery),
         client.fetch<any[]>(workingHoursQuery),
         client.fetch<any[]>(blockedDatesQuery, { fromDate: date }),
-        readDatabase(),
+        client.fetch<any[]>(bookingsQuery, { date, branchId }),
       ]);
 
-    const selectedServices = services.filter((s) =>
-      serviceIds.includes(s.id)
+    const selectedServices = services.filter((service) =>
+      serviceIds.includes(service.id),
     );
 
     const duration =
       selectedServices.reduce(
-        (sum, s) => sum + Number(s.durationMinutes || 0),
-        0
+        (sum, service) => sum + Number(service.durationMinutes || 0),
+        0,
       ) || 30;
 
-    const branchHours = workingHours.find((w) => w.branchId === branchId);
+    const branchHours = workingHours.find(
+      (hours) => hours.branchId === branchId,
+    );
 
     if (!branchHours) return NextResponse.json([]);
 
     const dayName = getDayName(date);
 
     const schedule =
-      branchHours.schedule?.find((s: any) => s.dayOfWeek === dayName) ||
-      branchHours.schedule?.find((s: any) => !s.isClosed);
+      branchHours.schedule?.find((item: any) => item.dayOfWeek === dayName) ||
+      branchHours.schedule?.find((item: any) => !item.isClosed);
 
     if (!schedule || schedule.isClosed) return NextResponse.json([]);
 
     const availableArtists = artistId
-      ? artists.filter((a) => a.id === artistId && a.branches?.includes(branchId))
-      : artists.filter((a) => a.branches?.includes(branchId));
+      ? artists.filter(
+          (artist) =>
+            artist.id === artistId && artist.branches?.includes(branchId),
+        )
+      : artists.filter((artist) => artist.branches?.includes(branchId));
 
     if (availableArtists.length === 0) {
       return NextResponse.json([]);
@@ -108,27 +132,30 @@ export async function GET(request: Request) {
       const endTime = minutesToTime(current + duration);
 
       const blocked = partialBlocks.some((block) => {
-        return block.blockedStartTime && block.blockedEndTime && overlaps(
-          startTime,
-          endTime,
-          block.blockedStartTime,
-          block.blockedEndTime,
+        return (
+          block.blockedStartTime &&
+          block.blockedEndTime &&
+          overlaps(
+            startTime,
+            endTime,
+            block.blockedStartTime,
+            block.blockedEndTime,
+          )
         );
       });
 
       if (blocked) continue;
 
       const slotArtists = availableArtists.filter((artist) => {
-        return !(localDatabase.bookings ?? []).some((b: any) => {
-        if (["cancelled", "completed", "no-show"].includes(b.status)) {
-          return false;
-        }
+        return !bookings.some((booking) => {
+          if (booking.artist !== artist.id) return false;
 
-        if (b.date !== date) return false;
-        if (b.branch !== branchId) return false;
-          if (b.artist !== artist.id) return false;
-
-          return overlaps(startTime, endTime, b.startTime, b.endTime);
+          return overlaps(
+            startTime,
+            endTime,
+            booking.startTime,
+            booking.endTime,
+          );
         });
       });
 
