@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Lock, Check, Settings, Trash, Calendar, PlusCircle, AlertCircle, 
-  MessageSquare, UserCheck, Shield, ClipboardList, LogOut, Clock, Bookmark, Filter, ShieldCheck 
+import {
+  Lock,
+  Check,
+  Settings,
+  Trash,
+  Calendar,
+  PlusCircle,
+  AlertCircle,
+  MessageSquare,
+  UserCheck,
+  Shield,
+  ClipboardList,
+  LogOut,
+  Clock,
+  Bookmark,
+  Filter,
+  ShieldCheck,
 } from "lucide-react";
-import { Booking, ContactMessage, Testimonial, Service, Artist, Branch } from "../types";
+import {
+  Booking,
+  ContactMessage,
+  Testimonial,
+  Service,
+  Artist,
+  Branch,
+} from "../types";
 
 export default function AdminPanel() {
   const [password, setPassword] = useState("");
@@ -45,45 +66,46 @@ export default function AdminPanel() {
   const [filterDate, setFilterDate] = useState("");
 
   // Subsections in Admin: "bookings" | "reviews" | "messages" | "closures"
-  const [subTab, setSubTab] = useState<"bookings" | "reviews" | "messages" | "closures">("bookings");
+  const [subTab, setSubTab] = useState<
+    "bookings" | "reviews" | "messages" | "closures"
+  >("bookings");
 
   const [loadingBookings, setLoadingBookings] = useState(false);
 
   // Read admin token (from localStorage or httpOnly cookie)
   const loadData = async () => {
-    setLoadingBookings(true);
-    const token = localStorage.getItem("elora_admin_token") || "";
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
     try {
-      // 1. Fetch bookings
-      const bRes = await fetch("/api/admin/bookings", { headers });
-      if (bRes.ok) {
-        const bData = await bRes.json();
-        setBookings(bData);
-      }
+      const token = localStorage.getItem("elora_admin_token") || "";
 
-      // 2. Fetch messages
-      const mRes = await fetch("/api/admin/contact-messages", { headers });
-      if (mRes.ok) setMessages(await mRes.json());
+      const [bookingsRes, branchesRes, artistsRes, servicesRes] =
+        await Promise.all([
+          fetch("/api/admin/bookings", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch("/api/branches"),
+          fetch("/api/artists"),
+          fetch("/api/services"),
+        ]);
 
-      // 3. Fetch reviews
-      const rRes = await fetch("/api/admin/testimonials", { headers });
-      if (rRes.ok) setReviews(await rRes.json());
+      const [bookings, branches, artists, services] = await Promise.all([
+        bookingsRes.json(),
+        branchesRes.json(),
+        artistsRes.json(),
+        servicesRes.json(),
+      ]);
 
-      // 4. Fetch blocked dates
-      const clRes = await fetch("/api/admin/blocked-dates", { headers });
-      if (clRes.ok) setBlockedDates(await clRes.json());
-
+      setBookings(Array.isArray(bookings) ? bookings : []);
+      setBranches(Array.isArray(branches) ? branches : []);
+      setArtists(Array.isArray(artists) ? artists : []);
+      setServices(Array.isArray(services) ? services : []);
     } catch (err) {
-      console.error("Error loading admin data", err);
-    } finally {
-      setLoadingBookings(false);
+      console.error("Admin data load error:", err);
     }
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   // Verify authentication on boot
   useEffect(() => {
@@ -94,7 +116,7 @@ export default function AdminPanel() {
     }
 
     fetch("/api/admin/me", {
-      headers: { "Authorization": `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
         if (res.ok) {
@@ -108,9 +130,15 @@ export default function AdminPanel() {
       .finally(() => setCheckingAuth(false));
 
     // Base setups
-    fetch("/api/services").then(res => res.json()).then(data => setServices(data));
-    fetch("/api/artists").then(res => res.json()).then(data => setArtists(data));
-    fetch("/api/branches").then(res => res.json()).then(data => setBranches(data));
+    fetch("/api/services")
+      .then((res) => res.json())
+      .then((data) => setServices(data));
+    fetch("/api/artists")
+      .then((res) => res.json())
+      .then((data) => setArtists(data));
+    fetch("/api/branches")
+      .then((res) => res.json())
+      .then((data) => setBranches(data));
   }, []);
 
   // Handle Login submission
@@ -122,7 +150,7 @@ export default function AdminPanel() {
       const res = await fetch("/api/admin/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -141,7 +169,7 @@ export default function AdminPanel() {
     const token = localStorage.getItem("elora_admin_token") || "";
     await fetch("/api/admin/logout", {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
     localStorage.removeItem("elora_admin_token");
     setAuthenticated(false);
@@ -155,9 +183,9 @@ export default function AdminPanel() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updates)
+        body: JSON.stringify(updates),
       });
       if (res.ok) {
         // Refresh local bookings list
@@ -176,12 +204,16 @@ export default function AdminPanel() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ isApproved: approve })
+        body: JSON.stringify({ isApproved: approve }),
       });
       if (res.ok) {
-        setReviews(reviews.map(item => item.id === id ? { ...item, isApproved: approve } : item));
+        setReviews(
+          reviews.map((item) =>
+            item.id === id ? { ...item, isApproved: approve } : item,
+          ),
+        );
       }
     } catch (err) {
       console.error(err);
@@ -189,19 +221,24 @@ export default function AdminPanel() {
   };
 
   // Moderate Contact Messages
-  const handleUpdateMessageStatus = async (id: string, status: "read" | "responded") => {
+  const handleUpdateMessageStatus = async (
+    id: string,
+    status: "read" | "responded",
+  ) => {
     const token = localStorage.getItem("elora_admin_token") || "";
     try {
       const res = await fetch(`/api/admin/contact-messages/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status }),
       });
       if (res.ok) {
-        setMessages(messages.map(item => item.id === id ? { ...item, status } : item));
+        setMessages(
+          messages.map((item) => (item.id === id ? { ...item, status } : item)),
+        );
       }
     } catch (err) {
       console.error(err);
@@ -221,15 +258,15 @@ export default function AdminPanel() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           date: blockDate,
           reason: blockReason,
-          branchId: blockBranch || undefined
-        })
+          branchId: blockBranch || undefined,
+        }),
       });
-      
+
       const data = await res.json();
       if (!res.ok) {
         setBlockError(data.error || "Blocked date addition failed.");
@@ -251,10 +288,10 @@ export default function AdminPanel() {
     try {
       const res = await fetch(`/api/admin/blocked-dates/${id}`, {
         method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        setBlockedDates(blockedDates.filter(b => b.id !== id));
+        setBlockedDates(blockedDates.filter((b) => b.id !== id));
       }
     } catch (err) {
       console.error(err);
@@ -264,8 +301,17 @@ export default function AdminPanel() {
   // Submit Manual Walk-in Booking (Admin Walk-In Route, Section 5 Saranjah)
   const handleAddManualBooking = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newBName.trim() || !newBPhone.trim() || !newBBranch || !newBDate || !newBTime || newBServices.length === 0) {
-      setManualError("Please fill out all required fields to register manual walk-in.");
+    if (
+      !newBName.trim() ||
+      !newBPhone.trim() ||
+      !newBBranch ||
+      !newBDate ||
+      !newBTime ||
+      newBServices.length === 0
+    ) {
+      setManualError(
+        "Please fill out all required fields to register manual walk-in.",
+      );
       return;
     }
 
@@ -278,7 +324,7 @@ export default function AdminPanel() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           branchId: newBBranch,
@@ -288,15 +334,17 @@ export default function AdminPanel() {
           customerPhone: newBPhone,
           date: newBDate,
           startTime: newBTime,
-          notes: newBNotes
-        })
+          notes: newBNotes,
+        }),
       });
 
       const data = await res.json();
       if (!res.ok) {
         setManualError(data.error || "Manual booking creation failed.");
       } else {
-        setManualSuccess("Success! Handcrafted Walk-in appointment registered successfully.");
+        setManualSuccess(
+          "Success! Handcrafted Walk-in appointment registered successfully.",
+        );
         // Clear
         setNewBName("");
         setNewBPhone("");
@@ -314,7 +362,8 @@ export default function AdminPanel() {
   // Filter Bookings list
   const filteredBookings = bookings.filter((bk) => {
     const matchB = filterBranch === "All" || bk.branch === filterBranch;
-    const matchS = filterStatus === "All" || bk.status === filterStatus.toLowerCase();
+    const matchS =
+      filterStatus === "All" || bk.status === filterStatus.toLowerCase();
     const matchD = !filterDate || bk.date === filterDate;
     return matchB && matchS && matchD;
   });
@@ -323,7 +372,9 @@ export default function AdminPanel() {
     return (
       <div className="max-w-md mx-auto py-20 text-center space-y-4">
         <div className="w-12 h-12 border-4 border-[#C5A059] border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p className="text-sm font-mono text-stone-550">Authenticating safe administrative sessions...</p>
+        <p className="text-sm font-mono text-stone-550">
+          Authenticating safe administrative sessions...
+        </p>
       </div>
     );
   }
@@ -338,15 +389,24 @@ export default function AdminPanel() {
               <Lock className="w-6 h-6 text-[#C5A059]" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-mono tracking-widest text-[#C5A059] font-bold block">Internal Portal</span>
-              <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mt-1">Elora Staff Area</h2>
-              <p className="text-xs text-stone-500 font-light mt-1">Provide administrative pass code to access bookings and closures.</p>
+              <span className="text-[10px] uppercase font-mono tracking-widest text-[#C5A059] font-bold block">
+                Internal Portal
+              </span>
+              <h2 className="font-serif text-2xl font-bold text-[#1A1A1A] mt-1">
+                Elora Staff Area
+              </h2>
+              <p className="text-xs text-stone-500 font-light mt-1">
+                Provide administrative pass code to access bookings and
+                closures.
+              </p>
             </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-stone-700 mb-1">Administrative Pass code</label>
+              <label className="block text-xs font-semibold text-stone-700 mb-1">
+                Administrative Pass code
+              </label>
               <input
                 type="password"
                 required
@@ -390,8 +450,13 @@ export default function AdminPanel() {
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-serif text-2xl font-bold tracking-tight text-stone-900">Elora Staff Console</h2>
-            <p className="text-xs text-stone-500 font-mono">Status: Secure Session Active &bull; <span className="text-emerald-700 font-bold">Authenticated</span></p>
+            <h2 className="font-serif text-2xl font-bold tracking-tight text-stone-900">
+              Elora Staff Console
+            </h2>
+            <p className="text-xs text-stone-500 font-mono">
+              Status: Secure Session Active & null;{" "}
+              <span className="text-emerald-700 font-bold">Authenticated</span>
+            </p>
           </div>
         </div>
 
@@ -408,7 +473,9 @@ export default function AdminPanel() {
       {isAddingBooking ? (
         <section className="bg-stone-50/50 border border-[#C5A059]/25 rounded-3xl p-6 md:p-8 animate-fadeIn space-y-6 shadow-md">
           <div className="flex justify-between items-center">
-            <h3 className="font-serif font-bold text-lg text-stone-900">Enter Manual Guest (Walk-In)</h3>
+            <h3 className="font-serif font-bold text-lg text-stone-900">
+              Enter Manual Guest (Walk-In)
+            </h3>
             <button
               onClick={() => setIsAddingBooking(false)}
               className="text-stone-500 hover:text-stone-800 text-xs font-mono uppercase cursor-pointer"
@@ -420,7 +487,9 @@ export default function AdminPanel() {
           <form onSubmit={handleAddManualBooking} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Customer Name *</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Customer Name *
+                </label>
                 <input
                   type="text"
                   required
@@ -430,9 +499,11 @@ export default function AdminPanel() {
                   className="w-full p-3 border border-stone-300 rounded-xl bg-white text-stone-900 text-sm focus:outline-none"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Telephone Number *</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Telephone Number *
+                </label>
                 <input
                   type="text"
                   required
@@ -446,7 +517,9 @@ export default function AdminPanel() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Branch *</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Branch *
+                </label>
                 <select
                   required
                   value={newBBranch}
@@ -454,49 +527,65 @@ export default function AdminPanel() {
                   className="w-full p-3 border border-stone-300 rounded-xl bg-white text-stone-900 text-sm focus:outline-none"
                 >
                   <option value="">Select Studio...</option>
-                  {branches.map(b => (
-                    <option key={b.id} value={b.id}>{b.name.replace("Elora Beauty - ", "")}</option>
+                  {branches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name.replace("Elora Beauty - ", "")}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Assigned Stylist</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Assigned Stylist
+                </label>
                 <select
                   value={newBArtist}
                   onChange={(e) => setNewBArtist(e.target.value)}
                   className="w-full p-3 border border-stone-300 rounded-xl bg-white text-stone-900 text-sm focus:outline-none"
                 >
                   <option value="">Select Expert...</option>
-                  {artists.map(a => (
-                    <option key={a.id} value={a.id}>{a.name}</option>
+                  {artists.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Services Selection *</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Services Selection *
+                </label>
                 <select
                   multiple
                   required
                   value={newBServices}
                   onChange={(e) => {
-                    const selected = Array.from(e.target.selectedOptions).map(option => (option as HTMLOptionElement).value);
+                    const selected = Array.from(e.target.selectedOptions).map(
+                      (option) => (option as HTMLOptionElement).value,
+                    );
                     setNewBServices(selected);
                   }}
                   className="w-full p-2 border border-stone-300 rounded-xl bg-white text-stone-900 text-xs focus:outline-none h-20"
                 >
-                  {services.map(s => (
-                    <option key={s.id} value={s.id}>{s.name} ({s.durationMinutes}m)</option>
+                  {services.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.durationMinutes}m)
+                    </option>
                   ))}
                 </select>
-                <p className="text-[10px] text-stone-400 mt-1">* Hold Command/Ctrl to select multiple.</p>
+                <p className="text-[10px] text-stone-400 mt-1">
+                  * Hold Command/Ctrl to select multiple.
+                </p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Date *</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Date *
+                </label>
                 <input
                   type="date"
                   required
@@ -507,7 +596,9 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1 text-stone-700">Start Time *</label>
+                <label className="block text-xs font-semibold mb-1 text-stone-700">
+                  Start Time *
+                </label>
                 <input
                   type="time"
                   required
@@ -519,7 +610,9 @@ export default function AdminPanel() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold mb-1 text-stone-700">Internal Staff Notes</label>
+              <label className="block text-xs font-semibold mb-1 text-stone-700">
+                Internal Staff Notes
+              </label>
               <textarea
                 value={newBNotes}
                 onChange={(e) => setNewBNotes(e.target.value)}
@@ -529,8 +622,16 @@ export default function AdminPanel() {
               />
             </div>
 
-            {manualError && <p className="text-xs font-bold text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-100">{manualError}</p>}
-            {manualSuccess && <p className="text-xs font-bold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">{manualSuccess}</p>}
+            {manualError && (
+              <p className="text-xs font-bold text-red-700 bg-red-50 p-2.5 rounded-lg border border-red-100">
+                {manualError}
+              </p>
+            )}
+            {manualSuccess && (
+              <p className="text-xs font-bold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg border border-emerald-100">
+                {manualSuccess}
+              </p>
+            )}
 
             <button
               type="submit"
@@ -548,7 +649,7 @@ export default function AdminPanel() {
           { label: "Bookings Ledger", id: "bookings", icon: ClipboardList },
           { label: "Reviews Moderation", id: "reviews", icon: UserCheck },
           { label: "Messaging Inbox", id: "messages", icon: MessageSquare },
-          { label: "Holiday closures", id: "closures", icon: Settings }
+          { label: "Holiday closures", id: "closures", icon: Settings },
         ].map((tab) => {
           const Icon = tab.icon;
           return (
@@ -571,27 +672,31 @@ export default function AdminPanel() {
       {/* SECTION A: BOOKINGS VIEW */}
       {subTab === "bookings" && (
         <div className="space-y-6 animate-fadeIn">
-          
           {/* Header & Filter segment */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-stone-50 border border-stone-200 rounded-2xl p-4">
-            
             <div className="flex flex-wrap items-center gap-3 text-xs">
               <div className="space-y-1">
-                <span className="block text-[10px] text-stone-400 font-bold uppercase font-mono">Select Branch</span>
+                <span className="block text-[10px] text-stone-400 font-bold uppercase font-mono">
+                  Select Branch
+                </span>
                 <select
                   value={filterBranch}
                   onChange={(e) => setFilterBranch(e.target.value)}
                   className="p-2 border border-stone-300 rounded bg-white text-stone-850"
                 >
                   <option value="All">All Branches</option>
-                  {branches.map(b => (
-                    <option key={b.id} value={b.id}>{b.name.replace("Elora Beauty - ", "")}</option>
+                  {branches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name.replace("Elora Beauty - ", "")}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1">
-                <span className="block text-[10px] text-stone-400 font-bold uppercase font-mono">Select Status</span>
+                <span className="block text-[10px] text-stone-400 font-bold uppercase font-mono">
+                  Select Status
+                </span>
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
@@ -606,7 +711,9 @@ export default function AdminPanel() {
               </div>
 
               <div className="space-y-1">
-                <span className="block text-[10px] text-stone-400 font-bold uppercase font-mono">Specific Date</span>
+                <span className="block text-[10px] text-stone-400 font-bold uppercase font-mono">
+                  Specific Date
+                </span>
                 <input
                   type="date"
                   value={filterDate}
@@ -615,7 +722,9 @@ export default function AdminPanel() {
                 />
               </div>
 
-              {(filterBranch !== "All" || filterStatus !== "All" || filterDate) && (
+              {(filterBranch !== "All" ||
+                filterStatus !== "All" ||
+                filterDate) && (
                 <button
                   onClick={() => {
                     setFilterBranch("All");
@@ -647,19 +756,33 @@ export default function AdminPanel() {
             <div className="h-40 bg-stone-100 rounded-2xl animate-pulse"></div>
           ) : filteredBookings.length === 0 ? (
             <div className="py-20 text-center border-2 border-dashed border-stone-200 rounded-3xl bg-white">
-              <p className="text-xs text-stone-400 font-light">No bookings records found matching filter constraints currently.</p>
+              <p className="text-xs text-stone-400 font-light">
+                No bookings records found matching filter constraints currently.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto border border-stone-200 rounded-2xl bg-white shadow-sm">
               <table className="min-w-full divide-y divide-stone-200 text-left text-xs">
                 <thead className="bg-stone-50 text-stone-400 uppercase font-mono text-[9px] tracking-wider">
                   <tr>
-                    <th scope="col" className="px-6 py-4">Client / Contact</th>
-                    <th scope="col" className="px-6 py-4">Date & Slot</th>
-                    <th scope="col" className="px-6 py-4">Location & Staff</th>
-                    <th scope="col" className="px-6 py-4">Services Details</th>
-                    <th scope="col" className="px-6 py-4 text-center">Status Action</th>
-                    <th scope="col" className="px-6 py-4">Internal Notes</th>
+                    <th scope="col" className="px-6 py-4">
+                      Client / Contact
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                      Date & Slot
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                      Location & Staff
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                      Services Details
+                    </th>
+                    <th scope="col" className="px-6 py-4 text-center">
+                      Status Action
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                      Internal Notes
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-200/60 bg-white">
@@ -667,32 +790,57 @@ export default function AdminPanel() {
                     return (
                       <tr key={bk.id} className="hover:bg-stone-50/50">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-serif font-bold text-stone-900">{bk.customerName}</div>
-                          <div className="text-stone-400 font-mono mt-0.5">{bk.customerPhone}</div>
-                          <span className="text-[10px] text-stone-400 font-mono tracking-wider block mt-1">Ref: {bk.bookingReference}</span>
+                          <div className="font-serif font-bold text-stone-900">
+                            {bk.customerName}
+                          </div>
+                          <div className="text-stone-400 font-mono mt-0.5">
+                            {bk.customerPhone}
+                          </div>
+                          <span className="text-[10px] text-stone-400 font-mono tracking-wider block mt-1">
+                            Ref: {bk.bookingReference}
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="font-bold text-stone-850 block">{bk.date}</span>
+                          <span className="font-bold text-stone-850 block">
+                            {bk.date}
+                          </span>
                           <span className="text-[#C5A059] font-mono py-0.5 rounded px-1 bg-[#C5A059]/10 text-[10px] mt-1 inline-block font-bold">
                             {bk.startTime} - {bk.endTime}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-stone-800 font-medium block">{bk.branchName.replace("Elora Beauty - ", "")}</span>
-                          <span className="text-stone-400 text-[10px] mt-1 block">Staff: {bk.artistName}</span>
+                          <span className="text-stone-800 font-medium block">
+                            {(
+                              bk.branchName ??
+                              bk.branch ??
+                              "Unknown Branch"
+                            ).replace("Elora Beauty - ", "")}
+                          </span>
+                          <span className="text-stone-400 text-[10px] mt-1 block">
+                            Staff: {bk.artistName ?? bk.artist ?? "Unassigned"}
+                          </span>
                         </td>
                         <td className="px-6 py-4 max-w-[180px]">
-                          <span className="text-stone-750 font-medium leading-relaxed block">{bk.servicesList.join(", ")}</span>
+                          <span className="text-stone-750 font-medium leading-relaxed block">
+                            {(bk.servicesList ?? bk.services ?? []).join(", ")}
+                          </span>
                         </td>
                         <td className="px-6 py-4 text-center whitespace-nowrap">
                           <select
                             value={bk.status}
-                            onChange={(e) => handleUpdateBooking(bk.id, { status: e.target.value })}
+                            onChange={(e) =>
+                              handleUpdateBooking(bk.id, {
+                                status: e.target.value,
+                              })
+                            }
                             className={`p-1.5 border rounded text-[11px] font-semibold font-sans focus:outline-none ${
-                              bk.status === "confirmed" ? "bg-amber-100 border-amber-300 text-amber-850 font-bold" :
-                              bk.status === "completed" ? "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold" :
-                              bk.status === "no-show" ? "bg-stone-100 border-stone-300 text-stone-605" :
-                              "bg-red-50 border-red-200 text-red-850 font-bold"
+                              bk.status === "confirmed"
+                                ? "bg-amber-100 border-amber-300 text-amber-850 font-bold"
+                                : bk.status === "completed"
+                                  ? "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold"
+                                  : bk.status === "no-show"
+                                    ? "bg-stone-100 border-stone-300 text-stone-605"
+                                    : "bg-red-50 border-red-200 text-red-850 font-bold"
                             }`}
                           >
                             <option value="confirmed">Confirmed</option>
@@ -705,7 +853,11 @@ export default function AdminPanel() {
                           <input
                             type="text"
                             value={bk.notes || ""}
-                            onChange={(e) => handleUpdateBooking(bk.id, { notes: e.target.value })}
+                            onChange={(e) =>
+                              handleUpdateBooking(bk.id, {
+                                notes: e.target.value,
+                              })
+                            }
                             placeholder="Add notes..."
                             className="p-1 border border-stone-300 rounded text-stone-704 w-full text-[11px] max-w-xs"
                           />
@@ -724,8 +876,13 @@ export default function AdminPanel() {
       {subTab === "reviews" && (
         <div className="space-y-6 animate-fadeIn">
           <div className="max-w-xl">
-            <h3 className="font-serif text-lg font-bold text-stone-906">Reviews Moderation Panel</h3>
-            <p className="text-stone-500 text-xs mt-1">Review feedback submitted by Sri Lankan guests. Approved feedback is fed directly onto the public feed.</p>
+            <h3 className="font-serif text-lg font-bold text-stone-906">
+              Reviews Moderation Panel
+            </h3>
+            <p className="text-stone-500 text-xs mt-1">
+              Review feedback submitted by Sri Lankan guests. Approved feedback
+              is fed directly onto the public feed.
+            </p>
           </div>
 
           {reviews.length === 0 ? (
@@ -735,15 +892,22 @@ export default function AdminPanel() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {reviews.map((rev) => (
-                <div key={rev.id} className="bg-white border border-stone-200 rounded-2xl p-5 flex flex-col justify-between space-y-4">
+                <div
+                  key={rev.id}
+                  className="bg-white border border-stone-200 rounded-2xl p-5 flex flex-col justify-between space-y-4"
+                >
                   <div>
                     <div className="flex justify-between items-center">
-                      <span className="font-serif font-bold text-stone-900 text-sm">{rev.customerName}</span>
+                      <span className="font-serif font-bold text-stone-900 text-sm">
+                        {rev.customerName}
+                      </span>
                       <span className="text-[10px] bg-stone-100 px-2.5 py-0.5 rounded-full font-mono text-stone-500">
                         {rev.rating} / 5 Stars
                       </span>
                     </div>
-                    <p className="text-stone-450 italic mt-2 text-xs leading-relaxed">"{rev.comment}"</p>
+                    <p className="text-stone-450 italic mt-2 text-xs leading-relaxed">
+                      "{rev.comment}"
+                    </p>
                   </div>
 
                   <div className="flex justify-between items-center border-t border-stone-100 pt-3">
@@ -779,8 +943,12 @@ export default function AdminPanel() {
       {subTab === "messages" && (
         <div className="space-y-6 animate-fadeIn">
           <div className="max-w-xl">
-            <h3 className="font-serif text-lg font-bold text-stone-905">Guest Inquiries</h3>
-            <p className="text-stone-500 text-xs mt-1 font-light">Read messages submitted through the online Contact forms.</p>
+            <h3 className="font-serif text-lg font-bold text-stone-905">
+              Guest Inquiries
+            </h3>
+            <p className="text-stone-500 text-xs mt-1 font-light">
+              Read messages submitted through the online Contact forms.
+            </p>
           </div>
 
           {messages.length === 0 ? (
@@ -790,19 +958,30 @@ export default function AdminPanel() {
           ) : (
             <div className="space-y-4">
               {messages.map((msg) => (
-                <div key={msg.id} className="bg-white border border-stone-205 rounded-2xl p-5 space-y-4 shadow-sm">
+                <div
+                  key={msg.id}
+                  className="bg-white border border-stone-205 rounded-2xl p-5 space-y-4 shadow-sm"
+                >
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                     <div>
-                      <h4 className="font-serif font-bold text-stone-905 text-sm">{msg.name}</h4>
-                      <p className="text-xs text-stone-404 font-mono mt-0.5">{msg.phone} {msg.email ? `| ${msg.email}` : ""}</p>
+                      <h4 className="font-serif font-bold text-stone-905 text-sm">
+                        {msg.name}
+                      </h4>
+                      <p className="text-xs text-stone-404 font-mono mt-0.5">
+                        {msg.phone} {msg.email ? `| ${msg.email}` : ""}
+                      </p>
                     </div>
                     <select
                       value={msg.status}
-                      onChange={(e) => handleUpdateMessageStatus(msg.id, e.target.value as any)}
+                      onChange={(e) =>
+                        handleUpdateMessageStatus(msg.id, e.target.value as any)
+                      }
                       className={`p-1.5 border rounded text-[10px] uppercase font-bold tracking-wider font-mono ${
-                        msg.status === "new" ? "bg-amber-100 border-amber-300 text-amber-800" :
-                        msg.status === "read" ? "bg-stone-105 border-stone-300 text-stone-650" :
-                        "bg-emerald-50 border-emerald-250 text-emerald-800"
+                        msg.status === "new"
+                          ? "bg-amber-100 border-amber-300 text-amber-800"
+                          : msg.status === "read"
+                            ? "bg-stone-105 border-stone-300 text-stone-650"
+                            : "bg-emerald-50 border-emerald-250 text-emerald-800"
                       }`}
                     >
                       <option value="new">New</option>
@@ -811,7 +990,9 @@ export default function AdminPanel() {
                     </select>
                   </div>
 
-                  <p className="text-xs text-stone-704 bg-stone-50 p-3 rounded-lg leading-relaxed">{msg.message}</p>
+                  <p className="text-xs text-stone-704 bg-stone-50 p-3 rounded-lg leading-relaxed">
+                    {msg.message}
+                  </p>
                 </div>
               ))}
             </div>
@@ -822,18 +1003,23 @@ export default function AdminPanel() {
       {/* SECTION D: HOLIDAY CLOSURES & BLOCKED TIMES (Section 3.1 Sathurgini) */}
       {subTab === "closures" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fadeIn">
-          
           {/* Add Closure Block form */}
           <div className="bg-white rounded-2xl border border-stone-200 p-6 space-y-4 shadow-sm self-start">
             <h3 className="font-serif font-bold text-stone-900 border-b border-stone-105 pb-2 text-md">
               Add Closure Override
             </h3>
 
-            {blockError && <p className="text-xs text-rose-700 font-bold bg-rose-50 p-2 rounded-lg">{blockError}</p>}
+            {blockError && (
+              <p className="text-xs text-rose-700 font-bold bg-rose-50 p-2 rounded-lg">
+                {blockError}
+              </p>
+            )}
 
             <form onSubmit={handleAddBlockDate} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">Override Date *</label>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Override Date *
+                </label>
                 <input
                   type="date"
                   required
@@ -844,7 +1030,9 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">Reason overridden / Note</label>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Reason overridden / Note
+                </label>
                 <input
                   type="text"
                   value={blockReason}
@@ -855,15 +1043,19 @@ export default function AdminPanel() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-stone-700 mb-1">Branch target</label>
+                <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  Branch target
+                </label>
                 <select
                   value={blockBranch}
                   onChange={(e) => setBlockBranch(e.target.value)}
                   className="w-full p-3 border border-stone-300 rounded-xl bg-white text-stone-900 text-xs focus:outline-none"
                 >
                   <option value="">Apply globally to all branches</option>
-                  {branches.map(b => (
-                    <option key={b.id} value={b.id}>{b.name.replace("Elora Beauty - ", "")}</option>
+                  {branches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name.replace("Elora Beauty - ", "")}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -879,8 +1071,13 @@ export default function AdminPanel() {
 
           {/* Block list */}
           <div className="lg:col-span-2 space-y-4">
-            <h3 className="font-serif font-bold text-stone-900 text-md">Registered Override Blocks</h3>
-            <p className="text-xs text-stone-500">Dates recorded here are immediately blocked and can never display any available online timeslots to clients.</p>
+            <h3 className="font-serif font-bold text-stone-900 text-md">
+              Registered Override Blocks
+            </h3>
+            <p className="text-xs text-stone-500">
+              Dates recorded here are immediately blocked and can never display
+              any available online timeslots to clients.
+            </p>
 
             {blockedDates.length === 0 ? (
               <div className="py-12 text-center text-stone-400 font-light border-2 border-dashed border-stone-200 rounded-3xl bg-white">
@@ -891,15 +1088,24 @@ export default function AdminPanel() {
                 {blockedDates.map((block) => {
                   const br = branches.find((b) => b.id === block.branchId);
                   return (
-                    <div key={block.id} className="bg-white border border-stone-205 rounded-xl p-4 flex items-center justify-between shadow-sm">
+                    <div
+                      key={block.id}
+                      className="bg-white border border-stone-205 rounded-xl p-4 flex items-center justify-between shadow-sm"
+                    >
                       <div className="space-y-1">
                         <div className="font-mono text-xs font-bold text-stone-900 flex items-center">
                           <Calendar className="w-4 h-4 text-[#C5A059] mr-2 shrink-0" />
                           {block.date}
                         </div>
-                        <p className="text-xs text-stone-500 leading-relaxed font-light">{block.reason || "Custom Block"}</p>
+                        <p className="text-xs text-stone-500 leading-relaxed font-light">
+                          {block.reason || "Custom Block"}
+                        </p>
                         <span className="text-[9px] uppercase tracking-wider font-mono text-stone-400 bg-stone-100 px-2 py-0.5 rounded-md inline-block">
-                          Branch scope: {block.branchId ? (br?.name.replace("Elora Beauty - ", "") || block.branchId) : "Global (All Colombo branches)"}
+                          Branch scope:{" "}
+                          {block.branchId
+                            ? br?.name.replace("Elora Beauty - ", "") ||
+                              block.branchId
+                            : "Global (All Colombo branches)"}
                         </span>
                       </div>
                       <button
@@ -915,10 +1121,8 @@ export default function AdminPanel() {
               </div>
             )}
           </div>
-
         </div>
       )}
-
     </div>
   );
 }
