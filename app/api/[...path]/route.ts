@@ -315,14 +315,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
       const duration = await getServicesDuration(serviceIds);
       const endTime = minutesToTime(timeToMinutes(startTime) + duration);
 
-      const selectedArtist =
-        artistId ||
-        (
-          await client.fetch<any[]>(
-            `*[_type == "artist" && $branchId in branches && isActive == true][0]{id,name}`,
-            { branchId },
-          )
-        )?.id;
+      const artist = await client.fetch<{ id: string; name: string } | null>(
+        `*[_type == "artist" && $branchId in branches && isActive == true][0]{
+    id,
+    name
+  }`,
+        { branchId },
+      );
+
+      const selectedArtist = artistId || artist?.id;
 
       if (!selectedArtist) {
         return error("No artist available for this booking.", 409);
