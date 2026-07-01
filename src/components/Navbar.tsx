@@ -44,7 +44,8 @@ export default function Navbar({
               alt="Elora Beauty Colombo Premier Spa"
               width={220}
               height={58}
-              fetchPriority="high"
+              loading="eager"
+              decoding="async"
               className="h-[58px] w-[220px]"
             />
           </button>

@@ -53,20 +53,6 @@ export default function App({
     }
   }, [branches]);
 
-  useEffect(() => {
-    document.title =
-      siteSettings?.seoTitle ||
-      "Elora Beauty | Colombo Premium Multi-Branch Hair, Nails & Bridal Parlour";
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute(
-        "content",
-        siteSettings?.seoDescription ||
-          "Elora Beauty Parlour Colombo. Professional hair, nails, makeup, skin care, and bridal styling.",
-      );
-    }
-  }, [activeTab, siteSettings]);
-
   const handleSelectBranch = (branchId: string) => {
     setSelectedBranch(branchId);
     if (branchId) {
